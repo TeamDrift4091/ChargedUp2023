@@ -23,5 +23,10 @@ public class Constants {
         public static final int FRONT_RIGHT_CANCODER_CHANNEL = 10;
         public static final int BACK_LEFT_CANCODER_CHANNEL = 11;
         public static final int BACK_RIGHT_CANCODER_CHANNEL = 12;
+        // ENCODER OFFSETS
+        public static final double FRONT_LEFT_ENCODER_OFFSET = 0;
+        public static final double FRONT_RIGHT_ENCODER_OFFSET = 0;
+        public static final double BACK_LEFT_ENCODER_OFFSET = 0;
+        public static final double BACK_RIGHT_ENCODER_OFFSET = 0;
     }
 }
