@@ -109,12 +109,8 @@
     "transitory": {
       "Shuffleboard": {
         "Drivetrain": {
-          "Front Left": {
-            "open": true
-          },
           "open": true
-        },
-        "open": true
+        }
       },
       "SmartDashboard": {
         "Robot (Field2d)": {
@@ -139,7 +135,12 @@
     "Plot <0>": {
       "plots": [
         {
-          "height": 205,
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": -31,
           "series": [
             {
               "color": [
@@ -180,7 +181,12 @@
           ]
         },
         {
-          "height": 205,
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": -31,
           "series": [
             {
               "color": [
@@ -221,7 +227,12 @@
           ]
         },
         {
-          "height": 205,
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": -31,
           "series": [
             {
               "color": [
@@ -262,7 +273,12 @@
           ]
         },
         {
-          "height": 205,
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": -31,
           "series": [
             {
               "color": [
@@ -281,6 +297,24 @@
                 1.0
               ],
               "id": "NT:/Shuffleboard/Drivetrain/Front Right/Desired Angle (Radians)"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Drivetrain/Front Right/Current Velocity (Meters per Second)"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Drivetrain/Front Right/Desired Velocity (Meters per Second)"
             }
           ]
         }

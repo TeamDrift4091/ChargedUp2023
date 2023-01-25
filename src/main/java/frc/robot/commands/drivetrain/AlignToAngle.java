@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
 public class AlignToAngle extends CommandBase {
-  /** Creates a new AlignToAngle. */
   private final Drivetrain drivetrain;
   private double angleDegrees;
   private final DoubleSupplier angleDegreesSupplier;

@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -24,9 +27,20 @@ public class Constants {
         public static final int BACK_LEFT_CANCODER_CHANNEL = 11;
         public static final int BACK_RIGHT_CANCODER_CHANNEL = 12;
         // ENCODER OFFSETS
+        // TODO: Tune
         public static final double FRONT_LEFT_ENCODER_OFFSET = 0;
         public static final double FRONT_RIGHT_ENCODER_OFFSET = 0;
         public static final double BACK_LEFT_ENCODER_OFFSET = 0;
         public static final double BACK_RIGHT_ENCODER_OFFSET = 0;
+    }
+    public static class Vision {
+        // TODO: Configure this in photonvision GUI
+        public static final String CAMERA_NAME = "mainCam";
+
+        // TODO: Physical location of the camera on the robot, relative to the center of the robot.
+        public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
+            new Translation3d(0, 0, 0), // in meters
+            new Rotation3d()
+        );
     }
 }
