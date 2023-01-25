@@ -11,6 +11,7 @@ import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
+import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.SwerveModule;
@@ -32,6 +33,8 @@ public class Drivetrain extends SwerveDrivetrain {
 
   // private static final NavX _gyro = new NavX();
   private static final SimNavX _gyro = new SimNavX();
+
+  private final PhotonVisionWrapper photonVision;
 
   private final SwerveSim sim;
 
@@ -78,6 +81,8 @@ public class Drivetrain extends SwerveDrivetrain {
     configCANCoder(frontRightEncoder, Constants.Drivetrain.FRONT_RIGHT_ENCODER_OFFSET);
     configCANCoder(backLeftEncoder, Constants.Drivetrain.BACK_LEFT_ENCODER_OFFSET);
     configCANCoder(backRightEncoder, Constants.Drivetrain.BACK_RIGHT_ENCODER_OFFSET);
+
+    photonVision = new PhotonVisionWrapper();
 
     sim = new SwerveSim(config, frontLeftDriveFalcon, frontLeftSteerFalcon, frontLeftEncoder, frontRightDriveFalcon, frontRightSteerFalcon, frontRightEncoder, backLeftDriveFalcon, backLeftSteerFalcon, backLeftEncoder, backRightDriveFalcon, backRightSteerFalcon, backRightEncoder);
 
