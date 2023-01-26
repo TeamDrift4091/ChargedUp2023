@@ -22,6 +22,13 @@ public class OrbitingJoystickDrive extends CommandBase {
 
   private final ProfiledPIDController angleController;
   
+  /**
+   * Creates a command that drives according to the joystick in a field relative manner, while maintaining a heading towards the given orbit point.
+   * @param drivetrain the drivetrian to control
+   * @param orbitPoint the point to keep the robot facing
+   * @param forward the forward input from the joystick
+   * @param strafe the strafe input from the joystick
+   */
   public OrbitingJoystickDrive(Drivetrain drivetrain, Supplier<Pose2d> orbitPoint, DoubleSupplier forward, DoubleSupplier strafe) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
@@ -43,6 +50,7 @@ public class OrbitingJoystickDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    angleController.reset(drivetrain.getPose2d().getRotation().getRadians());
     angleController.setGoal(0);
   }
 
