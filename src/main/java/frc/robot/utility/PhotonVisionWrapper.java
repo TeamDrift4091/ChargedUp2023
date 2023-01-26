@@ -6,15 +6,20 @@ package frc.robot.utility;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 
 public class PhotonVisionWrapper {
     /**
@@ -40,5 +45,12 @@ public class PhotonVisionWrapper {
             System.err.printf("Could not load resource file %s.\n", field.m_resourceFile);
             e.printStackTrace();
         }
+        photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);// insert  camera name as it is in photonvision UI 
+        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, Constants.Vision.CAMERA_TO_ROBOT);
+
+    }
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        return photonPoseEstimator.update();
     }
 }
