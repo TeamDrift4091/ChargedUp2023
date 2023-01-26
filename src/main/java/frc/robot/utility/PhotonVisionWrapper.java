@@ -21,16 +21,14 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
+/**
+ * Links: 
+ * https://docs.photonvision.org/en/latest/docs/examples/index.html
+ * https://docs.photonvision.org/en/latest/docs/examples/apriltag.html
+ * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/apriltagExample/src/main/java/frc/robot/PhotonCameraWrapper.java
+ * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/apriltagExample/src/main/java/frc/robot/Drivetrain.java
+ */
 public class PhotonVisionWrapper {
-    /**
-     * This class will be used to handle receiving information from the camera
-     * Links: 
-     * https://docs.photonvision.org/en/latest/docs/examples/index.html
-     * https://docs.photonvision.org/en/latest/docs/examples/apriltag.html
-     * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/apriltagExample/src/main/java/frc/robot/PhotonCameraWrapper.java
-     * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/apriltagExample/src/main/java/frc/robot/Drivetrain.java
-     */
-
     public PhotonCamera photonCamera;
     public PhotonPoseEstimator photonPoseEstimator;
 
@@ -39,16 +37,18 @@ public class PhotonVisionWrapper {
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
         ), Units.feetToMeters(54), Units.feetToMeters(27));
+
         try {
             fieldLayout = new AprilTagFieldLayout(field.m_resourceFile);
         } catch (IOException e) {
-            System.err.printf("Could not load resource file %s.\n", field.m_resourceFile);
+            System.err.printf("Could not load resource file \"%s\".\n", field.m_resourceFile);
             e.printStackTrace();
         }
-        photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);// insert  camera name as it is in photonvision UI 
-        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, Constants.Vision.CAMERA_TO_ROBOT);
 
+        photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);
+        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, Constants.Vision.CAMERA_TO_ROBOT);
     }
+    
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
