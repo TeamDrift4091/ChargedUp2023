@@ -4,6 +4,11 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
@@ -107,7 +112,22 @@ public class Drivetrain extends SwerveDrivetrain {
   @Override
   public void updateOdometry() {
     super.updateOdometry();
+    Optional<EstimatedRobotPose> result =
+      photonVision.getEstimatedGlobalPose(getPose2d());
+  
+    if (result.isPresent()){
+      EstimatedRobotPose camPose = result.get();
+      poseEstimator.addVisionMeasurement(
+        camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+    }
+
+      
+    
+   
   }
+
+
+  
 
   @Override
   public void simulationPeriodic() {
