@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
@@ -11,6 +15,7 @@ import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
+import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.SwerveModule;
@@ -32,6 +37,8 @@ public class Drivetrain extends SwerveDrivetrain {
 
   // private static final NavX _gyro = new NavX();
   private static final SimNavX _gyro = new SimNavX();
+
+  private final PhotonVisionWrapper photonVision;
 
   private final SwerveSim sim;
 
@@ -79,6 +86,8 @@ public class Drivetrain extends SwerveDrivetrain {
     configCANCoder(backLeftEncoder, Constants.Drivetrain.BACK_LEFT_ENCODER_OFFSET);
     configCANCoder(backRightEncoder, Constants.Drivetrain.BACK_RIGHT_ENCODER_OFFSET);
 
+    photonVision = new PhotonVisionWrapper();
+
     sim = new SwerveSim(config, frontLeftDriveFalcon, frontLeftSteerFalcon, frontLeftEncoder, frontRightDriveFalcon, frontRightSteerFalcon, frontRightEncoder, backLeftDriveFalcon, backLeftSteerFalcon, backLeftEncoder, backRightDriveFalcon, backRightSteerFalcon, backRightEncoder);
 
     configureShuffleboard();
@@ -102,6 +111,15 @@ public class Drivetrain extends SwerveDrivetrain {
   @Override
   public void updateOdometry() {
     super.updateOdometry();
+
+    Optional<EstimatedRobotPose> result =
+      photonVision.getEstimatedGlobalPose(getPose2d());
+  
+    if (result.isPresent()){
+      EstimatedRobotPose camPose = result.get();
+      poseEstimator.addVisionMeasurement(
+        camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+    } 
   }
 
   @Override
