@@ -70,7 +70,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
     // See https://github.com/bullbots/BullBotsLib
-    implementation fileTree(dir:'libs', include:'BullBotsLib-2023.0.5-beta.jar')
+    implementation fileTree(dir:'libs', include:'BullBotsLib-2023.1.0-beta.jar')
 }
 
 test {

@@ -18,7 +18,11 @@ import frc.robot.Constants;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
-import frc.team1891.common.drivetrains.SwerveModule;
+import frc.team1891.common.drivetrains.swervemodules.BSF_FalconSteerController;
+import frc.team1891.common.drivetrains.swervemodules.DriveController;
+import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
+import frc.team1891.common.drivetrains.swervemodules.SteerController;
+import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 import frc.team1891.common.drivetrains.sim.SwerveSim;
 import frc.team1891.common.hardware.SimNavX;
 
@@ -46,19 +50,27 @@ public class Drivetrain extends SwerveDrivetrain {
   private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_LEFT_DRIVE_CHANNEL);
   private static final WPI_TalonFX frontLeftSteerFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_LEFT_STEER_CHANNEL);
   private static final WPI_CANCoder frontLeftEncoder = new WPI_CANCoder(Constants.Drivetrain.FRONT_LEFT_CANCODER_CHANNEL);
-  private static final SwerveModule frontLeft = SwerveModule.createFromDriveFalconAndSteerFalcon(frontLeftDriveFalcon, frontLeftSteerFalcon, frontLeftEncoder, _config, 1,0,0,1,0,0, 1/_config.chassisMaxVelocityMetersPerSecond);
+  private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config);
+  private static final SteerController frontLeftSteerController = new BSF_FalconSteerController(frontLeftDriveFalcon, frontLeftEncoder, 150/7d, Constants.Drivetrain.FRONT_LEFT_ENCODER_OFFSET);
+  private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
   private static final WPI_TalonFX frontRightDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_RIGHT_DRIVE_CHANNEL);
   private static final WPI_TalonFX frontRightSteerFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_RIGHT_STEER_CHANNEL);
   private static final WPI_CANCoder frontRightEncoder = new WPI_CANCoder(Constants.Drivetrain.FRONT_RIGHT_CANCODER_CHANNEL);
-  private static final SwerveModule frontRight = SwerveModule.createFromDriveFalconAndSteerFalcon(frontRightDriveFalcon, frontRightSteerFalcon, frontRightEncoder, _config, 1,0,0,1,0,0, 1/_config.chassisMaxVelocityMetersPerSecond);
+  private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveFalcon, _config);
+  private static final SteerController frontRightSteerController = new BSF_FalconSteerController(frontRightDriveFalcon, frontRightEncoder, 150/7d, Constants.Drivetrain.FRONT_RIGHT_ENCODER_OFFSET);
+  private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final WPI_TalonFX backLeftDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.BACK_LEFT_DRIVE_CHANNEL);
   private static final WPI_TalonFX backLeftSteerFalcon = new WPI_TalonFX(Constants.Drivetrain.BACK_LEFT_STEER_CHANNEL);
   private static final WPI_CANCoder backLeftEncoder = new WPI_CANCoder(Constants.Drivetrain.BACK_LEFT_CANCODER_CHANNEL);
-  private static final SwerveModule backLeft = SwerveModule.createFromDriveFalconAndSteerFalcon(backLeftDriveFalcon, backLeftSteerFalcon, backLeftEncoder, _config, 1,0,0,1,0,0, 1/_config.chassisMaxVelocityMetersPerSecond);
+  private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveFalcon, _config);
+  private static final SteerController backLeftSteerController = new BSF_FalconSteerController(backLeftDriveFalcon, frontLeftEncoder, 150/7d, Constants.Drivetrain.BACK_LEFT_ENCODER_OFFSET);
+  private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
   private static final WPI_TalonFX backRightDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.BACK_RIGHT_DRIVE_CHANNEL);
   private static final WPI_TalonFX backRightSteerFalcon = new WPI_TalonFX(Constants.Drivetrain.BACK_RIGHT_STEER_CHANNEL);
   private static final WPI_CANCoder backRightEncoder = new WPI_CANCoder(Constants.Drivetrain.BACK_RIGHT_CANCODER_CHANNEL);
-  private static final SwerveModule backRight = SwerveModule.createFromDriveFalconAndSteerFalcon(backRightDriveFalcon, backRightSteerFalcon, backRightEncoder, _config, 1,0,0,1,0,0, 1/_config.chassisMaxVelocityMetersPerSecond);
+  private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveFalcon, _config);
+  private static final SteerController backRightSteerController = new BSF_FalconSteerController(backRightDriveFalcon, backRightEncoder, 150/7d, Constants.Drivetrain.BACK_RIGHT_ENCODER_OFFSET);
+  private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
     super(
@@ -77,10 +89,10 @@ public class Drivetrain extends SwerveDrivetrain {
     configDriveMotor(frontRightDriveFalcon);
     configDriveMotor(backLeftDriveFalcon);
     configDriveMotor(backRightDriveFalcon);
-    configSteerMotor(frontLeftSteerFalcon);
-    configSteerMotor(frontRightSteerFalcon);
-    configSteerMotor(backLeftSteerFalcon);
-    configSteerMotor(backRightSteerFalcon);
+    // configSteerMotor(frontLeftSteerFalcon);
+    // configSteerMotor(frontRightSteerFalcon);
+    // configSteerMotor(backLeftSteerFalcon);
+    // configSteerMotor(backRightSteerFalcon);
     configCANCoder(frontLeftEncoder, Constants.Drivetrain.FRONT_LEFT_ENCODER_OFFSET);
     configCANCoder(frontRightEncoder, Constants.Drivetrain.FRONT_RIGHT_ENCODER_OFFSET);
     configCANCoder(backLeftEncoder, Constants.Drivetrain.BACK_LEFT_ENCODER_OFFSET);
@@ -105,7 +117,7 @@ public class Drivetrain extends SwerveDrivetrain {
 
   private static void configCANCoder(WPI_CANCoder encoder, double encoderOffsetDegrees) {
     encoder.configFactoryDefault();
-    encoder.configMagnetOffset(encoderOffsetDegrees);
+    // encoder.configMagnetOffset(encoderOffsetDegrees);
   }
 
   @Override
