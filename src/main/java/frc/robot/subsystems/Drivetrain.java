@@ -12,8 +12,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
@@ -102,6 +105,8 @@ public class Drivetrain extends SwerveDrivetrain {
 
     sim = new SwerveSim(config, frontLeftDriveFalcon, frontLeftSteerFalcon, frontLeftEncoder, frontRightDriveFalcon, frontRightSteerFalcon, frontRightEncoder, backLeftDriveFalcon, backLeftSteerFalcon, backLeftEncoder, backRightDriveFalcon, backRightSteerFalcon, backRightEncoder);
 
+    SmartDashboard.putBoolean("showPhotonEstimate", true);
+
     configureShuffleboard();
   }
 
@@ -129,9 +134,16 @@ public class Drivetrain extends SwerveDrivetrain {
   
     if (result.isPresent()){
       EstimatedRobotPose camPose = result.get();
-      poseEstimator.addVisionMeasurement(
-        camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-    } 
+      poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+      if (SmartDashboard.getBoolean("showPhotonEstimate", false)) {
+        field.getObject("photonEstimate").setPose(camPose.estimatedPose.toPose2d());
+      }
+    } else {
+      if (SmartDashboard.getBoolean("showPhotonEstimate", false)) {
+        // move it way off the screen to make it disappear
+        field.getObject("photonEstimate").setPose(new Pose2d(-100, -100, new Rotation2d()));
+      }
+    }
   }
 
   @Override
