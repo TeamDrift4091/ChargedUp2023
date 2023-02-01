@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class Drivetrain {
-        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(4);
+        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2);
         public static final double DRIVETRAIN_GEAR_RATIO = 8.14; // L1 from SDS
         // Dimensions
         public static final double WHEEL_BASE_LENGTH_METERS = 1;
@@ -34,9 +34,7 @@ public class Constants {
         public static final double BACK_RIGHT_ENCODER_OFFSET = 0;
     }
     public static class Vision {
-        // TODO: Configure this in photonvision GUI
-        public static final String CAMERA_NAME = "mainCam";
-
+        public static final String CAMERA_NAME = "Main (Limelight)";
         // TODO: Physical location of the camera on the robot, relative to the center of the robot.
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
             new Translation3d(0, 0, 0), // in meters
