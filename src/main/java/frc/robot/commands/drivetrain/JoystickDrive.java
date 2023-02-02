@@ -14,7 +14,7 @@ import frc.robot.subsystems.Drivetrain;
 public class JoystickDrive extends CommandBase {
   public static final double DEADBAND = .15;
 
-  private static final boolean SMARTDASHBOARD = true;
+  private static final boolean SMARTDASHBOARD = false;
 
   private final Drivetrain drivetrain;
   private final DoubleSupplier forward, strafe, twist;
@@ -36,7 +36,7 @@ public class JoystickDrive extends CommandBase {
     double f = MathUtil.applyDeadband(forward.getAsDouble(), DEADBAND);
     double s = MathUtil.applyDeadband(strafe.getAsDouble(), DEADBAND);
     double t = MathUtil.applyDeadband(twist.getAsDouble(), DEADBAND);
-    drivetrain.holonomicDrive(-f, -s, t, false); // negative is forward on the joystick; chassis left is positive while joystick right is positive.
+    drivetrain.holonomicDrive(-f, -s, t, true); // negative is forward on the joystick; chassis left is positive while joystick right is positive.
 
     if (SMARTDASHBOARD) {
       SmartDashboard.putNumber("joystick/forward", forward.getAsDouble());
@@ -51,7 +51,7 @@ public class JoystickDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.holonomicDrive(0, 0, 0, false);
+    drivetrain.stop();
   }
 
   // Returns true when the command should end.

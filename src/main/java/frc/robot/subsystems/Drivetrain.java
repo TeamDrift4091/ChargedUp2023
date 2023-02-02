@@ -14,8 +14,9 @@ import com.ctre.phoenix.sensors.WPI_CANCoder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.utility.PhotonVisionWrapper;
@@ -26,7 +27,6 @@ import frc.team1891.common.drivetrains.swervemodules.DriveController;
 import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
 import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
-import frc.team1891.common.drivetrains.sim.SwerveSim;
 import frc.team1891.common.hardware.SimNavX;
 
 public class Drivetrain extends SwerveDrivetrain {
@@ -38,8 +38,6 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
-  private static final ShuffleboardTab _shuffuleboardTab = Shuffleboard.getTab("Drivetrain");
-
   private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, Constants.Drivetrain.DRIVETRAIN_GEAR_RATIO, 2048);
 
   // private static final NavX _gyro = new NavX();
@@ -47,7 +45,7 @@ public class Drivetrain extends SwerveDrivetrain {
 
   private final PhotonVisionWrapper photonVision;
 
-  private final SwerveSim sim;
+  // private final SwerveSim sim;
 
   // TODO: Tune PID and feed forward
   private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_LEFT_DRIVE_CHANNEL);
@@ -77,7 +75,6 @@ public class Drivetrain extends SwerveDrivetrain {
 
   private Drivetrain() {
     super(
-      _shuffuleboardTab,
       _config, 
       Constants.Drivetrain.WHEEL_BASE_WIDTH_METERS,
       Constants.Drivetrain.WHEEL_BASE_LENGTH_METERS,
@@ -103,11 +100,10 @@ public class Drivetrain extends SwerveDrivetrain {
 
     photonVision = new PhotonVisionWrapper();
 
-    sim = new SwerveSim(config, frontLeftDriveFalcon, frontLeftSteerFalcon, frontLeftEncoder, frontRightDriveFalcon, frontRightSteerFalcon, frontRightEncoder, backLeftDriveFalcon, backLeftSteerFalcon, backLeftEncoder, backRightDriveFalcon, backRightSteerFalcon, backRightEncoder);
+    // sim = new SwerveSim(config, frontLeftDriveFalcon, frontLeftSteerFalcon, frontLeftEncoder, frontRightDriveFalcon, frontRightSteerFalcon, frontRightEncoder, backLeftDriveFalcon, backLeftSteerFalcon, backLeftEncoder, backRightDriveFalcon, backRightSteerFalcon, backRightEncoder);
 
     SmartDashboard.putBoolean("showPhotonEstimate", true);
-
-    configureShuffleboard();
+    configureSmartDashboard();
   }
 
   private static void configDriveMotor(WPI_TalonFX driveMotor) {
@@ -115,10 +111,10 @@ public class Drivetrain extends SwerveDrivetrain {
     driveMotor.setNeutralMode(NeutralMode.Brake);
   }
 
-  private static void configSteerMotor(WPI_TalonFX steerMotor) {
-    steerMotor.configFactoryDefault();
-    steerMotor.setNeutralMode(NeutralMode.Brake);
-  }
+  // private static void configSteerMotor(WPI_TalonFX steerMotor) {
+  //   steerMotor.configFactoryDefault();
+  //   steerMotor.setNeutralMode(NeutralMode.Brake);
+  // }
 
   private static void configCANCoder(WPI_CANCoder encoder, double encoderOffsetDegrees) {
     encoder.configFactoryDefault();
@@ -148,8 +144,24 @@ public class Drivetrain extends SwerveDrivetrain {
 
   @Override
   public void simulationPeriodic() {
-    sim.update();
-    
-    _gyro.setRadians(_gyro.getRadians() - kinematics.toChassisSpeeds(getSwerveModuleStates()).omegaRadiansPerSecond * .02);
+    ChassisSpeeds simSpeeds = kinematics.toChassisSpeeds(
+      frontLeft.getDesiredSwerveModuleState(),
+      frontRight.getDesiredSwerveModuleState(),
+      backLeft.getDesiredSwerveModuleState(),
+      backRight.getDesiredSwerveModuleState()
+    );
+
+    _gyro.setRadians(_gyro.getRadians() - simSpeeds.omegaRadiansPerSecond * .02);
+    Pose2d newPose = poseEstimator.getEstimatedPosition().plus(
+      new Transform2d(
+        new Translation2d(
+          simSpeeds.vxMetersPerSecond * .02,
+          simSpeeds.vyMetersPerSecond * .02
+        ),
+        new Rotation2d()
+      )
+    );
+
+    poseEstimator.resetPosition(_gyro.getRotation2d(), getSwerveModulePositions(), newPose);
   }
 }
