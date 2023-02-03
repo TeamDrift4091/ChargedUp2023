@@ -28,10 +28,10 @@ public class Constants {
         public static final int BACK_RIGHT_CANCODER_CHANNEL = 12;
         // ENCODER OFFSETS
         // TODO: Tune
-        public static final double FRONT_LEFT_ENCODER_OFFSET = 0;
-        public static final double FRONT_RIGHT_ENCODER_OFFSET = 0;
-        public static final double BACK_LEFT_ENCODER_OFFSET = 0;
-        public static final double BACK_RIGHT_ENCODER_OFFSET = 0;
+        public static final double FRONT_LEFT_ENCODER_OFFSET_RADIANS = 0;
+        public static final double FRONT_RIGHT_ENCODER_OFFSET_RADIANS = 0;
+        public static final double BACK_LEFT_ENCODER_OFFSET_RADIANS = 0;
+        public static final double BACK_RIGHT_ENCODER_OFFSET_RADIANS = 0;
     }
     public static class Vision {
         public static final String CAMERA_NAME = "Main (Limelight)";
