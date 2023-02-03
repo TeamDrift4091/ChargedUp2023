@@ -6,7 +6,6 @@ package frc.robot.commands.drivetrain;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,10 +42,7 @@ public class AlignToAngle extends CommandBase {
     this.angleDegrees = Double.NaN;
 
     angleController = new ProfiledPIDController(.007, .001, 0,
-      new TrapezoidProfile.Constraints(
-        drivetrain.getConfig().chassisMaxAngularVelocityRadiansPerSecond,
-        drivetrain.getConfig().chassisMaxAngularAccelerationRadiansPerSecondSquared
-      )
+      new TrapezoidProfile.Constraints(1,1)
     );
     angleController.enableContinuousInput(0, 360);
   }
@@ -77,9 +73,9 @@ public class AlignToAngle extends CommandBase {
     SmartDashboard.putNumber("Target Angle", angleDegrees);
     double output = angleController.calculate(currentAngle);
 
-    double clampValue = .8;
-    output = MathUtil.clamp(output, -clampValue, clampValue);
-    drivetrain.holonomicDrive(0, 0, -output, true);
+    // double clampValue = .8;
+    // output = MathUtil.clamp(output, -clampValue, clampValue);
+    drivetrain.holonomicDrive(0, 0, output, true);
   }
 
   // Called once the command ends or is interrupted.

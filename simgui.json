@@ -91,8 +91,8 @@
         }
       },
       "/SmartDashboard/Robot (Field2d)": {
-        "height": 15.0,
-        "width": 29.0,
+        "height": 7.924799919128418,
+        "width": 16.459199905395508,
         "window": {
           "visible": true
         }
@@ -113,10 +113,10 @@
         }
       },
       "SmartDashboard": {
-        "Robot (Field2d)": {
+        "open": true,
+        "orbiting controller": {
           "open": true
-        },
-        "open": true
+        }
       }
     }
   },

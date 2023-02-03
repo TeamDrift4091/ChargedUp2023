@@ -38,11 +38,8 @@ public class OrbitingJoystickDrive extends CommandBase {
 
     // TODO: Tune PID
     // Theoretically this should be the same PID as fed to trajectories.
-    angleController = new ProfiledPIDController(.03, 0, 0, 
-      new TrapezoidProfile.Constraints(
-        drivetrain.getConfig().chassisMaxAngularVelocityRadiansPerSecond,
-        drivetrain.getConfig().chassisMaxAngularAccelerationRadiansPerSecondSquared
-      )
+    angleController = new ProfiledPIDController(1, 0, 0, 
+      new TrapezoidProfile.Constraints(1,1)
     );
     angleController.enableContinuousInput(0, 2*Math.PI);
   }
@@ -65,10 +62,10 @@ public class OrbitingJoystickDrive extends CommandBase {
     Rotation2d angleDeltaFromTarget = target.relativeTo(currentPose).getTranslation().getAngle();
 
     double twist = -angleController.calculate(angleDeltaFromTarget.getRadians());
-    double clampValue = .8;
-    double t = MathUtil.clamp(twist, -clampValue, clampValue);
+    // double clampValue = .8;
+    // double t = MathUtil.clamp(twist, -clampValue, clampValue);
 
-    drivetrain.holonomicDrive(f, s, t, true);
+    drivetrain.holonomicDrive(-f, -s, twist, true);
   }
 
   // Called once the command ends or is interrupted.

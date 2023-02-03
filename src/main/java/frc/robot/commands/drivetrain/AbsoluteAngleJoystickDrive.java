@@ -40,10 +40,10 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
 
     // TODO: Tune PID
     // Theoretically this should be the same PID as fed to trajectories.
-    angleController = new ProfiledPIDController(.03, 0, 0, 
+    angleController = new ProfiledPIDController(1, 0, 0, 
       new TrapezoidProfile.Constraints(
-        drivetrain.getConfig().chassisMaxAngularVelocityRadiansPerSecond,
-        drivetrain.getConfig().chassisMaxAngularAccelerationRadiansPerSecondSquared
+        1,
+        1
       )
     );
     angleController.enableContinuousInput(0, 2*Math.PI);
@@ -67,7 +67,7 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
 
     double t = angleController.calculate(currentAngle.getRadians(), targetAngle.getRadians());
 
-    drivetrain.holonomicDrive(f, s, t, true);
+    drivetrain.holonomicDrive(-f, -s, t, true);
 
     previousTarget = targetAngle;
   }
