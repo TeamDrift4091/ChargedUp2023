@@ -7,7 +7,6 @@ package frc.robot.commands.drivetrain;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -58,16 +57,14 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double f = MathUtil.applyDeadband(forward.getAsDouble(), JoystickDrive.DEADBAND);
-    double s = MathUtil.applyDeadband(strafe.getAsDouble(), JoystickDrive.DEADBAND);
     
     Rotation2d currentAngle = drivetrain.getPose2d().getRotation();
     Rotation2d targetAngle = rotation.get();
     targetAngle = (targetAngle == null) ? previousTarget : targetAngle;
 
-    double t = angleController.calculate(currentAngle.getRadians(), targetAngle.getRadians());
+    double twist = angleController.calculate(currentAngle.getRadians(), targetAngle.getRadians());
 
-    drivetrain.holonomicDrive(-f, -s, t, true);
+    drivetrain.holonomicDrive(-forward.getAsDouble(), -strafe.getAsDouble(), twist, true);
 
     previousTarget = targetAngle;
   }

@@ -47,7 +47,7 @@ public class RobotContainer {
         drivetrain,
         () -> controller.getLeftY(),
         () -> controller.getLeftX(),
-        () -> controller.getRightY()
+        () -> controller.getRightX()
       )
       // new AbsoluteAngleJoystickDrive(
       //   drivetrain,

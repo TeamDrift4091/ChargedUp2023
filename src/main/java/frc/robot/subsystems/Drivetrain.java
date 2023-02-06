@@ -21,12 +21,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.Drivetrain.*;
+import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
 import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
-import frc.team1891.common.drivetrains.swervemodules.MAX_NeoSteerController;
 import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 import frc.team1891.common.hardware.SimNavX;
@@ -72,19 +72,19 @@ public class Drivetrain extends SwerveDrivetrain {
   // TODO: Fix gear ratios
   private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config);
-  private static final SteerController frontLeftSteerController = new MAX_NeoSteerController(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
   private static final WPI_TalonFX frontRightDriveFalcon = new WPI_TalonFX(FrontRight.DRIVE_CHANNEL);
   private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveFalcon, _config);
-  private static final SteerController frontRightSteerController = new MAX_NeoSteerController(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController frontRightSteerController = new MAX_NeoSteerController_BugFix(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final WPI_TalonFX backLeftDriveFalcon = new WPI_TalonFX(BackLeft.DRIVE_CHANNEL);
   private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveFalcon, _config);
-  private static final SteerController backLeftSteerController = new MAX_NeoSteerController(BackLeft.STEER_CHANNEL, BackLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController backLeftSteerController = new MAX_NeoSteerController_BugFix(BackLeft.STEER_CHANNEL, BackLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
   private static final WPI_TalonFX backRightDriveFalcon = new WPI_TalonFX(BackRight.DRIVE_CHANNEL);
   private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveFalcon, _config);
-  private static final SteerController backRightSteerController = new MAX_NeoSteerController(BackRight.STEER_CHANNEL, BackRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController backRightSteerController = new MAX_NeoSteerController_BugFix(BackRight.STEER_CHANNEL, BackRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {

@@ -7,7 +7,6 @@ package frc.robot.commands.drivetrain;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,9 +53,6 @@ public class OrbitingJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double f = MathUtil.applyDeadband(forward.getAsDouble(), JoystickDrive.DEADBAND);
-    double s = MathUtil.applyDeadband(strafe.getAsDouble(), JoystickDrive.DEADBAND);
-
     Pose2d target = orbitPoint.get();
     Pose2d currentPose = drivetrain.getPose2d();
     Rotation2d angleDeltaFromTarget = target.relativeTo(currentPose).getTranslation().getAngle();
@@ -65,7 +61,7 @@ public class OrbitingJoystickDrive extends CommandBase {
     // double clampValue = .8;
     // double t = MathUtil.clamp(twist, -clampValue, clampValue);
 
-    drivetrain.holonomicDrive(-f, -s, twist, true);
+    drivetrain.holonomicDrive(-forward.getAsDouble(), -strafe.getAsDouble(), twist, true);
   }
 
   // Called once the command ends or is interrupted.
