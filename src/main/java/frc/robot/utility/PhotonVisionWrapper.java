@@ -29,10 +29,18 @@ import frc.robot.Constants;
  * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/apriltagExample/src/main/java/frc/robot/Drivetrain.java
  */
 public class PhotonVisionWrapper {
+    private static PhotonVisionWrapper instance = null;
+    public static PhotonVisionWrapper getInstance() {
+        if (instance == null) {
+            instance = new PhotonVisionWrapper();
+        }
+        return instance;
+    }
+
     public PhotonCamera photonCamera;
     public PhotonPoseEstimator photonPoseEstimator;
 
-    public PhotonVisionWrapper() {
+    private PhotonVisionWrapper() {
         AprilTagFields field = AprilTagFields.k2023ChargedUp;
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
@@ -47,10 +55,16 @@ public class PhotonVisionWrapper {
 
         photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);
         photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, Constants.Vision.CAMERA_TO_ROBOT);
+
+        setPipelineIndex(0);
     }
     
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
+    }
+
+    public void setPipelineIndex(int index) {
+        photonCamera.setPipelineIndex(index);
     }
 }

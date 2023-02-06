@@ -11,13 +11,16 @@ import org.photonvision.EstimatedRobotPose;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Constants.Drivetrain.*;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
@@ -37,7 +40,29 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
-  private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, Constants.Drivetrain.DRIVETRAIN_GEAR_RATIO, 2048);
+  public static ProfiledPIDController getTunedProfiledPIDController() {
+    // return new ProfiledPIDController(Constants.Drivetrain., 0, 0, null)
+    return new ProfiledPIDController(
+      Constants.Drivetrain.rotationalP,
+      Constants.Drivetrain.rotationalI,
+      Constants.Drivetrain.rotationalD,
+      new TrapezoidProfile.Constraints(
+        _config.chassisMaxAngularVelocityRadiansPerSecond,
+        _config.chassisMaxAngularAccelerationRadiansPerSecondSquared
+      )
+    );
+  }
+  public static ProfiledPIDController getTunedProfiledPIDControllerForHolonomicDrive() {
+    // return new ProfiledPIDController(Constants.Drivetrain., 0, 0, null)
+    return new ProfiledPIDController(
+      Constants.Drivetrain.rotationalP,
+      Constants.Drivetrain.rotationalI,
+      Constants.Drivetrain.rotationalD,
+      new TrapezoidProfile.Constraints(1,1)
+    );
+  }
+
+  private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, Constants.Drivetrain.DRIVETRAIN_DRIVE_GEAR_RATIO, 2048);
 
   // private static final NavX _gyro = new NavX();
   private static final SimNavX _gyro = new SimNavX();
@@ -45,21 +70,21 @@ public class Drivetrain extends SwerveDrivetrain {
   private final PhotonVisionWrapper photonVision;
 
   // TODO: Fix gear ratios
-  private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_LEFT_DRIVE_CHANNEL);
+  private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config);
-  private static final SteerController frontLeftSteerController = new MAX_NeoSteerController(Constants.Drivetrain.FRONT_LEFT_STEER_CHANNEL, Constants.Drivetrain.FRONT_LEFT_ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController frontLeftSteerController = new MAX_NeoSteerController(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
-  private static final WPI_TalonFX frontRightDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.FRONT_RIGHT_DRIVE_CHANNEL);
+  private static final WPI_TalonFX frontRightDriveFalcon = new WPI_TalonFX(FrontRight.DRIVE_CHANNEL);
   private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveFalcon, _config);
-  private static final SteerController frontRightSteerController = new MAX_NeoSteerController(Constants.Drivetrain.FRONT_RIGHT_STEER_CHANNEL, Constants.Drivetrain.FRONT_RIGHT_ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController frontRightSteerController = new MAX_NeoSteerController(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
-  private static final WPI_TalonFX backLeftDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.BACK_LEFT_DRIVE_CHANNEL);
+  private static final WPI_TalonFX backLeftDriveFalcon = new WPI_TalonFX(BackLeft.DRIVE_CHANNEL);
   private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveFalcon, _config);
-  private static final SteerController backLeftSteerController = new MAX_NeoSteerController(Constants.Drivetrain.BACK_LEFT_STEER_CHANNEL, Constants.Drivetrain.BACK_LEFT_ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
+  private static final SteerController backLeftSteerController = new MAX_NeoSteerController(BackLeft.STEER_CHANNEL, BackLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
-  private static final WPI_TalonFX backRightDriveFalcon = new WPI_TalonFX(Constants.Drivetrain.BACK_RIGHT_DRIVE_CHANNEL);
+  private static final WPI_TalonFX backRightDriveFalcon = new WPI_TalonFX(BackRight.DRIVE_CHANNEL);
   private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveFalcon, _config);
-  private static final SteerController backRightSteerController = new MAX_NeoSteerController(Constants.Drivetrain.BACK_RIGHT_STEER_CHANNEL, Constants.Drivetrain.BACK_RIGHT_ENCODER_OFFSET_RADIANS  , 1, 0, 0, 0);
+  private static final SteerController backRightSteerController = new MAX_NeoSteerController(BackRight.STEER_CHANNEL, BackRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
@@ -79,7 +104,7 @@ public class Drivetrain extends SwerveDrivetrain {
     configDriveMotor(backLeftDriveFalcon);
     configDriveMotor(backRightDriveFalcon);
 
-    photonVision = new PhotonVisionWrapper();
+    photonVision = PhotonVisionWrapper.getInstance();
 
     SmartDashboard.putBoolean("showPhotonEstimate", true);
     configureSmartDashboard();
