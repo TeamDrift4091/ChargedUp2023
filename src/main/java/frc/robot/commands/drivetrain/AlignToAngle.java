@@ -41,10 +41,11 @@ public class AlignToAngle extends CommandBase {
 
     this.angleDegrees = Double.NaN;
 
-    angleController = new ProfiledPIDController(.007, .001, 0,
-      new TrapezoidProfile.Constraints(1,1)
-    );
-    angleController.enableContinuousInput(0, 360);
+    // angleController = new ProfiledPIDController(.007, .001, 0,
+    //   new TrapezoidProfile.Constraints(1,1)
+    // );
+    // angleController.enableContinuousInput(0, 360);
+    angleController = Drivetrain.getTunedProfiledPIDControllerForHolonomicDrive();
   }
 
   // Called when the command is initially scheduled.

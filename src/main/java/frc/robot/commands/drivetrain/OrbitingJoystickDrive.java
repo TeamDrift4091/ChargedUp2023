@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -37,10 +36,11 @@ public class OrbitingJoystickDrive extends CommandBase {
 
     // TODO: Tune PID
     // Theoretically this should be the same PID as fed to trajectories.
-    angleController = new ProfiledPIDController(1, 0, 0, 
-      new TrapezoidProfile.Constraints(1,1)
-    );
-    angleController.enableContinuousInput(0, 2*Math.PI);
+    // angleController = new ProfiledPIDController(1, 0, 0, 
+    //   new TrapezoidProfile.Constraints(1,1)
+    // );
+    // angleController.enableContinuousInput(0, 2*Math.PI);
+    angleController = Drivetrain.getTunedProfiledPIDControllerForHolonomicDrive();
   }
 
   // Called when the command is initially scheduled.

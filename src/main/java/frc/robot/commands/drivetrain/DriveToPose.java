@@ -10,7 +10,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -36,15 +35,18 @@ public class DriveToPose extends CommandBase {
     this.drivetrain = drivetrain;
     this.targetPoseSupplier = targetPoseSupplier;
     this.targetPose = new Pose2d();
-    xController = new PIDController(1, 0, 0);
-    yController = new PIDController(1, 0, 0);
-    angleController = new ProfiledPIDController(.03, 0, 0,
-      new TrapezoidProfile.Constraints(
-        drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-        drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
-      )
-    );
-    angleController.enableContinuousInput(0, 2*Math.PI);
+    // xController = new PIDController(1, 0, 0);
+    // yController = new PIDController(1, 0, 0);
+    xController = Drivetrain.getTunedTranslationalPIDController();
+    yController = Drivetrain.getTunedTranslationalPIDController();
+    // angleController = new ProfiledPIDController(Constants.Drivetrain.rotationalP, Constants.Drivetrain.rotationalI, Constants.Drivetrain.rotationalD,
+    //   new TrapezoidProfile.Constraints(
+    //     drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
+    //     drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
+    //   )
+    // );
+    // angleController.enableContinuousInput(0, 2*Math.PI);
+    angleController = Drivetrain.getTunedProfiledPIDController();
   }
 
   // Called when the command is initially scheduled.

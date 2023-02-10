@@ -31,10 +31,37 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Autonomous Chooser": "String Chooser",
+      "/SmartDashboard/Holonomic Trajectory (Field2d)": "Field2d",
       "/SmartDashboard/Modules (Field2d)": "Field2d",
-      "/SmartDashboard/Robot (Field2d)": "Field2d"
+      "/SmartDashboard/Reset Odometry": "Command",
+      "/SmartDashboard/Robot (Field2d)": "Field2d",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
+      "/SmartDashboard/Autonomous Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Holonomic Trajectory (Field2d)": {
+        "Desired State": {
+          "arrowSize": 100,
+          "arrowWeight": 1.0,
+          "weight": 1.0
+        },
+        "Holonomic Trajectory Path": {
+          "arrows": false,
+          "style": "Line",
+          "weight": 1.0
+        },
+        "Robot": {
+          "arrowSize": 100
+        },
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Modules (Field2d)": {
         "Robot": {
           "arrowSize": 100,
@@ -86,6 +113,11 @@
         },
         "height": 2.0,
         "width": 2.0,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Reset Odometry": {
         "window": {
           "visible": true
         }

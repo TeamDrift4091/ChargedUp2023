@@ -8,9 +8,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.drivetrain.AlignToAngle;
 import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.commands.drivetrain.JoystickDrive;
@@ -39,6 +41,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+    AutonomousCommandManager.load();
   }
 
   private void configureBindings() {
@@ -57,6 +60,11 @@ public class RobotContainer {
       // )
     );
 
+    SmartDashboard.putData("Reset Odometry", new InstantCommand(() -> {
+      // drivetrain.resetGyro();
+      drivetrain.resetOdometry();
+    }));
+
     testDrivetrian.onTrue(new DrivetrainTest(drivetrain));
 
     orbitDrive.whileTrue(new OrbitingJoystickDrive(drivetrain, () -> new Pose2d(4,4,new Rotation2d()), () -> controller.getLeftY(), () -> controller.getLeftX()));
@@ -65,6 +73,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return AutonomousCommandManager.getSelected();
   }
 }

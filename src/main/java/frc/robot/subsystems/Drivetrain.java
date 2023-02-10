@@ -11,6 +11,7 @@ import org.photonvision.EstimatedRobotPose;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -40,9 +41,17 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
-  public static ProfiledPIDController getTunedProfiledPIDController() {
+  public static PIDController getTunedTranslationalPIDController() {
     // return new ProfiledPIDController(Constants.Drivetrain., 0, 0, null)
-    return new ProfiledPIDController(
+    return new PIDController(
+      Constants.Drivetrain.translationalP,
+      Constants.Drivetrain.translationalI,
+      Constants.Drivetrain.translationalD
+    );
+  }
+
+  public static ProfiledPIDController getTunedProfiledPIDController() {
+    ProfiledPIDController controller = new ProfiledPIDController(
       Constants.Drivetrain.rotationalP,
       Constants.Drivetrain.rotationalI,
       Constants.Drivetrain.rotationalD,
@@ -51,15 +60,18 @@ public class Drivetrain extends SwerveDrivetrain {
         _config.chassisMaxAngularAccelerationRadiansPerSecondSquared
       )
     );
+    controller.enableContinuousInput(0, 2*Math.PI);
+    return controller;
   }
   public static ProfiledPIDController getTunedProfiledPIDControllerForHolonomicDrive() {
-    // return new ProfiledPIDController(Constants.Drivetrain., 0, 0, null)
-    return new ProfiledPIDController(
+    ProfiledPIDController controller = new ProfiledPIDController(
       Constants.Drivetrain.rotationalP,
       Constants.Drivetrain.rotationalI,
       Constants.Drivetrain.rotationalD,
-      new TrapezoidProfile.Constraints(1,1)
+      new TrapezoidProfile.Constraints(1, 1)
     );
+    controller.enableContinuousInput(0, 2*Math.PI);
+    return controller;
   }
 
   private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, Constants.Drivetrain.DRIVETRAIN_DRIVE_GEAR_RATIO, 2048);
