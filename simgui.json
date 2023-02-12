@@ -71,6 +71,13 @@
           "weight": 1.0,
           "width": 1.5
         },
+        "Steepest Slope": {
+          "arrowSize": 10,
+          "arrowWeight": 2.0,
+          "length": 4.0,
+          "weight": 1.0,
+          "width": 3.0
+        },
         "backLeft": {
           "length": 0.6000000238418579,
           "width": 0.30000001192092896

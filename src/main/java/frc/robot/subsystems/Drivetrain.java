@@ -15,10 +15,13 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.Drivetrain.*;
@@ -111,6 +114,8 @@ public class Drivetrain extends SwerveDrivetrain {
       backRight
     );
 
+    gyro.reset();
+
     configDriveMotor(frontLeftDriveFalcon);
     configDriveMotor(frontRightDriveFalcon);
     configDriveMotor(backLeftDriveFalcon);
@@ -125,6 +130,31 @@ public class Drivetrain extends SwerveDrivetrain {
   private static void configDriveMotor(WPI_TalonFX driveMotor) {
     driveMotor.configFactoryDefault();
     driveMotor.setNeutralMode(NeutralMode.Brake);
+  }
+
+  /**
+   * Sets the modules to an x shape to avoid rolling unintentionally.
+   */
+  public void moduleXConfiguration() {
+    setSwerveModuleStates(new SwerveModuleState[] {
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45))
+    });
+  }
+
+  /**
+   * Returns the measurement of the gyro as a {@link Rotation3d}.
+   * 
+   * This measurement will not change if the robot's pose is reset.
+   * However it will if the gyro itself is reset.
+   * @return gyro measurements
+   */
+  public Rotation3d getGyroMeasurement() {
+    // Certain axes of the gyro are inverted compared to the conventional Rotation3d.
+    // Rotation3d assumes counterclockwise about each axis is positive.
+    return new Rotation3d(Units.degreesToRadians(-gyro.getRoll()), Units.degreesToRadians(gyro.getPitch()), Units.degreesToRadians(-gyro.getYaw()));
   }
 
   @Override

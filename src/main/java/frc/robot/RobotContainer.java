@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
+import frc.robot.commands.drivetrain.AbsoluteAngleJoystickDrive;
 import frc.robot.commands.drivetrain.AlignToAngle;
+import frc.robot.commands.drivetrain.BalanceOnChargingStation;
 import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.commands.drivetrain.JoystickDrive;
 import frc.robot.commands.drivetrain.OrbitingJoystickDrive;
@@ -37,7 +39,7 @@ public class RobotContainer {
   JoystickButton orbitDrive = new JoystickButton(controller, 2);
   JoystickButton squareAlign = new JoystickButton(controller, 3);
 
-  
+  JoystickButton balance = new JoystickButton(controller, 4);
 
   public RobotContainer() {
     configureBindings();
@@ -69,7 +71,14 @@ public class RobotContainer {
 
     orbitDrive.whileTrue(new OrbitingJoystickDrive(drivetrain, () -> new Pose2d(4,4,new Rotation2d()), () -> controller.getLeftY(), () -> controller.getLeftX()));
 
-    squareAlign.whileTrue(AlignToAngle.alignToNearestSquare(drivetrain));
+    // squareAlign.whileTrue(AlignToAngle.alignToNearestSquare(drivetrain));
+    squareAlign.whileTrue(new AbsoluteAngleJoystickDrive(drivetrain,
+      () -> controller.getLeftY(),
+      () -> controller.getLeftX(),
+      () -> rightStickRotation.get()
+    ));
+
+    balance.whileTrue(new BalanceOnChargingStation(drivetrain));
   }
 
   public Command getAutonomousCommand() {
