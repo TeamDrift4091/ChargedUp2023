@@ -21,8 +21,7 @@
         {
           "key0": 328,
           "key315": 327,
-          "key45": 329,
-          "key90": 326
+          "key45": 329
         }
       ],
       "povCount": 1
@@ -49,12 +48,14 @@
         }
       ],
       "axisCount": 6,
-      "buttonCount": 4,
+      "buttonCount": 6,
       "buttonKeys": [
         321,
         322,
         323,
-        324
+        324,
+        325,
+        326
       ],
       "povCount": 0
     },

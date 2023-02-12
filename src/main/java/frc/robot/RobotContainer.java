@@ -14,12 +14,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.drivetrain.AbsoluteAngleJoystickDrive;
-import frc.robot.commands.drivetrain.AlignToAngle;
-import frc.robot.commands.drivetrain.BalanceOnChargingStation;
 import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.commands.drivetrain.JoystickDrive;
 import frc.robot.commands.drivetrain.OrbitingJoystickDrive;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
 import frc.team1891.common.control.JoystickRotation2d;
 
 public class RobotContainer {
@@ -39,7 +38,8 @@ public class RobotContainer {
   JoystickButton orbitDrive = new JoystickButton(controller, 2);
   JoystickButton squareAlign = new JoystickButton(controller, 3);
 
-  JoystickButton balance = new JoystickButton(controller, 4);
+  JoystickButton toCommunity = new JoystickButton(controller, 4);
+  JoystickButton toLoadingStation = new JoystickButton(controller, 5);
 
   public RobotContainer() {
     configureBindings();
@@ -78,7 +78,9 @@ public class RobotContainer {
       () -> rightStickRotation.get()
     ));
 
-    balance.whileTrue(new BalanceOnChargingStation(drivetrain));
+    // balance.whileTrue(new BalanceOnChargingStation(drivetrain));
+    toCommunity.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toCommunityZone(drivetrain));
+    toLoadingStation.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toLoadingStation(drivetrain));
   }
 
   public Command getAutonomousCommand() {

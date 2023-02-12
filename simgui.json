@@ -131,6 +131,7 @@
       },
       "/SmartDashboard/Robot (Field2d)": {
         "height": 7.924799919128418,
+        "image": "C:\\Users\\Steph\\Downloads\\2023-field.png",
         "width": 16.459199905395508,
         "window": {
           "visible": true
@@ -179,7 +180,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": -31,
           "series": [
             {
               "color": [
@@ -225,7 +226,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": -31,
           "series": [
             {
               "color": [
@@ -271,7 +272,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": -31,
           "series": [
             {
               "color": [
@@ -317,7 +318,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": -31,
           "series": [
             {
               "color": [

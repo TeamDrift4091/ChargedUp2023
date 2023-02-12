@@ -15,6 +15,8 @@ import frc.robot.commands.drivetrain.DriveToPose;
 import frc.robot.subsystems.Drivetrain;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
 
+import static frc.robot.utility.MirrorPosesForRedAlliance.mirror;
+
 /**
  * Helper class to hold our autonomous commands.
  * 
@@ -31,55 +33,55 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setRotationalPID(Constants.Drivetrain.rotationalP, Constants.Drivetrain.rotationalI, Constants.Drivetrain.rotationalD);
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(Constants.Drivetrain.translationalP, Constants.Drivetrain.translationalI, Constants.Drivetrain.translationalD);
 
-        commandChooser.setDefaultOption("Default - Exit Community", new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 5, Rotation2d.fromDegrees(190))));
+        commandChooser.setDefaultOption("Default - Exit Community", new DriveToPose(Drivetrain.getInstance(), () -> mirror(new Pose2d(5, 5, Rotation2d.fromDegrees(190)))));
 
         commandChooser.addOption("Curve Trajectory", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
-            new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(1,2, new Rotation2d()), Rotation2d.fromDegrees(90)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(135))
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1,2, new Rotation2d()), Rotation2d.fromDegrees(90))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(135)))
         ));
 
-        commandChooser.addOption("Curve Trajectory without Explicit Angle Control", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-            new Pose2d(0,0, new Rotation2d()),
-            new Pose2d(1,2, new Rotation2d()),
-            new Pose2d(4,4, Rotation2d.fromDegrees(90))
-        ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(4, 4, Rotation2d.fromDegrees(90))))
-        );
+        // commandChooser.addOption("Curve Trajectory without Explicit Angle Control", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
+        //     mirror(new Pose2d(0,0, new Rotation2d())),
+        //     mirror(new Pose2d(1,2, new Rotation2d())),
+        //     mirror(new Pose2d(4,4, Rotation2d.fromDegrees(90)))
+        // ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(4, 4, Rotation2d.fromDegrees(90))))
+        // );
 
         commandChooser.addOption("Curve Trajectory 2", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-             new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),
-             new Pair<Pose2d, Rotation2d>(new Pose2d(3,2, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(90)),
-             new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(110)), Rotation2d.fromDegrees(110)),
-             new Pair<Pose2d, Rotation2d>(new Pose2d(4,6, Rotation2d.fromDegrees(20)), Rotation2d.fromDegrees(20)),
-             new Pair<Pose2d, Rotation2d>(new Pose2d(7,3, Rotation2d.fromDegrees(-40)), Rotation2d.fromDegrees(140)),
-             new Pair<Pose2d, Rotation2d>(new Pose2d(8,1, Rotation2d.fromDegrees(-150)), Rotation2d.fromDegrees(0)),
-             new Pair<Pose2d, Rotation2d>(new Pose2d(5,1, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(0))
-        ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 1, Rotation2d.fromDegrees(0))))
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0))),
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3,2, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(90))),
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(110)), Rotation2d.fromDegrees(110))),
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(4,6, Rotation2d.fromDegrees(20)), Rotation2d.fromDegrees(20))),
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(7,3, Rotation2d.fromDegrees(-40)), Rotation2d.fromDegrees(140))),
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(8,1, Rotation2d.fromDegrees(-150)), Rotation2d.fromDegrees(0))),
+             mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(5,1, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(0)))
+        ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> mirror(new Pose2d(5, 1, Rotation2d.fromDegrees(0)))))
         );
         
-        commandChooser.addOption("Curve Trajectory 2 without Explicit Angle Control", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-            new Pose2d(0,0, new Rotation2d()),
-            new Pose2d(3,2, Rotation2d.fromDegrees(90)),
-            new Pose2d(4,4, Rotation2d.fromDegrees(110)),
-            new Pose2d(4,6, Rotation2d.fromDegrees(20)),
-            new Pose2d(7,3, Rotation2d.fromDegrees(-40)),
-            new Pose2d(8,1, Rotation2d.fromDegrees(-150)),
-            new Pose2d(5,1, Rotation2d.fromDegrees(180))
-        ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 1, Rotation2d.fromDegrees(180))))
-        );
+        // commandChooser.addOption("Curve Trajectory 2 without Explicit Angle Control", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
+        //     mirror(new Pose2d(0,0, new Rotation2d())),
+        //     mirror(new Pose2d(3,2, Rotation2d.fromDegrees(90))),
+        //     mirror(new Pose2d(4,4, Rotation2d.fromDegrees(110))),
+        //     mirror(new Pose2d(4,6, Rotation2d.fromDegrees(20))),
+        //     mirror(new Pose2d(7,3, Rotation2d.fromDegrees(-40))),
+        //     mirror(new Pose2d(8,1, Rotation2d.fromDegrees(-150))),
+        //     mirror(new Pose2d(5,1, Rotation2d.fromDegrees(180)))
+        // ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 1, Rotation2d.fromDegrees(180))))
+        // );
 
         commandChooser.addOption("Clover Test", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
-            new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)))
         ));
 
         SmartDashboard.putData("Autonomous Chooser", commandChooser);
