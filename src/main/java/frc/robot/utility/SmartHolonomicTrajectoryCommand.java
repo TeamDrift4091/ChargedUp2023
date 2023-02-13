@@ -85,7 +85,7 @@ public class SmartHolonomicTrajectoryCommand extends CommandBase {
         try {
             m_trajectory = m_trajectorySupplier.get();
         } catch (Exception exception) {
-            DriverStation.reportError("Robot attempted to generate an invalid trajectory: " + exception.getMessage(), false);
+            DriverStation.reportWarning("The attempted trajectory command was aborted. The robot attempted to generate an invalid trajectory: " + exception.getMessage(), false);
             invalidTrajectory = true;
         }
 

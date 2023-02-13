@@ -24,6 +24,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.Drivetrain.*;
 import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
@@ -161,19 +162,21 @@ public class Drivetrain extends SwerveDrivetrain {
   public void updateOdometry() {
     super.updateOdometry();
 
-    Optional<EstimatedRobotPose> result =
-      photonVision.getEstimatedGlobalPose(getPose2d());
-  
-    if (result.isPresent()){
-      EstimatedRobotPose camPose = result.get();
-      poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-      if (SmartDashboard.getBoolean("showPhotonEstimate", false)) {
-        field.getObject("photonEstimate").setPose(camPose.estimatedPose.toPose2d());
-      }
-    } else {
-      if (SmartDashboard.getBoolean("showPhotonEstimate", false)) {
-        // move it way off the screen to make it disappear
-        field.getObject("photonEstimate").setPose(new Pose2d(-100, -100, new Rotation2d()));
+    if (Robot.isReal()) {
+      Optional<EstimatedRobotPose> result =
+        photonVision.getEstimatedGlobalPose(getPose2d());
+    
+      if (result.isPresent()){
+        EstimatedRobotPose camPose = result.get();
+        poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+        if (SmartDashboard.getBoolean("showPhotonEstimate", false)) {
+          field.getObject("photonEstimate").setPose(camPose.estimatedPose.toPose2d());
+        }
+      } else {
+        if (SmartDashboard.getBoolean("showPhotonEstimate", false)) {
+          // move it way off the screen to make it disappear
+          field.getObject("photonEstimate").setPose(new Pose2d(-100, -100, new Rotation2d()));
+        }
       }
     }
   }

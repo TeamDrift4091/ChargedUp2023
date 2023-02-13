@@ -19,6 +19,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 
 /**
@@ -49,8 +50,7 @@ public class PhotonVisionWrapper {
         try {
             fieldLayout = new AprilTagFieldLayout(field.m_resourceFile);
         } catch (IOException e) {
-            System.err.printf("Could not load resource file \"%s\".\n", field.m_resourceFile);
-            e.printStackTrace();
+            DriverStation.reportError(e.toString(), false);
         }
 
         photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);
