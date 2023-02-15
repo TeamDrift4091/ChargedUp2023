@@ -55,4 +55,14 @@ public class Constants {
             new Rotation3d()
         );
     }
+    public static class Claw {
+
+        public static final int LEFT_CLAW_CHANNEL = 13;
+        public static final int RIGHT_CLAW_CHANNEL = 14;
+        public static final int PNEUMATIC_BACK_CHANNEL = 0;
+        public static final int PNEUMATIC_FORWORD_CHANNEL = 1;
+    }
+
 }
+
+    
