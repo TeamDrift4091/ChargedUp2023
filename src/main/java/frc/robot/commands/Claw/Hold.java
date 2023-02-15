@@ -12,7 +12,7 @@ public class Hold extends CommandBase {
 
     @Override
     public void execute() {
-        claw.openGrip();
+        claw.closeGrip();
     }
  
 

@@ -29,6 +29,16 @@ public class Claw extends SubsystemBase {
     rightClawMotor.set(speed);
   }
 
+public void toggleClaw() {
+  gripSolenoid.get();
+    if (gripSolenoid.get().equals(DoubleSolenoid.Value.kReverse)) {
+        openGrip();// Open the claw
+    } else {
+      closeGrip();// Close the claw
+    }
+}
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
