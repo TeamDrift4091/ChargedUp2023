@@ -12,6 +12,6 @@ public class ReleaseCone extends CommandBase {
 
     @Override
     public void execute() {
-        claw.closeGrip();
+        claw.openGrip();
     }
 }
