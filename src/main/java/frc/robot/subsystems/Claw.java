@@ -17,11 +17,11 @@ public class Claw extends SubsystemBase {
     leftClawMotor = new WPI_TalonFX(Constants.Claw.LEFT_CLAW_CHANNEL);
     rightClawMotor = new WPI_TalonFX(Constants.Claw.RIGHT_CLAW_CHANNEL);
   }
-public void openGrip() {
-gripSolenoid.set(DoubleSolenoid.Value.kForward);
-}
-public void closeGrip() {
-  gripSolenoid.set(DoubleSolenoid.Value.kReverse);
+  public void openGrip() {
+    gripSolenoid.set(DoubleSolenoid.Value.kForward);
+  }
+  public void closeGrip() {
+    gripSolenoid.set(DoubleSolenoid.Value.kReverse);
   }
   
   public void setClawSpeed(double speed) {
