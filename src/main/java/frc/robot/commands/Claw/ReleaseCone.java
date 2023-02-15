@@ -1,6 +1,4 @@
-package frc.robot.commands.Claw;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+package frc.robot.commands.claw;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
 
@@ -14,6 +12,6 @@ public class ReleaseCone extends CommandBase {
 
     @Override
     public void execute() {
-        claw.setSolenoidPositions(Value.kReverse);
+        claw.closeGrip();
     }
 }

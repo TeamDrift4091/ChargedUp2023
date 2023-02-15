@@ -1,6 +1,5 @@
-package frc.robot.commands.Claw;
+package frc.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
 
@@ -14,7 +13,7 @@ public class GrabCone extends CommandBase {
 
     @Override
     public void execute() { 
-        claw.setSolenoidPositions(Value.kForward);
+        claw.openGrip();
     }
 }
 
