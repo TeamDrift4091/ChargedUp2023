@@ -48,7 +48,7 @@ public class PhotonVisionWrapper {
         ), Units.feetToMeters(54), Units.feetToMeters(27));
 
         try {
-            fieldLayout = new AprilTagFieldLayout(field.m_resourceFile);
+            fieldLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toString()+"/2023-chargedup.json");
         } catch (IOException e) {
             DriverStation.reportError(e.toString(), false);
         }
