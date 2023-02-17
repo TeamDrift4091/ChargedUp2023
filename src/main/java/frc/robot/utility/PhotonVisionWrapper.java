@@ -15,11 +15,11 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants;
 
 /**
@@ -42,7 +42,6 @@ public class PhotonVisionWrapper {
     public PhotonPoseEstimator photonPoseEstimator;
 
     private PhotonVisionWrapper() {
-        AprilTagFields field = AprilTagFields.k2023ChargedUp;
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
         ), Units.feetToMeters(54), Units.feetToMeters(27));
