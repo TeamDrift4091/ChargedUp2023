@@ -25,9 +25,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.Constants.Drivetrain.*;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.DrivetrainConstants.*;
 import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
@@ -48,19 +48,18 @@ public class Drivetrain extends SwerveDrivetrain {
   }
 
   public static PIDController getTunedTranslationalPIDController() {
-    // return new ProfiledPIDController(Constants.Drivetrain., 0, 0, null)
     return new PIDController(
-      Constants.Drivetrain.translationalP,
-      Constants.Drivetrain.translationalI,
-      Constants.Drivetrain.translationalD
+      DrivetrainConstants.translationalP,
+      DrivetrainConstants.translationalI,
+      DrivetrainConstants.translationalD
     );
   }
 
   public static ProfiledPIDController getTunedProfiledPIDController() {
     ProfiledPIDController controller = new ProfiledPIDController(
-      Constants.Drivetrain.rotationalP,
-      Constants.Drivetrain.rotationalI,
-      Constants.Drivetrain.rotationalD,
+      DrivetrainConstants.rotationalP,
+      DrivetrainConstants.rotationalI,
+      DrivetrainConstants.rotationalD,
       new TrapezoidProfile.Constraints(
         _config.chassisMaxAngularVelocityRadiansPerSecond,
         _config.chassisMaxAngularAccelerationRadiansPerSecondSquared
@@ -71,16 +70,16 @@ public class Drivetrain extends SwerveDrivetrain {
   }
   public static ProfiledPIDController getTunedProfiledPIDControllerForHolonomicDrive() {
     ProfiledPIDController controller = new ProfiledPIDController(
-      Constants.Drivetrain.rotationalP,
-      Constants.Drivetrain.rotationalI,
-      Constants.Drivetrain.rotationalD,
+      DrivetrainConstants.rotationalP,
+      DrivetrainConstants.rotationalI,
+      DrivetrainConstants.rotationalD,
       new TrapezoidProfile.Constraints(1, 1)
     );
     controller.enableContinuousInput(0, 2*Math.PI);
     return controller;
   }
 
-  private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, Constants.Drivetrain.DRIVETRAIN_DRIVE_GEAR_RATIO, 2048);
+  private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, DrivetrainConstants.DRIVETRAIN_DRIVE_GEAR_RATIO, 2048);
 
   // private static final NavX _gyro = new NavX();
   private static final SimNavX _gyro = new SimNavX();
@@ -108,8 +107,8 @@ public class Drivetrain extends SwerveDrivetrain {
   private Drivetrain() {
     super(
       _config, 
-      Constants.Drivetrain.WHEEL_BASE_WIDTH_METERS,
-      Constants.Drivetrain.WHEEL_BASE_LENGTH_METERS,
+      DrivetrainConstants.WHEEL_BASE_WIDTH_METERS,
+      DrivetrainConstants.WHEEL_BASE_LENGTH_METERS,
       _gyro,
       frontLeft,
       frontRight,

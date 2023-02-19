@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ClawConstants;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -13,9 +13,9 @@ public class Claw extends SubsystemBase {
   private WPI_TalonFX rightClawMotor;
 
   public Claw() {
-    gripSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.Claw.PNEUMATIC_FORWORD_CHANNEL, Constants.Claw.PNEUMATIC_BACK_CHANNEL);
-    leftClawMotor = new WPI_TalonFX(Constants.Claw.LEFT_CLAW_CHANNEL);
-    rightClawMotor = new WPI_TalonFX(Constants.Claw.RIGHT_CLAW_CHANNEL);
+    gripSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.PNEUMATIC_FORWORD_CHANNEL, ClawConstants.PNEUMATIC_BACK_CHANNEL);
+    leftClawMotor = new WPI_TalonFX(ClawConstants.LEFT_CLAW_CHANNEL);
+    rightClawMotor = new WPI_TalonFX(ClawConstants.RIGHT_CLAW_CHANNEL);
   }
   public void openGrip() {
     gripSolenoid.set(DoubleSolenoid.Value.kForward);

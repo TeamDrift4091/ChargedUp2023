@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class BalanceOnChargingStation extends CommandBase {
@@ -62,8 +62,8 @@ public class BalanceOnChargingStation extends CommandBase {
     }
 
     SmartDashboard.putNumberArray("Modules (Field2d)/Steepest Slope", new double[] {
-      Constants.Drivetrain.WHEEL_BASE_LENGTH_METERS,
-      Constants.Drivetrain.WHEEL_BASE_WIDTH_METERS,
+      DrivetrainConstants.WHEEL_BASE_LENGTH_METERS,
+      DrivetrainConstants.WHEEL_BASE_WIDTH_METERS,
       steepestSlope.getDegrees()
     });
   }

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.drivetrain.DriveToPose;
 import frc.robot.subsystems.Drivetrain;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
@@ -32,8 +32,8 @@ public class AutonomousCommandManager {
     private static SendableChooser<Pair<Command, Command>> commandChooser = new SendableChooser<>();
 
     public static void load() {
-        HolonomicTrajectoryCommandGenerator.setRotationalPID(Constants.Drivetrain.rotationalP, Constants.Drivetrain.rotationalI, Constants.Drivetrain.rotationalD);
-        HolonomicTrajectoryCommandGenerator.setTranslationalPID(Constants.Drivetrain.translationalP, Constants.Drivetrain.translationalI, Constants.Drivetrain.translationalD);
+        HolonomicTrajectoryCommandGenerator.setRotationalPID(DrivetrainConstants.rotationalP, DrivetrainConstants.rotationalI, DrivetrainConstants.rotationalD);
+        HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
         commandChooser.setDefaultOption("Default - Exit Community", new Pair<Command, Command>(
             new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 5, Rotation2d.fromDegrees(190))),
