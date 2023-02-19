@@ -22,6 +22,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -131,6 +133,23 @@ public class Drivetrain extends SwerveDrivetrain {
   private static void configDriveMotor(WPI_TalonFX driveMotor) {
     driveMotor.configFactoryDefault();
     driveMotor.setNeutralMode(NeutralMode.Brake);
+  }
+
+  @Override
+  public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    xSpeed *= config.chassisMaxVelocityMetersPerSecond;
+    ySpeed *= config.chassisMaxVelocityMetersPerSecond;
+    rot *= config.chassisMaxAngularVelocityRadiansPerSecond;
+
+    fromChassisSpeeds(
+      fieldRelative?
+            (DriverStation.getAlliance().equals(Alliance.Blue)?
+              ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
+            :
+              ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))
+        :
+            new ChassisSpeeds(xSpeed, ySpeed, rot)
+    );
   }
 
   /**
