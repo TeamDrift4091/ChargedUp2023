@@ -32,6 +32,7 @@ public class AutonomousCommandManager {
     private static SendableChooser<Pair<Command, Command>> commandChooser = new SendableChooser<>();
 
     public static void load() {
+        // RotatingHolonomicDriveController.enableSmartDashboard(true);
         HolonomicTrajectoryCommandGenerator.setRotationalPID(DrivetrainConstants.rotationalP, DrivetrainConstants.rotationalI, DrivetrainConstants.rotationalD);
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 

@@ -157,9 +157,6 @@
         }
       },
       "SmartDashboard": {
-        "Robot (Field2d)": {
-          "open": true
-        },
         "open": true,
         "orbiting controller": {
           "open": true
@@ -187,7 +184,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": 205,
           "series": [
             {
               "color": [
@@ -233,7 +230,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": 205,
           "series": [
             {
               "color": [
@@ -279,7 +276,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": 205,
           "series": [
             {
               "color": [
@@ -325,7 +322,7 @@
               "autoFit": true
             }
           ],
-          "height": -34,
+          "height": 205,
           "series": [
             {
               "color": [
@@ -365,7 +362,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

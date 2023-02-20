@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,6 +29,7 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.DrivetrainConstants.*;
 import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
+import frc.team1891.common.LazyDashboard;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
@@ -79,7 +79,15 @@ public class Drivetrain extends SwerveDrivetrain {
     return controller;
   }
 
-  private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, DrivetrainConstants.DRIVETRAIN_DRIVE_GEAR_RATIO, 2048);
+  private static final DrivetrainConfig _config = new DrivetrainConfig(
+    DrivetrainConstants.CHASSIS_MAX_VELOCITY,
+    DrivetrainConstants.CHASSIS_MAX_ACCELERATION,
+    DrivetrainConstants.CHASSIS_MAX_ANGULAR_VELOCITY,
+    DrivetrainConstants.CHASSIS_MAX_ANGULAR_ACCELERATION,
+    DrivetrainConstants.WHEEL_RADIUS_METERS,
+    DrivetrainConstants.DRIVETRAIN_DRIVE_GEAR_RATIO,
+    2048
+  );
 
   // private static final NavX _gyro = new NavX();
   private static final SimNavX _gyro = new SimNavX();
@@ -113,7 +121,8 @@ public class Drivetrain extends SwerveDrivetrain {
       frontLeft,
       frontRight,
       backLeft,
-      backRight
+      backRight,
+      DrivetrainConstants.MODULE_MAX_VELOCITY
     );
 
     gyro.reset();
@@ -126,6 +135,12 @@ public class Drivetrain extends SwerveDrivetrain {
     photonVision = PhotonVisionWrapper.getInstance();
 
     SmartDashboard.putBoolean("showPhotonEstimate", true);
+
+    if (Robot.isSimulation()) {
+      LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
+    }
     configureSmartDashboard();
   }
 
@@ -149,18 +164,6 @@ public class Drivetrain extends SwerveDrivetrain {
         :
             new ChassisSpeeds(xSpeed, ySpeed, rot)
     );
-  }
-
-  /**
-   * Sets the modules to an x shape to avoid rolling unintentionally.
-   */
-  public void moduleXConfiguration() {
-    setSwerveModuleStates(new SwerveModuleState[] {
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45))
-    });
   }
 
   /**
@@ -199,9 +202,11 @@ public class Drivetrain extends SwerveDrivetrain {
     }
   }
 
+  private ChassisSpeeds simSpeeds = new ChassisSpeeds();
+
   @Override
   public void simulationPeriodic() {
-    ChassisSpeeds simSpeeds = kinematics.toChassisSpeeds(
+    simSpeeds = kinematics.toChassisSpeeds(
       frontLeft.getDesiredSwerveModuleState(),
       frontRight.getDesiredSwerveModuleState(),
       backLeft.getDesiredSwerveModuleState(),

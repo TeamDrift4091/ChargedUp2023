@@ -5,6 +5,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
+/**
+ * Units are in meters and radians
+ */
 public class Constants {
     public static class DrivetrainConstants {
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2);
@@ -21,6 +24,12 @@ public class Constants {
         public static final double translationalP = 1;
         public static final double translationalI = 0;
         public static final double translationalD = 0;
+
+        public static final double CHASSIS_MAX_VELOCITY = 2;
+        public static final double CHASSIS_MAX_ACCELERATION = 1;
+        public static final double CHASSIS_MAX_ANGULAR_VELOCITY = Math.PI;
+        public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
+        public static final double MODULE_MAX_VELOCITY = 3.5; // Free speed max is ~4.11 for REV MAXSwerve
 
         public static class FrontLeft {
             public static final int DRIVE_CHANNEL = 1;
