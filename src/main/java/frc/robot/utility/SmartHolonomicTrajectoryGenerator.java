@@ -20,7 +20,7 @@ import frc.team1891.common.trajectory.HolonomicTrajectory;
 import frc.team1891.common.trajectory.HolonomicTrajectoryGenerator;
 import frc.team1891.common.trajectory.HolonomicTrajectoryParameterizer.TrajectoryGenerationException;
 
-import static frc.robot.utility.MirrorPosesForRedAlliance.mirror;
+import static frc.robot.utility.MirrorPoses.mirror;
 
 /** Generates an optimized trajectory to the desired end point based on the robot's current position. */
 public class SmartHolonomicTrajectoryGenerator {

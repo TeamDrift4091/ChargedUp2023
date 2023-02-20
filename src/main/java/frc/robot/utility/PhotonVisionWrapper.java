@@ -20,7 +20,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.Constants;
+import frc.robot.Constants.VisionConstants;
 
 /**
  * Links: 
@@ -52,8 +52,8 @@ public class PhotonVisionWrapper {
             DriverStation.reportError(e.toString(), false);
         }
 
-        photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);
-        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, Constants.Vision.CAMERA_TO_ROBOT);
+        photonCamera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, VisionConstants.CAMERA_TO_ROBOT);
 
         setPipelineIndex(0);
     }
