@@ -15,13 +15,12 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.Filesystem;
 
 /**
  * Links: 
@@ -43,13 +42,12 @@ public class PhotonVisionWrapper {
     public PhotonPoseEstimator photonPoseEstimator;
 
     private PhotonVisionWrapper() {
-        AprilTagFields field = AprilTagFields.k2023ChargedUp;
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
         ), Constants.FIELD_LENGTH, Constants.FIELD_WIDTH);
 
         try {
-            fieldLayout = new AprilTagFieldLayout(field.m_resourceFile);
+            fieldLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toString()+"/2023-chargedup.json");
         } catch (IOException e) {
             DriverStation.reportError(e.toString(), false);
         }
