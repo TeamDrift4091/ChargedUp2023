@@ -35,14 +35,14 @@ public class PhotonVisionWrapper {
         CUBE(2),
         CIRCLE(3);
 
-        public final int pipeline;
+        public final int index;
 
         private Pipeline(int pipeline) {
-            this.pipeline = pipeline;
+            this.index = pipeline;
         }
 
-        public int getInt(){
-            return pipeline;
+        public int getIndex(){
+            return index;
         }
     }
 
@@ -81,6 +81,6 @@ public class PhotonVisionWrapper {
     }
 
     public void setPipelineIndex(Pipeline pipeline) {
-        photonCamera.setPipelineIndex(pipeline.getInt());
+        photonCamera.setPipelineIndex(pipeline.getIndex());
     }
 }
