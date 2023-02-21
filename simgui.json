@@ -66,10 +66,10 @@
         "Robot": {
           "arrowSize": 100,
           "arrowWeight": 1.0,
-          "length": 1.5,
+          "length": 0.7620000243186951,
           "style": "Box/Image",
           "weight": 1.0,
-          "width": 1.5
+          "width": 0.7620000243186951
         },
         "Steepest Slope": {
           "arrowSize": 10,
@@ -79,47 +79,47 @@
           "width": 3.0
         },
         "backLeft": {
-          "length": 0.6000000238418579,
-          "width": 0.30000001192092896
+          "length": 0.30000001192092896,
+          "width": 0.15000000596046448
         },
         "backLeftDesired": {
           "arrowWeight": 1.0,
-          "length": 0.6000000238418579,
+          "length": 0.30000001192092896,
           "weight": 1.0,
-          "width": 0.30000001192092896
+          "width": 0.15000000596046448
         },
         "backRight": {
-          "length": 0.6000000238418579,
-          "width": 0.30000001192092896
+          "length": 0.30000001192092896,
+          "width": 0.15000000596046448
         },
         "backRightDesired": {
           "arrowWeight": 1.0,
-          "length": 0.6000000238418579,
+          "length": 0.30000001192092896,
           "weight": 1.0,
-          "width": 0.30000001192092896
+          "width": 0.15000000596046448
         },
         "frontLeft": {
-          "length": 0.6000000238418579,
-          "width": 0.30000001192092896
+          "length": 0.30000001192092896,
+          "width": 0.15000000596046448
         },
         "frontLeftDesired": {
           "arrowWeight": 1.0,
-          "length": 0.6000000238418579,
+          "length": 0.30000001192092896,
           "weight": 1.0,
-          "width": 0.30000001192092896
+          "width": 0.15000000596046448
         },
         "frontRight": {
-          "length": 0.6000000238418579,
-          "width": 0.30000001192092896
+          "length": 0.30000001192092896,
+          "width": 0.15000000596046448
         },
         "frontRightDesired": {
           "arrowWeight": 1.0,
-          "length": 0.6000000238418579,
+          "length": 0.30000001192092896,
           "weight": 1.0,
-          "width": 0.30000001192092896
+          "width": 0.15000000596046448
         },
-        "height": 2.0,
-        "width": 2.0,
+        "height": 1.4350999593734741,
+        "width": 1.4350999593734741,
         "window": {
           "visible": true
         }

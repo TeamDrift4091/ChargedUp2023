@@ -7,7 +7,8 @@ package frc.robot.utility;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
+
+import static frc.robot.Constants.FIELD_LENGTH;
 
 /**
  * Any poses or rotations given to the robot as target positions to drive to should be run through one of these methods first
@@ -18,8 +19,6 @@ import edu.wpi.first.math.util.Units;
  * Pair<Pose2d, Rotation2d> poseAndRotation = MirrorPoses.pairFromDegrees(4.0, 3.5, 180, 45);
 */
 public class MirrorPoses {
-    private static final double FIELD_WIDTH = Units.feetToMeters(54);
-
     private MirrorPoses() {}
 
     /**
@@ -40,7 +39,7 @@ public class MirrorPoses {
      * @return the pose that has been mirrored if necessary
      */
     public static Pose2d mirror(Pose2d pose) {
-        return new Pose2d(FIELD_WIDTH - pose.getX(), pose.getY(), mirror(pose.getRotation()));
+        return new Pose2d(FIELD_LENGTH - pose.getX(), pose.getY(), mirror(pose.getRotation()));
     }
 
     /**

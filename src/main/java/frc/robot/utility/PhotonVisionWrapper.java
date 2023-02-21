@@ -20,7 +20,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants.VisionConstants;;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants;
 
 /**
  * Links: 
@@ -45,7 +46,7 @@ public class PhotonVisionWrapper {
         AprilTagFields field = AprilTagFields.k2023ChargedUp;
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
-        ), Units.feetToMeters(54), Units.feetToMeters(27));
+        ), Constants.FIELD_LENGTH, Constants.FIELD_WIDTH);
 
         try {
             fieldLayout = new AprilTagFieldLayout(field.m_resourceFile);

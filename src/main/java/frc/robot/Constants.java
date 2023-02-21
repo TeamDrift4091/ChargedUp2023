@@ -9,13 +9,15 @@ import edu.wpi.first.math.util.Units;
  * Units are in meters and radians
  */
 public class Constants {
+    public static double FIELD_WIDTH = Units.feetToMeters(27);
+    public static double FIELD_LENGTH = Units.feetToMeters(54);
     public static class DrivetrainConstants {
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2);
         public static final double DRIVETRAIN_DRIVE_GEAR_RATIO = 5.50; // 12T REV MAXSwerve
         // public static final double DRIVETRAIN_STEER_GEAR_RATIO = 1;
         // Dimensions
-        public static final double WHEEL_BASE_LENGTH_METERS = 1;
-        public static final double WHEEL_BASE_WIDTH_METERS = 1;
+        public static final double WHEEL_BASE_LENGTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
+        public static final double WHEEL_BASE_WIDTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
 
         public static final double rotationalP = 1;
         public static final double rotationalI = 0;
