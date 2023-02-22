@@ -38,6 +38,8 @@ import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 import frc.team1891.common.hardware.SimNavX;
 
+import static frc.robot.utility.MirrorPoses.mirror;
+
 public class Drivetrain extends SwerveDrivetrain {
   private static Drivetrain instance;
   public static Drivetrain getInstance() {
@@ -161,6 +163,10 @@ public class Drivetrain extends SwerveDrivetrain {
       LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
     }
     configureSmartDashboard();
+
+    if (DriverStation.getAlliance().equals(Alliance.Red)) {
+      poseEstimator.resetPosition(gyro.getRotation2d(), getSwerveModulePositions(), mirror(getPose2d()));
+    }
   }
 
   private static void configDriveMotor(WPI_TalonFX driveMotor) {

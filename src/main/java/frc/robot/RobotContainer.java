@@ -26,7 +26,7 @@ import frc.team1891.common.control.JoystickRotation2d;
 public class RobotContainer {
   // Subsystems
   Drivetrain drivetrain = Drivetrain.getInstance();
-  Claw claw = new Claw();
+  // Claw claw = new Claw();
 
 
   // Controllers
