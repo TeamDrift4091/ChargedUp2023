@@ -19,15 +19,17 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.Constants.Drivetrain.*;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.DrivetrainConstants.*;
 import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
+import frc.team1891.common.LazyDashboard;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
@@ -35,6 +37,8 @@ import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
 import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 import frc.team1891.common.hardware.SimNavX;
+
+import static frc.robot.utility.MirrorPoses.mirror;
 
 public class Drivetrain extends SwerveDrivetrain {
   private static Drivetrain instance;
@@ -45,20 +49,28 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
+  /**
+   * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
+   * @return a new {@link PIDController}
+   */
   public static PIDController getTunedTranslationalPIDController() {
-    // return new ProfiledPIDController(Constants.Drivetrain., 0, 0, null)
     return new PIDController(
-      Constants.Drivetrain.translationalP,
-      Constants.Drivetrain.translationalI,
-      Constants.Drivetrain.translationalD
+      DrivetrainConstants.translationalP,
+      DrivetrainConstants.translationalI,
+      DrivetrainConstants.translationalD
     );
   }
 
+  /**
+   * Returns a new PID controller that can be used to control the angle of the robot chassis.
+   * The output will be in radians per second, representing the desired angular velocity.
+   * @return a new {@link ProfiledPIDController}
+   */
   public static ProfiledPIDController getTunedProfiledPIDController() {
     ProfiledPIDController controller = new ProfiledPIDController(
-      Constants.Drivetrain.rotationalP,
-      Constants.Drivetrain.rotationalI,
-      Constants.Drivetrain.rotationalD,
+      DrivetrainConstants.rotationalP,
+      DrivetrainConstants.rotationalI,
+      DrivetrainConstants.rotationalD,
       new TrapezoidProfile.Constraints(
         _config.chassisMaxAngularVelocityRadiansPerSecond,
         _config.chassisMaxAngularAccelerationRadiansPerSecondSquared
@@ -67,18 +79,32 @@ public class Drivetrain extends SwerveDrivetrain {
     controller.enableContinuousInput(0, 2*Math.PI);
     return controller;
   }
+  /**
+   * Returns a new PID controller that can be used to control the angle of the robot chassis.
+   * The output will be between -1 and 1, and is meant to be fed to {@link Drivetrain#holonomicDrive(double, double, double, boolean)}.
+   * @return a new {@link ProfiledPIDController}
+   */
   public static ProfiledPIDController getTunedProfiledPIDControllerForHolonomicDrive() {
     ProfiledPIDController controller = new ProfiledPIDController(
-      Constants.Drivetrain.rotationalP,
-      Constants.Drivetrain.rotationalI,
-      Constants.Drivetrain.rotationalD,
+      DrivetrainConstants.rotationalP,
+      DrivetrainConstants.rotationalI,
+      DrivetrainConstants.rotationalD,
       new TrapezoidProfile.Constraints(1, 1)
     );
     controller.enableContinuousInput(0, 2*Math.PI);
     return controller;
   }
 
-  private static final DrivetrainConfig _config = new DrivetrainConfig(2, 1, Math.PI, Math.PI, 2, Constants.Drivetrain.DRIVETRAIN_DRIVE_GEAR_RATIO, 2048);
+  // Helpful object that holds information about the drivetrain.
+  private static final DrivetrainConfig _config = new DrivetrainConfig(
+    DrivetrainConstants.CHASSIS_MAX_VELOCITY,
+    DrivetrainConstants.CHASSIS_MAX_ACCELERATION,
+    DrivetrainConstants.CHASSIS_MAX_ANGULAR_VELOCITY,
+    DrivetrainConstants.CHASSIS_MAX_ANGULAR_ACCELERATION,
+    DrivetrainConstants.WHEEL_RADIUS_METERS,
+    DrivetrainConstants.DRIVETRAIN_DRIVE_GEAR_RATIO,
+    2048
+  );
 
   // private static final NavX _gyro = new NavX();
   private static final SimNavX _gyro = new SimNavX();
@@ -86,6 +112,7 @@ public class Drivetrain extends SwerveDrivetrain {
   private final PhotonVisionWrapper photonVision;
 
   // TODO: Fix gear ratios
+  // Objects to hold module related things, such as motors, and motor wrappers (drive and steer controllers)
   private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config);
   private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
@@ -104,19 +131,22 @@ public class Drivetrain extends SwerveDrivetrain {
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
+    // Call super to initialize this Drivetrain as a SwerveDrivetrain, allowing the super class to handle important features.
     super(
       _config, 
-      Constants.Drivetrain.WHEEL_BASE_WIDTH_METERS,
-      Constants.Drivetrain.WHEEL_BASE_LENGTH_METERS,
+      DrivetrainConstants.WHEEL_BASE_WIDTH_METERS,
+      DrivetrainConstants.WHEEL_BASE_LENGTH_METERS,
       _gyro,
       frontLeft,
       frontRight,
       backLeft,
-      backRight
+      backRight,
+      DrivetrainConstants.MODULE_MAX_VELOCITY
     );
 
     gyro.reset();
 
+    // Configure all the motors.  Basically they all need to be reset, to make sure there aren't any unexpected settings saved.
     configDriveMotor(frontLeftDriveFalcon);
     configDriveMotor(frontRightDriveFalcon);
     configDriveMotor(backLeftDriveFalcon);
@@ -124,8 +154,19 @@ public class Drivetrain extends SwerveDrivetrain {
 
     photonVision = PhotonVisionWrapper.getInstance();
 
+    // Add some SmartDashboard settings
     SmartDashboard.putBoolean("showPhotonEstimate", true);
+
+    if (Robot.isSimulation()) {
+      LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
+    }
     configureSmartDashboard();
+
+    if (DriverStation.getAlliance().equals(Alliance.Red)) {
+      poseEstimator.resetPosition(gyro.getRotation2d(), getSwerveModulePositions(), mirror(getPose2d()));
+    }
   }
 
   private static void configDriveMotor(WPI_TalonFX driveMotor) {
@@ -133,16 +174,22 @@ public class Drivetrain extends SwerveDrivetrain {
     driveMotor.setNeutralMode(NeutralMode.Brake);
   }
 
-  /**
-   * Sets the modules to an x shape to avoid rolling unintentionally.
-   */
-  public void moduleXConfiguration() {
-    setSwerveModuleStates(new SwerveModuleState[] {
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45))
-    });
+  @Override
+  public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    xSpeed *= config.chassisMaxVelocityMetersPerSecond;
+    ySpeed *= config.chassisMaxVelocityMetersPerSecond;
+    rot *= config.chassisMaxAngularVelocityRadiansPerSecond;
+
+    fromChassisSpeeds(
+      fieldRelative?
+            // If the robot is on the red alliance, the field oriented drive needs to change directions.
+            (DriverStation.getAlliance().equals(Alliance.Blue)?
+              ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
+            :
+              ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))
+        :
+            new ChassisSpeeds(xSpeed, ySpeed, rot)
+    );
   }
 
   /**
@@ -162,6 +209,7 @@ public class Drivetrain extends SwerveDrivetrain {
   public void updateOdometry() {
     super.updateOdometry();
 
+    // Handle vision processing and pose estimation
     if (Robot.isReal()) {
       Optional<EstimatedRobotPose> result =
         photonVision.getEstimatedGlobalPose(getPose2d());
@@ -181,15 +229,19 @@ public class Drivetrain extends SwerveDrivetrain {
     }
   }
 
+  private ChassisSpeeds simSpeeds = new ChassisSpeeds();
+
   @Override
   public void simulationPeriodic() {
-    ChassisSpeeds simSpeeds = kinematics.toChassisSpeeds(
+    // Calculate the theoretical chassis speed based on the desired position of the modules
+    simSpeeds = kinematics.toChassisSpeeds(
       frontLeft.getDesiredSwerveModuleState(),
       frontRight.getDesiredSwerveModuleState(),
       backLeft.getDesiredSwerveModuleState(),
       backRight.getDesiredSwerveModuleState()
     );
 
+    // update pose estimation and gyro readings according to theoretical chassis speeds
     _gyro.setRadians(_gyro.getRadians() - simSpeeds.omegaRadiansPerSecond * .02);
     Pose2d newPose = poseEstimator.getEstimatedPosition().plus(
       new Transform2d(
