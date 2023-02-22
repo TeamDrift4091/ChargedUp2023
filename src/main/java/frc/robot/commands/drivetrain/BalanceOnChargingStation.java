@@ -13,7 +13,11 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class BalanceOnChargingStation extends CommandBase {
-  Drivetrain drivetrain;
+  private final Drivetrain drivetrain;
+  /**
+   * Creates a new command that uses the tilt of the gyro to drive in the direction of the steepest incline.
+   * @param drivetrain
+   */
   public BalanceOnChargingStation(Drivetrain drivetrain) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;

@@ -47,6 +47,10 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
+  /**
+   * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
+   * @return a new {@link PIDController}
+   */
   public static PIDController getTunedTranslationalPIDController() {
     return new PIDController(
       DrivetrainConstants.translationalP,
@@ -55,6 +59,11 @@ public class Drivetrain extends SwerveDrivetrain {
     );
   }
 
+  /**
+   * Returns a new PID controller that can be used to control the angle of the robot chassis.
+   * The output will be in radians per second, representing the desired angular velocity.
+   * @return a new {@link ProfiledPIDController}
+   */
   public static ProfiledPIDController getTunedProfiledPIDController() {
     ProfiledPIDController controller = new ProfiledPIDController(
       DrivetrainConstants.rotationalP,
@@ -68,6 +77,11 @@ public class Drivetrain extends SwerveDrivetrain {
     controller.enableContinuousInput(0, 2*Math.PI);
     return controller;
   }
+  /**
+   * Returns a new PID controller that can be used to control the angle of the robot chassis.
+   * The output will be between -1 and 1, and is meant to be fed to {@link Drivetrain#holonomicDrive(double, double, double, boolean)}.
+   * @return a new {@link ProfiledPIDController}
+   */
   public static ProfiledPIDController getTunedProfiledPIDControllerForHolonomicDrive() {
     ProfiledPIDController controller = new ProfiledPIDController(
       DrivetrainConstants.rotationalP,
@@ -79,6 +93,7 @@ public class Drivetrain extends SwerveDrivetrain {
     return controller;
   }
 
+  // Helpful object that holds information about the drivetrain.
   private static final DrivetrainConfig _config = new DrivetrainConfig(
     DrivetrainConstants.CHASSIS_MAX_VELOCITY,
     DrivetrainConstants.CHASSIS_MAX_ACCELERATION,
@@ -95,6 +110,7 @@ public class Drivetrain extends SwerveDrivetrain {
   private final PhotonVisionWrapper photonVision;
 
   // TODO: Fix gear ratios
+  // Objects to hold module related things, such as motors, and motor wrappers (drive and steer controllers)
   private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config);
   private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
@@ -113,6 +129,7 @@ public class Drivetrain extends SwerveDrivetrain {
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
+    // Call super to initialize this Drivetrain as a SwerveDrivetrain, allowing the super class to handle important features.
     super(
       _config, 
       DrivetrainConstants.WHEEL_BASE_WIDTH_METERS,
@@ -127,6 +144,7 @@ public class Drivetrain extends SwerveDrivetrain {
 
     gyro.reset();
 
+    // Configure all the motors.  Basically they all need to be reset, to make sure there aren't any unexpected settings saved.
     configDriveMotor(frontLeftDriveFalcon);
     configDriveMotor(frontRightDriveFalcon);
     configDriveMotor(backLeftDriveFalcon);
@@ -134,6 +152,7 @@ public class Drivetrain extends SwerveDrivetrain {
 
     photonVision = PhotonVisionWrapper.getInstance();
 
+    // Add some SmartDashboard settings
     SmartDashboard.putBoolean("showPhotonEstimate", true);
 
     if (Robot.isSimulation()) {
@@ -157,6 +176,7 @@ public class Drivetrain extends SwerveDrivetrain {
 
     fromChassisSpeeds(
       fieldRelative?
+            // If the robot is on the red alliance, the field oriented drive needs to change directions.
             (DriverStation.getAlliance().equals(Alliance.Blue)?
               ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
             :
@@ -183,6 +203,7 @@ public class Drivetrain extends SwerveDrivetrain {
   public void updateOdometry() {
     super.updateOdometry();
 
+    // Handle vision processing and pose estimation
     if (Robot.isReal()) {
       Optional<EstimatedRobotPose> result =
         photonVision.getEstimatedGlobalPose(getPose2d());
@@ -206,6 +227,7 @@ public class Drivetrain extends SwerveDrivetrain {
 
   @Override
   public void simulationPeriodic() {
+    // Calculate the theoretical chassis speed based on the desired position of the modules
     simSpeeds = kinematics.toChassisSpeeds(
       frontLeft.getDesiredSwerveModuleState(),
       frontRight.getDesiredSwerveModuleState(),
@@ -213,6 +235,7 @@ public class Drivetrain extends SwerveDrivetrain {
       backRight.getDesiredSwerveModuleState()
     );
 
+    // update pose estimation and gyro readings according to theoretical chassis speeds
     _gyro.setRadians(_gyro.getRadians() - simSpeeds.omegaRadiansPerSecond * .02);
     Pose2d newPose = poseEstimator.getEstimatedPosition().plus(
       new Transform2d(

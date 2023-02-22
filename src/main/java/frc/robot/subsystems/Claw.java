@@ -17,31 +17,44 @@ public class Claw extends SubsystemBase {
     leftClawMotor = new WPI_TalonFX(ClawConstants.LEFT_CLAW_CHANNEL);
     rightClawMotor = new WPI_TalonFX(ClawConstants.RIGHT_CLAW_CHANNEL);
   }
+
+  /**
+   * Opens the grip solenoid
+   */
   public void openGrip() {
     gripSolenoid.set(DoubleSolenoid.Value.kForward);
   }
+
+  /**
+   * Closes the grip solenoid
+   */
   public void closeGrip() {
     gripSolenoid.set(DoubleSolenoid.Value.kReverse);
   }
   
+  /**
+   * Sets the speed of the wheels in the claw
+   * @param speed
+   */
   public void setClawSpeed(double speed) {
     leftClawMotor.set(speed);
     rightClawMotor.set(speed);
   }
 
-public void toggleClaw() {
-  gripSolenoid.get();
-    if (gripSolenoid.get().equals(DoubleSolenoid.Value.kReverse)) {
-        openGrip();// Open the claw
-    } else {
-      closeGrip();// Close the claw
-    }
-}
-
+  /**
+   * Toggles the claw open or closed.
+   */
+  public void toggleClaw() {
+    gripSolenoid.get();
+      if (gripSolenoid.get().equals(DoubleSolenoid.Value.kReverse)) {
+          openGrip();// Open the claw
+      } else {
+        closeGrip();// Close the claw
+      }
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
 }

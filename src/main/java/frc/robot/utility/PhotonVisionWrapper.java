@@ -46,7 +46,6 @@ public class PhotonVisionWrapper {
         }
     }
 
-
     private static PhotonVisionWrapper instance = null;
     public static PhotonVisionWrapper getInstance() {
         if (instance == null) {
@@ -59,10 +58,12 @@ public class PhotonVisionWrapper {
     public PhotonPoseEstimator photonPoseEstimator;
 
     private PhotonVisionWrapper() {
+        // Create a simple field layout.  This should be overwritten by reading from the json file, but it's necessary to have something just in case.
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
         ), Constants.FIELD_LENGTH, Constants.FIELD_WIDTH);
 
+        // Try to read from the json file, and apply it to fieldLayout.
         try {
             fieldLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toString()+"/2023-chargedup.json");
         } catch (IOException e) {
@@ -72,15 +73,24 @@ public class PhotonVisionWrapper {
         photonCamera = new PhotonCamera(VisionConstants.CAMERA_NAME);
         photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, VisionConstants.CAMERA_TO_ROBOT);
 
-        setPipelineIndex(Pipeline.APRILTAG);
+        setPipeline(Pipeline.APRILTAG);
     }
     
+    /**
+     * Returns the result of the PhotonPoseEstimator after accounting for the last estimated pose of the drivetrain
+     * @param prevEstimatedRobotPose the last estimated pose from the drivetrain
+     * @return the new estimated pose using vision.
+     */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
     }
 
-    public void setPipelineIndex(Pipeline pipeline) {
+    /**
+     * Sets the pipeline to the desired pipeline
+     * @param pipeline the pipeline for the photonvision processing to use
+     */
+    public void setPipeline(Pipeline pipeline) {
         photonCamera.setPipelineIndex(pipeline.getIndex());
     }
 }

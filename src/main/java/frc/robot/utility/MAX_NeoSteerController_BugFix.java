@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Robot;
 import frc.team1891.common.drivetrains.swervemodules.MAX_NeoSteerController;
 
-/** Add your docs here. */
+/** In the sim, MAX_NeoSteerController seems to output random measurements for the rotation of the module.  This fixes that by always returning 0 in the sim. */
 public class MAX_NeoSteerController_BugFix extends MAX_NeoSteerController {
 
     public MAX_NeoSteerController_BugFix(int turningCANId, double chassisAngularOffset, double kP, double kI, double kD, double kFF) {

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.drivetrain.DriveToPose;
+import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.subsystems.Drivetrain;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
 
@@ -29,8 +30,12 @@ import static frc.robot.utility.MirrorPoses.mirror;
 public class AutonomousCommandManager {
     private AutonomousCommandManager() {}
 
+    // This object appears on SmartDashboard, allowing us to select which autonomous routine we want, while the robot is on.
     private static SendableChooser<Pair<Command, Command>> commandChooser = new SendableChooser<>();
 
+    /**
+     * Loads the sendable chooser with all the autonomous options.
+     */
     public static void load() {
         // RotatingHolonomicDriveController.enableSmartDashboard(true);
         HolonomicTrajectoryCommandGenerator.setRotationalPID(DrivetrainConstants.rotationalP, DrivetrainConstants.rotationalI, DrivetrainConstants.rotationalD);
@@ -120,9 +125,14 @@ public class AutonomousCommandManager {
                 mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))))
         ));
 
+        commandChooser.addOption("Module Test", new Pair<Command,Command>(new DrivetrainTest(Drivetrain.getInstance()), new DrivetrainTest(Drivetrain.getInstance())));
+
         SmartDashboard.putData("Autonomous Chooser", commandChooser);
     }
 
+    /**
+     * Gets the autonomous routine selected by the sendable chooser, and returns the correct command according to the alliance color.
+     */
     public static Command getSelected() {
         // SmartDashboard.putBoolean("Autonomous Finished", false);
         // return commandChooser.getSelected().andThen(() -> SmartDashboard.putBoolean("Autonomous Finished", true));
