@@ -18,6 +18,7 @@ import frc.robot.commands.drivetrain.AbsoluteAngleJoystickDrive;
 import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.commands.drivetrain.JoystickDrive;
 import frc.robot.commands.drivetrain.OrbitingJoystickDrive;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
@@ -26,6 +27,7 @@ import frc.team1891.common.control.JoystickRotation2d;
 public class RobotContainer {
   // Subsystems
   Drivetrain drivetrain = Drivetrain.getInstance();
+  Arm arm = new Arm();
   // Claw claw = new Claw();
 
 

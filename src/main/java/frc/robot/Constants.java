@@ -66,6 +66,19 @@ public class Constants {
             new Rotation3d()
         );
     }
+    public final class ArmConstants{
+        public static final int LEFT_CLIMBER_ID = 1; 
+        public static final int RIGHT_CLIMBER_ID = 2;
+        public static final int CLAW_STRING_ID = 3;
+        //CAN IDs for three motors
+
+        public static final double JOINT_HEIGHT_FROM_GROUND =1;
+        //joint height from ground 
+
+        public static final double ARM_MIN_LENGTH = 0.5;
+        public static final double ARM_MAX_LENGTH = 1;
+        //Arm length limits
+    }
     public static class ClawConstants {
         public static final int LEFT_CLAW_CHANNEL = 13;
         public static final int RIGHT_CLAW_CHANNEL = 14;
@@ -73,5 +86,3 @@ public class Constants {
         public static final int PNEUMATIC_FORWORD_CHANNEL = 1;
     }
 }
-
-    
