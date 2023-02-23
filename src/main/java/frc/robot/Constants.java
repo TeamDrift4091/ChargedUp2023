@@ -67,17 +67,23 @@ public class Constants {
         );
     }
     public final class ArmConstants{
-        public static final int LEFT_CLIMBER_ID = 1; 
-        public static final int RIGHT_CLIMBER_ID = 2;
-        public static final int CLAW_STRING_ID = 3;
-        //CAN IDs for three motors
+        // CAN IDs for three motors
+        public static final int LEFT_CLIMBER_ID = 15; 
+        public static final int RIGHT_CLIMBER_ID = 16;
+        public static final int CLAW_STRING_ID = 17;
+        public static final int SHOULDER_ID = 18;
 
-        public static final double JOINT_HEIGHT_FROM_GROUND =1;
-        //joint height from ground 
+        // Motor gear ratios
+        public static final double SHOULDER_GEAR_RATIO = 1;
+        public static final double ARM_GEAR_RATIO = 1;
+        public static final double METERS_PER_CLIMBER_ROTATION = .05;
 
+        // Joint height from ground 
+        public static final double SHOULDER_HEIGHT_FROM_GROUND =1;
+
+        // Arm length limits
         public static final double ARM_MIN_LENGTH = 0.5;
         public static final double ARM_MAX_LENGTH = 1;
-        //Arm length limits
     }
     public static class ClawConstants {
         public static final int LEFT_CLAW_CHANNEL = 13;
