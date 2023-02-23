@@ -15,12 +15,12 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.Filesystem;
 
 /**
  * Links: 
@@ -30,6 +30,22 @@ import frc.robot.Constants;
  * https://github.com/PhotonVision/photonvision/blob/master/photonlib-java-examples/apriltagExample/src/main/java/frc/robot/Drivetrain.java
  */
 public class PhotonVisionWrapper {
+    private enum Pipeline{
+        APRILTAG(1),
+        CUBE(2),
+        CIRCLE(3);
+
+        public final int index;
+
+        private Pipeline(int pipeline) {
+            this.index = pipeline;
+        }
+
+        public int getIndex(){
+            return index;
+        }
+    }
+
     private static PhotonVisionWrapper instance = null;
     public static PhotonVisionWrapper getInstance() {
         if (instance == null) {
@@ -42,29 +58,39 @@ public class PhotonVisionWrapper {
     public PhotonPoseEstimator photonPoseEstimator;
 
     private PhotonVisionWrapper() {
-        AprilTagFields field = AprilTagFields.k2023ChargedUp;
+        // Create a simple field layout.  This should be overwritten by reading from the json file, but it's necessary to have something just in case.
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
             new AprilTag(1, new Pose3d())
-        ), Units.feetToMeters(54), Units.feetToMeters(27));
+        ), Constants.FIELD_LENGTH, Constants.FIELD_WIDTH);
 
+        // Try to read from the json file, and apply it to fieldLayout.
         try {
-            fieldLayout = new AprilTagFieldLayout(field.m_resourceFile);
+            fieldLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toString()+"/2023-chargedup.json");
         } catch (IOException e) {
             DriverStation.reportError(e.toString(), false);
         }
 
-        photonCamera = new PhotonCamera(Constants.Vision.CAMERA_NAME);
-        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, Constants.Vision.CAMERA_TO_ROBOT);
+        photonCamera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, VisionConstants.CAMERA_TO_ROBOT);
 
-        setPipelineIndex(0);
+        setPipeline(Pipeline.APRILTAG);
     }
     
+    /**
+     * Returns the result of the PhotonPoseEstimator after accounting for the last estimated pose of the drivetrain
+     * @param prevEstimatedRobotPose the last estimated pose from the drivetrain
+     * @return the new estimated pose using vision.
+     */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
     }
 
-    public void setPipelineIndex(int index) {
-        photonCamera.setPipelineIndex(index);
+    /**
+     * Sets the pipeline to the desired pipeline
+     * @param pipeline the pipeline for the photonvision processing to use
+     */
+    public void setPipeline(Pipeline pipeline) {
+        photonCamera.setPipelineIndex(pipeline.getIndex());
     }
 }

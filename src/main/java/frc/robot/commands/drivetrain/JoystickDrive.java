@@ -12,6 +12,13 @@ import frc.robot.subsystems.Drivetrain;
 public class JoystickDrive extends CommandBase {
   private final Drivetrain drivetrain;
   private final DoubleSupplier forward, strafe, twist;
+  /**
+   * Creates a new command that drives the robot according to joystick inputs (Double Suppliers). This is field oriented.
+   * @param drivetrain
+   * @param forward
+   * @param strafe
+   * @param twist
+   */
   public JoystickDrive(Drivetrain drivetrain, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier twist) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
