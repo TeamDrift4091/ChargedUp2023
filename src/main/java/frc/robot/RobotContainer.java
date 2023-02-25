@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,17 +18,15 @@ import frc.robot.commands.drivetrain.AbsoluteAngleJoystickDrive;
 import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.commands.drivetrain.JoystickDrive;
 import frc.robot.commands.drivetrain.OrbitingJoystickDrive;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
 import frc.team1891.common.control.JoystickRotation2d;
 
 public class RobotContainer {
   // Subsystems
-  Drivetrain drivetrain = Drivetrain.getInstance();
-  // Arm arm = new Arm();
-  // Claw claw = new Claw();
+  private final Drivetrain drivetrain = Drivetrain.getInstance();
+  // private final Arm arm = new Arm();
+  // private final Claw claw = new Claw();
 
 
   // Controllers

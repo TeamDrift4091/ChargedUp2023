@@ -29,7 +29,7 @@ public class Constants {
 
         public static final double CHASSIS_MAX_VELOCITY = 2;
         public static final double CHASSIS_MAX_ACCELERATION = 1;
-        public static final double CHASSIS_MAX_ANGULAR_VELOCITY = Math.PI;
+        public static final double CHASSIS_MAX_ANGULAR_VELOCITY = 2*Math.PI/3.;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
         public static final double MODULE_MAX_VELOCITY = 3.5; // Free speed max is ~4.11 for REV MAXSwerve
 
