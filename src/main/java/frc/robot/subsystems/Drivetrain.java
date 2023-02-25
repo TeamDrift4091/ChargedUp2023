@@ -114,19 +114,25 @@ public class Drivetrain extends SwerveDrivetrain {
   // TODO: Fix gear ratios
   // Objects to hold module related things, such as motors, and motor wrappers (drive and steer controllers)
   private static final WPI_TalonFX frontLeftDriveFalcon = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
-  private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config);
+  private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveFalcon, _config, 0);
   private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
   private static final WPI_TalonFX frontRightDriveFalcon = new WPI_TalonFX(FrontRight.DRIVE_CHANNEL);
-  private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveFalcon, _config);
+  private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveFalcon, _config, 0) {
+    public void drive(edu.wpi.first.math.kinematics.SwerveModuleState state) {
+      super.drive(state);
+      SmartDashboard.putNumber("target velocity encoder ticks", config.velocityToEncoderTicksPer100ms(state.speedMetersPerSecond));
+      SmartDashboard.putNumber("current velocity encoder ticks", driveMotor.getSelectedSensorVelocity());
+    };
+  };
   private static final SteerController frontRightSteerController = new MAX_NeoSteerController_BugFix(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final WPI_TalonFX backLeftDriveFalcon = new WPI_TalonFX(BackLeft.DRIVE_CHANNEL);
-  private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveFalcon, _config);
+  private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveFalcon, _config, 0);
   private static final SteerController backLeftSteerController = new MAX_NeoSteerController_BugFix(BackLeft.STEER_CHANNEL, BackLeft.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
   private static final WPI_TalonFX backRightDriveFalcon = new WPI_TalonFX(BackRight.DRIVE_CHANNEL);
-  private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveFalcon, _config);
+  private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveFalcon, _config, 0);
   private static final SteerController backRightSteerController = new MAX_NeoSteerController_BugFix(BackRight.STEER_CHANNEL, BackRight.ENCODER_OFFSET_RADIANS, 1, 0, 0, 0);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
@@ -162,6 +168,7 @@ public class Drivetrain extends SwerveDrivetrain {
       LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
       LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
     }
+    LazyDashboard.addNumber("TestModuleSpeed", 1, () -> frontRight.getSwerveModuleState().speedMetersPerSecond);
     configureSmartDashboard();
 
     if (DriverStation.getAlliance().equals(Alliance.Red)) {
@@ -172,6 +179,9 @@ public class Drivetrain extends SwerveDrivetrain {
   private static void configDriveMotor(WPI_TalonFX driveMotor) {
     driveMotor.configFactoryDefault();
     driveMotor.setNeutralMode(NeutralMode.Brake);
+    driveMotor.config_kP(0, .13);
+    driveMotor.config_kI(0, 0);
+    driveMotor.config_kD(0, 0);
   }
 
   @Override

@@ -27,12 +27,12 @@ import frc.team1891.common.control.JoystickRotation2d;
 public class RobotContainer {
   // Subsystems
   Drivetrain drivetrain = Drivetrain.getInstance();
-  Arm arm = new Arm();
+  // Arm arm = new Arm();
   // Claw claw = new Claw();
 
 
   // Controllers
-  XboxController controller = new XboxController(0) {
+  XboxController controller = new XboxController(1) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
@@ -41,7 +41,7 @@ public class RobotContainer {
   // Buttons and triggers (These are how we schedule commands).
 
   JoystickRotation2d rightStickRotation = new JoystickRotation2d(() -> -controller.getRightY(), () -> -controller.getRightX());
-  JoystickButton testDrivetrian = new JoystickButton(controller, 1);
+  JoystickButton testDrivetrian = new JoystickButton(controller, XboxController.Button.kA.value);
   JoystickButton orbitDrive = new JoystickButton(controller, 2);
   JoystickButton squareAlign = new JoystickButton(controller, 3);
 
