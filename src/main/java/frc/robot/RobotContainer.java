@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,7 +53,13 @@ public class RobotContainer {
     // Connects the buttons and triggers to commands
     configureBindings();
     // Loads the autonomous chooser with all of the available autonomous routines.
-    AutonomousCommandManager.load();
+    // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
+    Thread loadAutoThread = new Thread(() -> {
+      long start = System.currentTimeMillis();
+      AutonomousCommandManager.load();
+      System.out.printf("AUTO: Autonomous commands loaded in %.3f seconds.\n", (System.currentTimeMillis() - start)/1000.);
+    }, "AutonomousCommandManager.load();");
+    loadAutoThread.run();
   }
 
   private void configureBindings() {

@@ -15,6 +15,10 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private Thread lazyDashboardThread = new Thread(() -> {
+    LazyDashboard.updateAll();
+  }, "Update Lazy Dashboard");
+
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
@@ -24,7 +28,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    LazyDashboard.updateAll();
+    lazyDashboardThread.run();
   }
 
   @Override
