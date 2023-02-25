@@ -33,6 +33,16 @@ public class Constants {
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
         public static final double MODULE_MAX_VELOCITY = 3.5; // Free speed max is ~4.11 for REV MAXSwerve
 
+        public static final double driveP = 0.13;
+        public static final double driveI = 0.0;
+        public static final double driveD = 0.0;
+        public static final double driveF = 0.0;
+
+        public static final double steerP = 1.0;
+        public static final double steerI = 0.0;
+        public static final double steerD = 0.0;
+        public static final double steerF = 0.0;
+
         public static class FrontLeft {
             public static final int DRIVE_CHANNEL = 1;
             public static final int STEER_CHANNEL = 2;

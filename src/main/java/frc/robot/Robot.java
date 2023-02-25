@@ -21,8 +21,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    PortForwarder.add(5800, "photonvision.local", 5800); // may need to be limelight.local
+    // Port forward ports connected to the camera.  This allows us to access them when connected
+    // to the robot over USB.
+    // PortForwarder.add(5800, "photonvision.local", 5800); // may need to be limelight.local
+    for (int port = 5800; port < 5805; port++) {
+      PortForwarder.add(port, "limelight.local", port);
+    }
   }
 
   @Override
