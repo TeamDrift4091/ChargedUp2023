@@ -5,14 +5,27 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
+import frc.robot.Constants.ArmConstants;
+import frc.team1891.common.LazyDashboard;
+import frc.team1891.common.Subsystem;
 
-public class Arm extends SubsystemBase {    
+public class Arm extends Subsystem {
     private final WPI_TalonFX leftClimber; //declares a variable "leftClimber" of type "TalonFX" which represents the left climber motor.
     private final WPI_TalonFX rightClimber; //declares a variable "rightClimber" of type "TalonFX" which represents the right climber motor
     private final WPI_TalonFX clawString; //declares a variable "clawString" of type "TalonFX" which represents the claw string motor
     private final WPI_TalonFX shoulderMotor; // declares a variable "shoulderMotor" of type "WPI_TalonFX" which represents the motor of the shoulder joint
+
+    // Sim / SmartDashboard visuals
+    // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
+    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
+    private final MechanismRoot2d armRoot = armMechanism2d.getRoot("shoulder", ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*.25, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND);
+    private final MechanismLigament2d arm = armRoot.append(new MechanismLigament2d("arm", ArmConstants.ARM_MIN_LENGTH, -90));
+    private final MechanismLigament2d claw = arm.append(new MechanismLigament2d("claw", .1, 90));
 
     public Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
@@ -22,6 +35,8 @@ public class Arm extends SubsystemBase {
 
         // Assume the robot starts with its arm down and fully retracted.
         reset();
+        // Configure SmartDashboard and arm visualization.
+        configureSmartDashboard();
     }
 
     /** 
@@ -38,7 +53,9 @@ public class Arm extends SubsystemBase {
         leftClimber.setSelectedSensorPosition(0);
         rightClimber.setSelectedSensorPosition(0);
         clawString.setSelectedSensorPosition(0);
-        shoulderMotor.setSelectedSensorPosition(0);
+        double startingAngleDegrees = -90;
+        shoulderMotor.setSelectedSensorPosition(startingAngleDegrees / 360. * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
+        System.out.println("angleDegrees = "+(startingAngleDegrees / 360. * ArmConstants.SHOULDER_GEAR_RATIO * 2048));
     }
 
     /**
@@ -69,14 +86,23 @@ public class Arm extends SubsystemBase {
     }
 
     private void toExtension(double extensionMeters) {
+        // Handle sim visualization
+        if (Robot.isSimulation()) {
+            arm.setLength(extensionMeters);
+        }
         // Convert from meters to encoder ticks
-        double target = (extensionMeters - ArmConstants.ARM_MIN_LENGTH) / (ArmConstants.ARM_GEAR_RATIO*ArmConstants.METERS_PER_CLIMBER_ROTATION);
+        double target = (extensionMeters - ArmConstants.ARM_MIN_LENGTH) * ArmConstants.ARM_GEAR_RATIO / (2048*ArmConstants.METERS_PER_CLIMBER_ROTATION);
         setExtension(ControlMode.Position, target);
     }
 
     private void toAngle(Rotation2d rotation) {
+        // Handle sim visualization
+        if (Robot.isSimulation()) {
+            arm.setAngle(rotation);
+            claw.setAngle(-rotation.getDegrees());
+        }
         // Add offset since a rotation is relative to the horizontal, and we want it relative to straight down.
-        double target = (rotation.plus(Rotation2d.fromDegrees(90)).getRadians() / (ArmConstants.SHOULDER_GEAR_RATIO * 2 * Math.PI));
+        double target = (rotation.getRadians() * ArmConstants.SHOULDER_GEAR_RATIO / (2048 * 2 * Math.PI));
         setShoulder(ControlMode.Position, target);
     }
 
@@ -92,18 +118,52 @@ public class Arm extends SubsystemBase {
      * Returns a double, representing the length of the arm.
      * @return
      */
-    private double getArmExtensionDistance() {
+    public double getArmExtensionDistance() {
+        // Handle sim visualization
+        if (Robot.isSimulation()) {
+            return arm.getLength();
+        }
         // Calculates the extension of the arm based on the left climber motor.
         // TODO: This may cause issues since we are just measuring from the left motor.
-        return ArmConstants.ARM_MIN_LENGTH + (leftClimber.getSelectedSensorPosition() * ArmConstants.ARM_GEAR_RATIO * ArmConstants.METERS_PER_CLIMBER_ROTATION);
+        return ArmConstants.ARM_MIN_LENGTH + (leftClimber.getSelectedSensorPosition() / ArmConstants.ARM_GEAR_RATIO * ArmConstants.METERS_PER_CLIMBER_ROTATION);
     }
 
     /**
      * Returns a rotation, representing the angle of the arm relative to a straight down position
      * @return the rotation of the arm
      */
-    private Rotation2d getArmAngle() {
+    public Rotation2d getArmAngle() {
+        // Handle sim visualization
+        if (Robot.isSimulation()) {
+            return Rotation2d.fromDegrees(arm.getAngle());
+        }
         // Calculates the angle of the arm based on the encoder measurement of the shoulder motor.
-        return new Rotation2d(shoulderMotor.getSelectedSensorPosition()*ArmConstants.SHOULDER_GEAR_RATIO * 2 * Math.PI);
+        return new Rotation2d(shoulderMotor.getSelectedSensorPosition()/2048./ArmConstants.SHOULDER_GEAR_RATIO * 2 * Math.PI);
+    }
+
+    @Override
+    protected void configureSmartDashboard() {
+        SmartDashboard.putData("Arm", armMechanism2d);
+
+        LazyDashboard.addNumber("Arm/x", getPosition()::getX);
+        LazyDashboard.addNumber("Arm/y", getPosition()::getY);
+    }
+
+    @Override
+    public void stop() {
+        leftClimber.stopMotor();
+        rightClimber.stopMotor();
+        clawString.stopMotor();
+        shoulderMotor.stopMotor();
+    }
+
+    @Override
+    public void periodic() {
+        // Update the visualization with real values.
+        if (Robot.isReal()) {
+            arm.setAngle(getArmAngle());
+            claw.setAngle(-getArmAngle().getDegrees());
+            arm.setLength(getArmExtensionDistance());
+        }
     }
 }
