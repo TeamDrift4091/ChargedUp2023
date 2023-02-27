@@ -16,6 +16,9 @@ public class Claw extends SubsystemBase {
     gripSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.PNEUMATIC_FORWORD_CHANNEL, ClawConstants.PNEUMATIC_BACK_CHANNEL);
     leftClawMotor = new WPI_TalonFX(ClawConstants.LEFT_CLAW_CHANNEL);
     rightClawMotor = new WPI_TalonFX(ClawConstants.RIGHT_CLAW_CHANNEL);
+    configDriveMotor(leftClawMotor);
+    configDriveMotor(rightClawMotor);
+
   }
 
   /**
@@ -56,5 +59,14 @@ public class Claw extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+  private static void configDriveMotor(WPI_TalonFX driveMotor){
+    driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
+    driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
+    driveMotor.config_KP(1, p);
+    driveMotor.config_KI(0, i);
+    driveMotor.config_KD(0, d);
+    driveMotor.config_KF(0, f);
+
   }
 }

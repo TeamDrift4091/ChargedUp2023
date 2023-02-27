@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,6 +34,10 @@ public class Arm extends Subsystem {
         clawString = new WPI_TalonFX(ArmConstants.CLAW_STRING_ID); //creates a nnew TalonFx instance for the claw string motor using its CAN ID
         shoulderMotor = new WPI_TalonFX(ArmConstants.SHOULDER_ID); // creates a new WPI_TalonFX instance for the shoulder of the robot arm using its CAN ID
 
+        configDriveMotor(leftClimber);
+        configDriveMotor(rightClimber);
+        configDriveMotor(clawString);
+        configDriveMotor(shoulderMotor);
         // Assume the robot starts with its arm down and fully retracted.
         reset();
         // Configure SmartDashboard and arm visualization.
@@ -165,5 +170,14 @@ public class Arm extends Subsystem {
             claw.setAngle(-getArmAngle().getDegrees());
             arm.setLength(getArmExtensionDistance());
         }
+    }
+    private static void configDriveMotor(WPI_TalonFX driveMotor){
+        driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
+        driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
+        driveMotor.config_KP(1, p);
+        driveMotor.config_KI(0, i);
+        driveMotor.config_KD(0, d);
+        driveMotor.config_KF(0, f);
+
     }
 }
