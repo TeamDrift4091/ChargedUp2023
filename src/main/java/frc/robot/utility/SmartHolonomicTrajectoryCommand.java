@@ -7,7 +7,6 @@ package frc.robot.utility;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -57,8 +56,8 @@ public class SmartHolonomicTrajectoryCommand extends CommandBase {
     public SmartHolonomicTrajectoryCommand(
             Supplier<HolonomicTrajectory> trajectorySupplier,
             Supplier<Pose2d> pose,
-            PIDController xController,
-            PIDController yController,
+            ProfiledPIDController xController,
+            ProfiledPIDController yController,
             ProfiledPIDController thetaController,
             Consumer<ChassisSpeeds> outputChassisSpeeds,
             Subsystem... requirements) {

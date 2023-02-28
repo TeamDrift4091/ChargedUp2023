@@ -46,6 +46,15 @@ public class AutonomousCommandManager {
             new DriveToPose(Drivetrain.getInstance(), () -> mirror(new Pose2d(5, 5, Rotation2d.fromDegrees(190))))
         ));
 
+        commandChooser.addOption("Circle", new Pair<Command,Command>(HolonomicTrajectoryCommandGenerator.generate(
+            Drivetrain.getInstance(), true, 
+            new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),
+            new Pair<Pose2d, Rotation2d>(new Pose2d(1,0, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0))
+        ), HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), true, 
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0))),
+            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1, 0, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0)))
+        )));
+
         commandChooser.addOption("Curve Trajectory", new Pair<Command, Command>(
             HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
                 new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),

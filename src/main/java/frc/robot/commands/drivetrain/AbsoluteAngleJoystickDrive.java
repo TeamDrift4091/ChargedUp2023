@@ -45,7 +45,7 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
     //   )
     // );
     // angleController.enableContinuousInput(0, 2*Math.PI);
-    angleController = Drivetrain.getTunedProfiledPIDControllerForHolonomicDrive();
+    angleController = Drivetrain.getTunedRotationalPIDControllerForHolonomicDrive();
   }
 
   // Called when the command is initially scheduled.

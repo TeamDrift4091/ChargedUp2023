@@ -45,7 +45,7 @@ public class AlignToAngle extends CommandBase {
     //   new TrapezoidProfile.Constraints(1,1)
     // );
     // angleController.enableContinuousInput(0, 360);
-    angleController = Drivetrain.getTunedProfiledPIDControllerForHolonomicDrive();
+    angleController = Drivetrain.getTunedRotationalPIDControllerForHolonomicDrive();
   }
 
   // Called when the command is initially scheduled.
