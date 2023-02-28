@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
-import frc.team1891.common.LazyDashboard;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
@@ -45,16 +43,40 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
+  private static final double TRANSLATIONAL_TOLERANCE = .01;
+  private static final double ROTATIONAL_TOLERANCE = Math.toRadians(1);
+
   /**
    * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
-   * @return a new {@link PIDController}
+   * @return a new {@link ProfiledPIDController}
    */
-  public static PIDController getTunedTranslationalPIDController() {
-    return new PIDController(
+  public static ProfiledPIDController getTunedTranslationalPIDController() {
+    ProfiledPIDController controller = new ProfiledPIDController(
       translationalP,
       translationalI,
-      translationalD
+      translationalD,
+      new TrapezoidProfile.Constraints(
+        _config.chassisMaxVelocityMetersPerSecond,
+        _config.chassisMaxAccelerationMetersPerSecondSquared
+      )
     );
+    controller.setTolerance(TRANSLATIONAL_TOLERANCE);
+    return controller;
+  }
+
+  /**
+   * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
+   * @return a new {@link ProfiledPIDController}
+   */
+  public static ProfiledPIDController getTunedTranslationalPIDControllerForHolonomicDrive() {
+    ProfiledPIDController controller =  new ProfiledPIDController(
+      translationalP,
+      translationalI,
+      translationalD,
+      new TrapezoidProfile.Constraints(1, 1)
+    );
+    controller.setTolerance(TRANSLATIONAL_TOLERANCE);
+    return controller;
   }
 
   /**
@@ -62,7 +84,7 @@ public class Drivetrain extends SwerveDrivetrain {
    * The output will be in radians per second, representing the desired angular velocity.
    * @return a new {@link ProfiledPIDController}
    */
-  public static ProfiledPIDController getTunedProfiledPIDController() {
+  public static ProfiledPIDController getTunedRotationalPIDController() {
     ProfiledPIDController controller = new ProfiledPIDController(
       rotationalP,
       rotationalI,
@@ -73,6 +95,7 @@ public class Drivetrain extends SwerveDrivetrain {
       )
     );
     controller.enableContinuousInput(0, 2*Math.PI);
+    controller.setTolerance(ROTATIONAL_TOLERANCE);
     return controller;
   }
   /**
@@ -80,7 +103,7 @@ public class Drivetrain extends SwerveDrivetrain {
    * The output will be between -1 and 1, and is meant to be fed to {@link Drivetrain#holonomicDrive(double, double, double, boolean)}.
    * @return a new {@link ProfiledPIDController}
    */
-  public static ProfiledPIDController getTunedProfiledPIDControllerForHolonomicDrive() {
+  public static ProfiledPIDController getTunedRotationalPIDControllerForHolonomicDrive() {
     ProfiledPIDController controller = new ProfiledPIDController(
       rotationalP,
       rotationalI,
@@ -88,6 +111,7 @@ public class Drivetrain extends SwerveDrivetrain {
       new TrapezoidProfile.Constraints(1, 1)
     );
     controller.enableContinuousInput(0, 2*Math.PI);
+    controller.setTolerance(ROTATIONAL_TOLERANCE);
     return controller;
   }
 
@@ -111,14 +135,7 @@ public class Drivetrain extends SwerveDrivetrain {
   private static final DriveController frontLeftDriveController = new FalconDriveController(FrontLeft.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
   private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
-  private static final DriveController frontRightDriveController = new FalconDriveController(FrontRight.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF) {
-    // For Debug:
-    public void drive(edu.wpi.first.math.kinematics.SwerveModuleState state) {
-      super.drive(state);
-      SmartDashboard.putNumber("target velocity encoder ticks", config.velocityToEncoderTicksPer100ms(state.speedMetersPerSecond));
-      SmartDashboard.putNumber("current velocity encoder ticks", driveMotor.getSelectedSensorVelocity());
-    };
-  };
+  private static final DriveController frontRightDriveController = new FalconDriveController(FrontRight.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
   private static final SteerController frontRightSteerController = new MAX_NeoSteerController_BugFix(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final DriveController backLeftDriveController = new FalconDriveController(BackLeft.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
@@ -149,13 +166,12 @@ public class Drivetrain extends SwerveDrivetrain {
     // Add some SmartDashboard settings
     SmartDashboard.putBoolean("showPhotonEstimate", true);
 
-    if (Robot.isSimulation()) {
-      LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
-      LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
-      LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
-    }
-    // For Debug:
-    LazyDashboard.addNumber("TestModuleSpeed", 1, () -> frontRight.getSwerveModuleState().speedMetersPerSecond);
+    // if (Robot.isSimulation()) {
+    //   LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
+    //   LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
+    //   LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
+    // }
+    
     configureSmartDashboard();
 
     if (DriverStation.getAlliance().equals(Alliance.Red)) {

@@ -19,13 +19,13 @@ public class Constants {
         public static final double WHEEL_BASE_LENGTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
         public static final double WHEEL_BASE_WIDTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
 
-        public static final double rotationalP = 1;
-        public static final double rotationalI = 0;
-        public static final double rotationalD = 0;
+        public static final double rotationalP = 4;
+        public static final double rotationalI = 0.6;
+        public static final double rotationalD = 0.5;
 
-        public static final double translationalP = 1;
-        public static final double translationalI = 0;
-        public static final double translationalD = 0;
+        public static final double translationalP = 2.5;
+        public static final double translationalI = 0.5;
+        public static final double translationalD = .4;
 
         public static final double CHASSIS_MAX_VELOCITY = 2;
         public static final double CHASSIS_MAX_ACCELERATION = 1;
@@ -33,10 +33,10 @@ public class Constants {
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
         public static final double MODULE_MAX_VELOCITY = 3.5; // Free speed max is ~4.11 for REV MAXSwerve
 
-        public static final double driveP = 0.13;
+        public static final double driveP = 0.02;
         public static final double driveI = 0.0;
         public static final double driveD = 0.0;
-        public static final double driveF = 0.0;
+        public static final double driveF = 0.045;
 
         public static final double steerP = 1.0;
         public static final double steerI = 0.0;
@@ -72,7 +72,7 @@ public class Constants {
         }
     }
     public static class VisionConstants {
-        public static final String CAMERA_NAME = "Main (Limelight)";
+        public static final String CAMERA_NAME = "Limelight";
         // TODO: Physical location of the camera on the robot, relative to the center of the robot.
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
             new Translation3d(0, 0, 0), // in meters
