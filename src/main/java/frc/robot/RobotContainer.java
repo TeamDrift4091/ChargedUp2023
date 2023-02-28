@@ -13,17 +13,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.arm.Retract;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
-import frc.robot.commands.autonomous.DriveToAndScore;
-import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
-import frc.robot.utility.GameObject;
 import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
-import frc.team1891.common.control.POVTrigger;
-import frc.team1891.common.control.POVTrigger.POV;
 
 import static frc.robot.utility.MirrorPoses.mirror;
 
@@ -49,14 +42,16 @@ public class RobotContainer {
   // JoystickButton orbitDrive = new JoystickButton(controller, 2);
   // JoystickButton squareAlign = new JoystickButton(controller, 3);
 
-  private final Trigger raiseArm = new POVTrigger(controller, POV.NORTH);
-  private final Trigger lowerArm = new POVTrigger(controller, POV.SOUTH);
-  private final Trigger extendArm = new POVTrigger(controller, POV.EAST);
-  private final Trigger retractArm = new POVTrigger(controller, POV.WEST);
+  // private final Trigger raiseArm = new POVTrigger(controller, POV.NORTH);
+  // private final Trigger lowerArm = new POVTrigger(controller, POV.SOUTH);
+  // private final Trigger extendArm = new POVTrigger(controller, POV.EAST);
+  // private final Trigger retractArm = new POVTrigger(controller, POV.WEST);
 
   // private final Trigger scoreNearestHigh = new POVTrigger(controller, POV.NORTH);
   // private final Trigger scoreNearestLow = new POVTrigger(controller, POV.SOUTH);
   // private final Trigger scoreNearestMid = new POVTrigger(controller, POV.EAST);
+  // private GameObject gameObjectMode = GameObject.CUBE;
+  // private final Trigger toggleObjectType = new POVTrigger(controller, POV.WEST);
 
   private final JoystickButton toCommunity = new JoystickButton(controller, 4);
   private final JoystickButton toLoadingStation = new JoystickButton(controller, 5);
@@ -109,9 +104,16 @@ public class RobotContainer {
     // extendArm.whileTrue(new RunCommand(() -> arm.toPosition(new Translation2d(arm.getArmExtensionDistance()+.01, arm.getArmAngle()).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)))));
     // retractArm.whileTrue(new RunCommand(() -> arm.toPosition(new Translation2d(arm.getArmExtensionDistance()-.01, arm.getArmAngle()).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)))));
 
-    // scoreNearestHigh.whileTrue(new DriveToAndScore(drivetrain, arm, claw, GameObject.CONE, ScoringLevel.HIGH));
-    // scoreNearestLow.whileTrue(new DriveToAndScore(drivetrain, arm, claw, GameObject.CONE, ScoringLevel.LOW));
-    // scoreNearestMid.whileTrue(new DriveToAndScore(drivetrain, arm, claw, GameObject.CONE, ScoringLevel.MEDIUM));
+    // scoreNearestHigh.whileTrue(new DriveToAndScore(drivetrain, arm, claw, () -> gameObjectMode, ScoringLevel.HIGH));
+    // scoreNearestLow.whileTrue(new DriveToAndScore(drivetrain, arm, claw, () -> gameObjectMode, ScoringLevel.LOW));
+    // scoreNearestMid.whileTrue(new DriveToAndScore(drivetrain, arm, claw, () -> gameObjectMode, ScoringLevel.MEDIUM));
+    // toggleObjectType.onTrue(new InstantCommand(() -> {
+    //   if (gameObjectMode.equals(GameObject.CONE)) {
+    //     gameObjectMode = GameObject.CUBE;
+    //   } else {
+    //     gameObjectMode = GameObject.CONE;
+    //   }
+    // }));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

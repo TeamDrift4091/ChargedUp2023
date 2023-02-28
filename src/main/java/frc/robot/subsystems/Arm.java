@@ -61,7 +61,6 @@ public class Arm extends Subsystem {
         rightClimber.setSelectedSensorPosition(0);
         clawString.setSelectedSensorPosition(0);
         shoulderMotor.setSelectedSensorPosition(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
-        System.out.println("angleDegrees = "+(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048));
     }
 
     public void toHome() {
@@ -169,7 +168,7 @@ public class Arm extends Subsystem {
 
     @Override
     protected void configureSmartDashboard() {
-        SmartDashboard.putData("Arm", armMechanism2d);
+        SmartDashboard.putData("Arm (Mechanism2d)", armMechanism2d);
 
         LazyDashboard.addNumber("Arm/x", getPosition()::getX);
         LazyDashboard.addNumber("Arm/y", getPosition()::getY);

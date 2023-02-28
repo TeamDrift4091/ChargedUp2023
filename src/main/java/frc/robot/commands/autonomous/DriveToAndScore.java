@@ -4,6 +4,8 @@
 
 package frc.robot.commands.autonomous;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.arm.ArmToPose;
@@ -19,6 +21,17 @@ public class DriveToAndScore extends SequentialCommandGroup {
   public DriveToAndScore(Drivetrain drivetrain, Arm arm, Claw claw, GameObject gameObject, ScoringLevel scoringLevel) {    // Add your commands in the addCommands() call, e.g.
     addCommands(
       new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestScoringPosition(gameObject)),
+      new ArmToPose(arm, () -> ScoringLocationManager.getArmPosition(scoringLevel)),
+      // (gameObject.equals(GameObject.CONE)?
+      //   new DropFromClaw(claw):
+      //   new EjectFromClaw(claw)),
+      Commands.print(gameObject + " scored.")
+    );
+  }
+
+  public DriveToAndScore(Drivetrain drivetrain, Arm arm, Claw claw, Supplier<GameObject> gameObject, ScoringLevel scoringLevel) {    // Add your commands in the addCommands() call, e.g.
+    addCommands(
+      new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestScoringPosition(gameObject.get())),
       new ArmToPose(arm, () -> ScoringLocationManager.getArmPosition(scoringLevel)),
       // (gameObject.equals(GameObject.CONE)?
       //   new DropFromClaw(claw):

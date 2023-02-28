@@ -36,15 +36,6 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
     this.strafe = strafe;
     this.rotation = rotation;
 
-    // TODO: Tune PID
-    // Theoretically this should be the same PID as fed to trajectories.
-    // angleController = new ProfiledPIDController(1, 0, 0, 
-    //   new TrapezoidProfile.Constraints(
-    //     1,
-    //     1
-    //   )
-    // );
-    // angleController.enableContinuousInput(0, 2*Math.PI);
     angleController = Drivetrain.getTunedRotationalPIDControllerForHolonomicDrive();
   }
 

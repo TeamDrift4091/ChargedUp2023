@@ -92,11 +92,11 @@ public class Constants {
         public static final double METERS_PER_CLIMBER_ROTATION = .05;
 
         // Joint height from ground 
-        public static final double SHOULDER_HEIGHT_FROM_GROUND =1;
+        public static final double SHOULDER_HEIGHT_FROM_GROUND = 1;
 
         // Arm length limits
-        public static final double ARM_MIN_LENGTH = 0.5;
-        public static final double ARM_MAX_LENGTH = 1;
+        public static final double ARM_MIN_LENGTH = .8;
+        public static final double ARM_MAX_LENGTH = 1.5;
 
         public static final double ARM_MAX_ANGLE = 2*Math.PI/3.;
     }

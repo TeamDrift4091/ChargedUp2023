@@ -36,9 +36,9 @@ public class ScoringLocationManager {
     }
 
     public enum Grid {
-        BY_LOADING_ZONE(3),
-        COOPERTITION(2),
-        BY_WALL(1);
+        BY_LOADING_ZONE(2),
+        COOPERTITION(1),
+        BY_WALL(0);
 
         public static Grid[] allGrids = new Grid[] {
             Grid.BY_LOADING_ZONE,
