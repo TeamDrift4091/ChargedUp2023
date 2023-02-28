@@ -17,8 +17,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.utility.MAX_NeoSteerController_BugFix;
@@ -174,7 +172,8 @@ public class Drivetrain extends SwerveDrivetrain {
     
     configureSmartDashboard();
 
-    if (DriverStation.getAlliance().equals(Alliance.Red)) {
+    if (Robot.isRedAlliance()
+) {
       poseEstimator.resetPosition(gyro.getRotation2d(), getSwerveModulePositions(), mirror(getPose2d()));
     }
   }
@@ -188,7 +187,8 @@ public class Drivetrain extends SwerveDrivetrain {
     fromChassisSpeeds(
       fieldRelative?
         // If the robot is on the red alliance, the field oriented drive needs to change directions.
-        (DriverStation.getAlliance().equals(Alliance.Blue)?
+        (Robot.isBlueAlliance()
+?
           ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
         :
           ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))

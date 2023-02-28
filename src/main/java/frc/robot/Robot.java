@@ -5,7 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.team1891.common.LazyDashboard;
@@ -85,4 +87,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  public static boolean isRedAlliance() {
+    return DriverStation.getAlliance().equals(Alliance.Red);
+  }
+
+  public static boolean isBlueAlliance() {
+    return DriverStation.getAlliance().equals(Alliance.Blue);
+  }
 }

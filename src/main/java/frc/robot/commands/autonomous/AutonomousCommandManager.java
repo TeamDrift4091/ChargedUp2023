@@ -7,11 +7,10 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.drivetrain.DriveToPose;
 import frc.robot.commands.drivetrain.DrivetrainTest;
@@ -145,7 +144,7 @@ public class AutonomousCommandManager {
     public static Command getSelected() {
         // SmartDashboard.putBoolean("Autonomous Finished", false);
         // return commandChooser.getSelected().andThen(() -> SmartDashboard.putBoolean("Autonomous Finished", true));
-        if (DriverStation.getAlliance().equals(Alliance.Blue)) {
+        if (Robot.isBlueAlliance()) {
             return commandChooser.getSelected().getFirst();
         }
         return commandChooser.getSelected().getSecond();

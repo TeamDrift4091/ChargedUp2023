@@ -12,8 +12,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 import frc.team1891.common.trajectory.HolonomicTrajectory;
 import frc.team1891.common.trajectory.HolonomicTrajectoryGenerator;
@@ -34,14 +33,14 @@ public class SmartHolonomicTrajectoryGenerator {
                 new Pair<Pose2d, Rotation2d>(new Pose2d(3.75, 4.75, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(180)),
                 new Pair<Pose2d, Rotation2d>(new Pose2d(2.2, 4.75, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(180))
             ));
-            if (robotPose.getX() < FIELD_LENGTH-3 && DriverStation.getAlliance().equals(Alliance.Blue) ||
-            robotPose.getX() > 3 && DriverStation.getAlliance().equals(Alliance.Red)) {  
+            if (robotPose.getX() < FIELD_LENGTH-3 && Robot.isBlueAlliance() ||
+            robotPose.getX() > 3 && Robot.isRedAlliance()) {  
                 posesAndHeadings.remove(0);          
-                if (robotPose.getX() < 5 && DriverStation.getAlliance().equals(Alliance.Blue) ||
-                robotPose.getX() > FIELD_LENGTH-5 && DriverStation.getAlliance().equals(Alliance.Red)) {
+                if (robotPose.getX() < 5 && Robot.isBlueAlliance() ||
+                robotPose.getX() > FIELD_LENGTH-5 && Robot.isRedAlliance()) {
                     posesAndHeadings.remove(0);
-                    if (robotPose.getX() < 3.75 && DriverStation.getAlliance().equals(Alliance.Blue) ||
-                    robotPose.getX() > FIELD_LENGTH-3.75 && DriverStation.getAlliance().equals(Alliance.Red)) {
+                    if (robotPose.getX() < 3.75 && Robot.isBlueAlliance() ||
+                    robotPose.getX() > FIELD_LENGTH-3.75 && Robot.isRedAlliance()) {
                         posesAndHeadings.remove(0);
                     }
                 }
@@ -52,13 +51,13 @@ public class SmartHolonomicTrajectoryGenerator {
                 new Pair<Pose2d, Rotation2d>(new Pose2d(2.2, .75, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(180))
             ));
             
-            if (robotPose.getX() < 5 && DriverStation.getAlliance().equals(Alliance.Blue) ||
-            robotPose.getX() > FIELD_LENGTH-5 && DriverStation.getAlliance().equals(Alliance.Red)) {
+            if (robotPose.getX() < 5 && Robot.isBlueAlliance() ||
+            robotPose.getX() > FIELD_LENGTH-5 && Robot.isRedAlliance()) {
                 posesAndHeadings.remove(0);
             }
         }
 
-        if (DriverStation.getAlliance().equals(Alliance.Red)) {
+        if (Robot.isRedAlliance()) {
             for (int i = 0; i < posesAndHeadings.size(); i++) {
                 posesAndHeadings.set(i, mirror(posesAndHeadings.get(i)));
             }
@@ -107,8 +106,8 @@ public class SmartHolonomicTrajectoryGenerator {
         ));
 
         // Checks if the robot is in the community
-        if (robotPose.getX() < 5 && DriverStation.getAlliance().equals(Alliance.Blue) ||
-        robotPose.getX() > FIELD_LENGTH-5 && DriverStation.getAlliance().equals(Alliance.Red)) {
+        if (robotPose.getX() < 5 && Robot.isBlueAlliance() ||
+        robotPose.getX() > FIELD_LENGTH-5 && Robot.isRedAlliance()) {
             if (robotPose.getY() < 1.1) { // easier to exit community from the bottom
                 posesAndHeadings.add(0, new Pair<Pose2d,Rotation2d>(new Pose2d(5.5, .75, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0)));
             } else { // easier to exit community from the top
@@ -119,13 +118,13 @@ public class SmartHolonomicTrajectoryGenerator {
                 }
             }
         // Checks if the robot is the robot is somewhere in the middle section where the second to last waypoint isn't necessary
-        } else if ((robotPose.getX() > 10 && DriverStation.getAlliance().equals(Alliance.Blue) ||
-        robotPose.getX() < FIELD_LENGTH - 10 && DriverStation.getAlliance().equals(Alliance.Red)) &&
+        } else if ((robotPose.getX() > 10 && Robot.isBlueAlliance() ||
+        robotPose.getX() < FIELD_LENGTH - 10 && Robot.isRedAlliance()) &&
         robotPose.getY() > 6) {
             posesAndHeadings.remove(0);
         }
         
-        if (DriverStation.getAlliance().equals(Alliance.Red)) {
+        if (Robot.isRedAlliance()) {
             for (int i = 0; i < posesAndHeadings.size(); i++) {
                 posesAndHeadings.set(i, mirror(posesAndHeadings.get(i)));
             }

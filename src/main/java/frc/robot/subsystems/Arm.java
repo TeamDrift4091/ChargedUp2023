@@ -23,10 +23,12 @@ public class Arm extends Subsystem {
 
     // Sim / SmartDashboard visuals
     // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
-    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
+    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH*1.5, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
     private final MechanismRoot2d armRoot = armMechanism2d.getRoot("shoulder", ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*.25, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND);
     private final MechanismLigament2d arm = armRoot.append(new MechanismLigament2d("arm", ArmConstants.ARM_MIN_LENGTH, -90));
     private final MechanismLigament2d claw = arm.append(new MechanismLigament2d("claw", .1, 90));
+
+    private final double startingAngleRadians = -Math.PI/2.;
 
     public Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
@@ -58,9 +60,13 @@ public class Arm extends Subsystem {
         leftClimber.setSelectedSensorPosition(0);
         rightClimber.setSelectedSensorPosition(0);
         clawString.setSelectedSensorPosition(0);
-        double startingAngleDegrees = -90;
-        shoulderMotor.setSelectedSensorPosition(startingAngleDegrees / 360. * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
-        System.out.println("angleDegrees = "+(startingAngleDegrees / 360. * ArmConstants.SHOULDER_GEAR_RATIO * 2048));
+        shoulderMotor.setSelectedSensorPosition(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
+        System.out.println("angleDegrees = "+(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048));
+    }
+
+    public void toHome() {
+        toExtension(0);
+        toAngle(new Rotation2d(startingAngleRadians));
     }
 
     /**
@@ -81,16 +87,21 @@ public class Arm extends Subsystem {
 
     /**
      * Drive the robot arm to get the tip of the arm to the desired position relative to the robot center and the height above the ground.
-     * @param position
+     * @param position the target position
+     * @return whether or not the target position is valid
      */
-    public void toPosition(Translation2d position) {
-        // TODO: If the arm wants to extend too far, don't let it.
+    public boolean toPosition(Translation2d position) {
         Translation2d target = position.minus((new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)));
-        toExtension(target.getNorm());
-        toAngle(target.getAngle());
+        return toExtension(target.getNorm()) && toAngle(target.getAngle());
     }
 
-    private void toExtension(double extensionMeters) {
+    /**
+     * Returns false if the extensions length is impossible for our arm.
+     */
+    private boolean toExtension(double extensionMeters) {
+        if (ArmConstants.ARM_MIN_LENGTH > extensionMeters || extensionMeters > ArmConstants.ARM_MAX_LENGTH) {
+            return false;
+        }
         // Handle sim visualization
         if (Robot.isSimulation()) {
             arm.setLength(extensionMeters);
@@ -98,9 +109,17 @@ public class Arm extends Subsystem {
         // Convert from meters to encoder ticks
         double target = (extensionMeters - ArmConstants.ARM_MIN_LENGTH) * ArmConstants.ARM_GEAR_RATIO / (2048*ArmConstants.METERS_PER_CLIMBER_ROTATION);
         setExtension(ControlMode.Position, target);
+        
+        return true;
     }
 
-    private void toAngle(Rotation2d rotation) {
+    /**
+     * Returns false if the rotation is impossible for our arm.
+     */
+    private boolean toAngle(Rotation2d rotation) {
+        if (rotation.getRadians() - startingAngleRadians > ArmConstants.ARM_MAX_ANGLE || rotation.getRadians() - startingAngleRadians < 0) {
+            return false;
+        }
         // Handle sim visualization
         if (Robot.isSimulation()) {
             arm.setAngle(rotation);
@@ -109,6 +128,8 @@ public class Arm extends Subsystem {
         // Add offset since a rotation is relative to the horizontal, and we want it relative to straight down.
         double target = (rotation.getRadians() * ArmConstants.SHOULDER_GEAR_RATIO / (2048 * 2 * Math.PI));
         setShoulder(ControlMode.Position, target);
+
+        return true;
     }
 
     /**

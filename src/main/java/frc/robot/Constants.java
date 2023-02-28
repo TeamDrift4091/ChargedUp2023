@@ -97,6 +97,8 @@ public class Constants {
         // Arm length limits
         public static final double ARM_MIN_LENGTH = 0.5;
         public static final double ARM_MAX_LENGTH = 1;
+
+        public static final double ARM_MAX_ANGLE = 2*Math.PI/3.;
     }
     public static class ClawConstants {
         public static final int LEFT_CLAW_CHANNEL = 13;

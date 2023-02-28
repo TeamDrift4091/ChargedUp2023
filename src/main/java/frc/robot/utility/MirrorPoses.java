@@ -7,6 +7,7 @@ package frc.robot.utility;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 import static frc.robot.Constants.FIELD_LENGTH;
 
@@ -40,6 +41,15 @@ public class MirrorPoses {
      */
     public static Pose2d mirror(Pose2d pose) {
         return new Pose2d(FIELD_LENGTH - pose.getX(), pose.getY(), mirror(pose.getRotation()));
+    }
+
+    /**
+     * If the robot is on the red alliance, the pose will be mirrored as if the robot were on the other alliance
+     * @param translation the {@link Translation2d} that will be mirrored
+     * @return the pose that has been mirrored if necessary
+     */
+    public static Translation2d mirror(Translation2d translation) {
+        return new Translation2d(FIELD_LENGTH - translation.getX(), translation.getY());
     }
 
     /**
