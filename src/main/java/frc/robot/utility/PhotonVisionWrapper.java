@@ -31,9 +31,9 @@ import edu.wpi.first.wpilibj.Filesystem;
  */
 public class PhotonVisionWrapper {
     private enum Pipeline{
-        APRILTAG(1),
-        CUBE(2),
-        CIRCLE(3);
+        APRILTAG(0),
+        CUBE(1),
+        CONE(2);
 
         public final int index;
 

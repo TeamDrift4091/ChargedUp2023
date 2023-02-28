@@ -13,7 +13,7 @@ public class SmartHolonomicTrajectoryCommandGenerator {
     private SmartHolonomicTrajectoryCommandGenerator() {}
 
     public static Command toCommunityZone(Drivetrain drivetrain) {
-        ProfiledPIDController headingController = Drivetrain.getTunedProfiledPIDController();
+        ProfiledPIDController headingController = Drivetrain.getTunedRotationalPIDController();
         headingController.enableContinuousInput(-Math.PI, Math.PI); // why -pi to pi?
 
         Command command = new SmartHolonomicTrajectoryCommand(
@@ -30,7 +30,7 @@ public class SmartHolonomicTrajectoryCommandGenerator {
     }
 
     public static Command toLoadingStation(Drivetrain drivetrain) {
-        ProfiledPIDController headingController = Drivetrain.getTunedProfiledPIDController();
+        ProfiledPIDController headingController = Drivetrain.getTunedRotationalPIDController();
         headingController.enableContinuousInput(-Math.PI, Math.PI); // why -pi to pi?
 
         Command command = new SmartHolonomicTrajectoryCommand(

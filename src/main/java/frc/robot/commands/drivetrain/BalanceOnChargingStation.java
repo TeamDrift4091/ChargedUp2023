@@ -15,7 +15,7 @@ import frc.robot.subsystems.Drivetrain;
 
 public class BalanceOnChargingStation extends CommandBase {
   private final Drivetrain drivetrain;
-  private final ProfiledPIDController angleController = Drivetrain.getTunedProfiledPIDController();
+  private final ProfiledPIDController angleController = Drivetrain.getTunedRotationalPIDController();
   /**
    * Creates a new command that uses the tilt of the gyro to drive in the direction of the steepest incline.
    * @param drivetrain
