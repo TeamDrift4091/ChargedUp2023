@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawConstants;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Claw extends SubsystemBase {
@@ -63,10 +64,10 @@ public class Claw extends SubsystemBase {
   private static void configDriveMotor(WPI_TalonFX driveMotor){
     driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
     driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
-    driveMotor.config_KP(1, p);
-    driveMotor.config_KI(0, i);
-    driveMotor.config_KD(0, d);
-    driveMotor.config_KF(0, f);
+    driveMotor.config_kP(0, 1);
+    driveMotor.config_kI(0, 0);
+    driveMotor.config_kD(0, 0);
+    driveMotor.config_kF(0, 0);
 
   }
 }
