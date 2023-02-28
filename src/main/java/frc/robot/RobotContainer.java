@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -14,21 +15,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
 import frc.team1891.common.control.JoystickRotation2d;
+import frc.team1891.common.control.POVTrigger;
+import frc.team1891.common.control.POVTrigger.POV;
 
 import static frc.robot.utility.MirrorPoses.mirror;
 
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
-  // private final Arm arm = new Arm();
-  // private final Claw claw = new Claw();
-
+  private final Arm arm = new Arm();
+  private final Claw claw = new Claw();
 
   // Controllers
   XboxController controller = new XboxController(1) {
@@ -45,6 +50,11 @@ public class RobotContainer {
   JoystickButton resetOdometry = new JoystickButton(controller, XboxController.Button.kRightBumper.value);
   // JoystickButton orbitDrive = new JoystickButton(controller, 2);
   // JoystickButton squareAlign = new JoystickButton(controller, 3);
+
+  Trigger raiseArm = new POVTrigger(controller, POV.NORTH);
+  Trigger lowerArm = new POVTrigger(controller, POV.SOUTH);
+  Trigger extendArm = new POVTrigger(controller, POV.EAST);
+  Trigger retractArm = new POVTrigger(controller, POV.WEST);
 
   JoystickButton toCommunity = new JoystickButton(controller, 4);
   JoystickButton toLoadingStation = new JoystickButton(controller, 5);
@@ -106,6 +116,11 @@ public class RobotContainer {
     // // balance.whileTrue(new BalanceOnChargingStation(drivetrain));
     toCommunity.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toCommunityZone(drivetrain));
     toLoadingStation.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toLoadingStation(drivetrain));
+
+    raiseArm.whileTrue(new RunCommand(() -> arm.toPosition(new Translation2d(arm.getArmExtensionDistance(), arm.getArmAngle().rotateBy(Rotation2d.fromDegrees(1))).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)))));
+    lowerArm.whileTrue(new RunCommand(() -> arm.toPosition(new Translation2d(arm.getArmExtensionDistance(), arm.getArmAngle().rotateBy(Rotation2d.fromDegrees(-1))).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)))));
+    extendArm.whileTrue(new RunCommand(() -> arm.toPosition(new Translation2d(arm.getArmExtensionDistance()+.01, arm.getArmAngle()).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)))));
+    retractArm.whileTrue(new RunCommand(() -> arm.toPosition(new Translation2d(arm.getArmExtensionDistance()-.01, arm.getArmAngle()).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)))));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
