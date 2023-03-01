@@ -38,7 +38,7 @@ public class Arm extends Subsystem {
       return instance;
     }
 
-    public Arm(){
+    private Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
         rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
         clawString = new WPI_TalonFX(ArmConstants.CLAW_STRING_ID); //creates a nnew TalonFx instance for the claw string motor using its CAN ID
