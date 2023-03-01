@@ -38,6 +38,7 @@ public class Arm extends Subsystem {
 
         configDriveMotor(leftClimber);
         configDriveMotor(rightClimber);
+        rightClimber.follow(leftClimber);
         configDriveMotor(clawString);
         configDriveMotor(shoulderMotor);
         // Assume the robot starts with its arm down and fully retracted.
@@ -73,7 +74,8 @@ public class Arm extends Subsystem {
      */
     public void setExtension(ControlMode controlMode, double value){  //method that takes in ControlMode and a double value as parameters, sets the control mode and value parallel for all three motors
         leftClimber.set(controlMode, value); //sets control mode and value for the left climber motor
-        rightClimber.set(controlMode, value); //sets control mode and value for the right climber motor
+        // This isn't necessary since rightClimber follows leftClimber
+        // rightClimber.set(controlMode, value); //sets control mode and value for the right climber motor
         clawString.set(controlMode, value); //sets control mode and value for the claw string motor
     }
 
