@@ -39,10 +39,10 @@ public class DrivetrainTest extends CommandBase {
     } else {
       drivetrain.setSwerveModuleStates(
         new SwerveModuleState[] {
-          new SwerveModuleState(.1, new Rotation2d()),
-          new SwerveModuleState(.1, new Rotation2d()),
-          new SwerveModuleState(.1, new Rotation2d()),
-          new SwerveModuleState(.1, new Rotation2d())
+          new SwerveModuleState(.25, new Rotation2d()),
+          new SwerveModuleState(.25, new Rotation2d()),
+          new SwerveModuleState(.25, new Rotation2d()),
+          new SwerveModuleState(.25, new Rotation2d())
         }
       );
     }

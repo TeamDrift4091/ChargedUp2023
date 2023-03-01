@@ -44,31 +44,24 @@ public class Constants {
         public static final double steerF = 0.0;
 
         public static class FrontLeft {
-            public static final int DRIVE_CHANNEL = 1;
-            public static final int STEER_CHANNEL = 2;
-            public static final int CANCODER_CHANNEL = 9;
-            // public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
-            public static final double ENCODER_OFFSET_RADIANS = 0;
-        }
-        public static class FrontRight {
             public static final int DRIVE_CHANNEL = 3;
             public static final int STEER_CHANNEL = 4;
-            public static final int CANCODER_CHANNEL = 10;
-            public static final double ENCODER_OFFSET_RADIANS = 0;
+            public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
         }
-        public static class BackLeft {
-            public static final int DRIVE_CHANNEL = 5;
-            public static final int STEER_CHANNEL = 6;
-            public static final int CANCODER_CHANNEL = 11;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI;
-            // public static final double ENCODER_OFFSET_RADIANS = 0;
-        }
-        public static class BackRight {
+        public static class FrontRight {
             public static final int DRIVE_CHANNEL = 7;
             public static final int STEER_CHANNEL = 8;
-            public static final int CANCODER_CHANNEL = 12;
-            // public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI;
+            public static final double ENCODER_OFFSET_RADIANS = Math.PI-Math.PI/2.;
+        }
+        public static class BackLeft {
+            public static final int DRIVE_CHANNEL = 1;
+            public static final int STEER_CHANNEL = 2;
+            public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
+        }
+        public static class BackRight {
+            public static final int DRIVE_CHANNEL = 5;
+            public static final int STEER_CHANNEL = 6;
+            public static final double ENCODER_OFFSET_RADIANS = Math.PI-Math.PI/2.;
         }
     }
     public static class VisionConstants {
