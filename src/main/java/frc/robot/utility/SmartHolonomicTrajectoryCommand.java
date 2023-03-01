@@ -7,6 +7,7 @@ package frc.robot.utility;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -56,8 +57,8 @@ public class SmartHolonomicTrajectoryCommand extends CommandBase {
     public SmartHolonomicTrajectoryCommand(
             Supplier<HolonomicTrajectory> trajectorySupplier,
             Supplier<Pose2d> pose,
-            ProfiledPIDController xController,
-            ProfiledPIDController yController,
+            PIDController xController,
+            PIDController yController,
             ProfiledPIDController thetaController,
             Consumer<ChassisSpeeds> outputChassisSpeeds,
             Subsystem... requirements) {
@@ -86,6 +87,7 @@ public class SmartHolonomicTrajectoryCommand extends CommandBase {
         } catch (Exception exception) {
             DriverStation.reportWarning("The attempted trajectory command was aborted. The robot attempted to generate an invalid trajectory: " + exception.getMessage(), false);
             invalidTrajectory = true;
+            return;
         }
 
         m_timer.reset();
@@ -99,6 +101,9 @@ public class SmartHolonomicTrajectoryCommand extends CommandBase {
     @Override
     @SuppressWarnings("LocalVariableName")
     public void execute() {
+        if (invalidTrajectory) {
+            return;
+        }
         double curTime = m_timer.get();
         State desiredState = m_trajectory.sample(curTime);
 
@@ -120,6 +125,6 @@ public class SmartHolonomicTrajectoryCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds()) || invalidTrajectory;
+        return invalidTrajectory || m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
     }
   }

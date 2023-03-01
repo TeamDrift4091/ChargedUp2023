@@ -8,6 +8,9 @@ import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,22 +44,18 @@ public class Drivetrain extends SwerveDrivetrain {
     return instance;
   }
 
-  private static final double TRANSLATIONAL_TOLERANCE = .01;
+  private static final double TRANSLATIONAL_TOLERANCE = .02;
   private static final double ROTATIONAL_TOLERANCE = Math.toRadians(1);
 
   /**
    * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
-   * @return a new {@link ProfiledPIDController}
+   * @return a new {@link PIDController}
    */
-  public static ProfiledPIDController getTunedTranslationalPIDController() {
-    ProfiledPIDController controller = new ProfiledPIDController(
+  public static PIDController getTunedTranslationalPIDController() {
+    PIDController controller = new PIDController(
       translationalP,
       translationalI,
-      translationalD,
-      new TrapezoidProfile.Constraints(
-        _config.chassisMaxVelocityMetersPerSecond,
-        _config.chassisMaxAccelerationMetersPerSecondSquared
-      )
+      translationalD
     );
     controller.setTolerance(TRANSLATIONAL_TOLERANCE);
     return controller;
@@ -64,14 +63,13 @@ public class Drivetrain extends SwerveDrivetrain {
 
   /**
    * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
-   * @return a new {@link ProfiledPIDController}
+   * @return a new {@link PIDController}
    */
-  public static ProfiledPIDController getTunedTranslationalPIDControllerForHolonomicDrive() {
-    ProfiledPIDController controller =  new ProfiledPIDController(
+  public static PIDController getTunedTranslationalPIDControllerForHolonomicDrive() {
+    PIDController controller =  new PIDController(
       translationalP,
       translationalI,
-      translationalD,
-      new TrapezoidProfile.Constraints(1, 1)
+      translationalD
     );
     controller.setTolerance(TRANSLATIONAL_TOLERANCE);
     return controller;
@@ -130,16 +128,20 @@ public class Drivetrain extends SwerveDrivetrain {
   private final PhotonVisionWrapper photonVision;
 
   // Objects to hold module related things, such as motors, and motor wrappers (drive and steer controllers)
-  private static final DriveController frontLeftDriveController = new FalconDriveController(FrontLeft.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
+  private static final WPI_TalonFX frontLeftDriveMotor = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
+  private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveMotor, _config);
   private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
-  private static final DriveController frontRightDriveController = new FalconDriveController(FrontRight.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
+  private static final WPI_TalonFX frontRightDriveMotor = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
+  private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveMotor, _config);
   private static final SteerController frontRightSteerController = new MAX_NeoSteerController_BugFix(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
-  private static final DriveController backLeftDriveController = new FalconDriveController(BackLeft.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
+  private static final WPI_TalonFX backLeftDriveMotor = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
+  private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveMotor, _config);
   private static final SteerController backLeftSteerController = new MAX_NeoSteerController_BugFix(BackLeft.STEER_CHANNEL, BackLeft.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
-  private static final DriveController backRightDriveController = new FalconDriveController(BackRight.DRIVE_CHANNEL, _config, driveP, driveI, driveD, driveF);
+  private static final WPI_TalonFX backRightDriveMotor = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
+  private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveMotor, _config);
   private static final SteerController backRightSteerController = new MAX_NeoSteerController_BugFix(BackRight.STEER_CHANNEL, BackRight.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
@@ -157,6 +159,11 @@ public class Drivetrain extends SwerveDrivetrain {
       MODULE_MAX_VELOCITY
     );
 
+    configDriveMotor(frontLeftDriveMotor);
+    configDriveMotor(frontRightDriveMotor);
+    configDriveMotor(backLeftDriveMotor);
+    configDriveMotor(backRightDriveMotor);
+
     gyro.reset();
 
     photonVision = PhotonVisionWrapper.getInstance();
@@ -172,10 +179,20 @@ public class Drivetrain extends SwerveDrivetrain {
     
     configureSmartDashboard();
 
-    if (Robot.isRedAlliance()
-) {
+    if (Robot.isRedAlliance()) {
       poseEstimator.resetPosition(gyro.getRotation2d(), getSwerveModulePositions(), mirror(getPose2d()));
     }
+  }
+
+  private static void configDriveMotor(WPI_TalonFX motor) {
+    motor.configFactoryDefault();
+    motor.config_kP(0, driveP);
+    motor.config_kI(0, driveI);
+    motor.config_kD(0, driveD);
+    motor.config_kF(0, driveF);
+    // Not sure if this will need tuned, I think it should be faster than the chassis
+    // max to make sure the expected chassis movement isn't limited in auto.
+    motor.configClosedloopRamp(.8*CHASSIS_MAX_VELOCITY/CHASSIS_MAX_ACCELERATION);
   }
 
   @Override

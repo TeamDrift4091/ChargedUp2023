@@ -6,6 +6,7 @@ package frc.robot.commands.drivetrain;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,7 +19,8 @@ public class DriveToPose extends CommandBase {
   private final Supplier<Pose2d> targetPoseSupplier;
   private Pose2d targetPose;
   
-  private final ProfiledPIDController xController, yController, angleController;
+  private final PIDController xController, yController;
+  private final ProfiledPIDController angleController;
   /**
    * Creates a command that drives to the desired pose using PID.
    * 
@@ -53,8 +55,8 @@ public class DriveToPose extends CommandBase {
   public void initialize() {
     Pose2d currentPose = drivetrain.getPose2d();
     angleController.reset(currentPose.getRotation().getRadians());
-    xController.reset(currentPose.getX());
-    yController.reset(currentPose.getY());
+    xController.reset();
+    yController.reset();
     targetPose = targetPoseSupplier.get();
 
     SmartDashboard.putBoolean("Autonomous Finished", false);
@@ -94,6 +96,6 @@ public class DriveToPose extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atGoal() && yController.atGoal() && angleController.atGoal();
+    return xController.atSetpoint() && yController.atSetpoint() && angleController.atGoal();
   }
 }
