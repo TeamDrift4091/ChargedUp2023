@@ -70,4 +70,13 @@ public class Claw extends SubsystemBase {
     driveMotor.config_kF(0, 0);
 
   }
+
+public void startMotors(double speed) {
+}
+
+public void setMotorSpeed(double speed, double speed2) {
+}
+
+public void stopMotors() {
+}
 }
