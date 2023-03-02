@@ -19,7 +19,6 @@ public class Claw extends SubsystemBase {
     rightClawMotor = new WPI_TalonFX(ClawConstants.RIGHT_CLAW_CHANNEL);
     configDriveMotor(leftClawMotor);
     configDriveMotor(rightClawMotor);
-
   }
 
   /**
@@ -64,10 +63,11 @@ public class Claw extends SubsystemBase {
   private static void configDriveMotor(WPI_TalonFX driveMotor){
     driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
     driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
-    driveMotor.config_kP(0, 1);
-    driveMotor.config_kI(0, 0);
-    driveMotor.config_kD(0, 0);
-    driveMotor.config_kF(0, 0);
+    // Default PID will likely be good enough.
+    // driveMotor.config_kP(0, 1);
+    // driveMotor.config_kI(0, 0);
+    // driveMotor.config_kD(0, 0);
+    // driveMotor.config_kF(0, 0);
 
   }
 }

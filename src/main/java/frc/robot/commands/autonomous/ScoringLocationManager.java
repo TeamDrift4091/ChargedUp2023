@@ -7,31 +7,35 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.utility.GameObject;
 
 import static frc.robot.utility.MirrorPoses.mirror;
 
-/** Add your docs here. */
 public class ScoringLocationManager {
+    private static final double DISTANCE_FROM_WALL = 2;
     private ScoringLocationManager() {}
 
-    // TODO: Take measurements and implement
+    /** https://www.desmos.com/calculator/hmytultfgz */
     public enum ScoringLevel {
-        LOW(.3,.1),
-        MEDIUM(.5, .3),
-        HIGH(.8, .5);
+        LOW(1.191514, 0.254, 1.191514, 0.254),
+        MEDIUM(0.79629, 0.851662, 0.79629, 1.1176),
+        HIGH(0.363728, 1.1557, 0.363728, 1.4224);
 
-        // The pose of the arm relative to the robot
-        private final Translation2d armPose;
+        private final Translation2d cube, cone;
 
-        private ScoringLevel(double x, double y) {
-            this.armPose = new Translation2d(x, y);
+        private ScoringLevel(double xCube, double yCube, double xCone, double yCone) {
+            this.cube = new Translation2d(xCube, yCube);
+            this.cone = new Translation2d(xCone, yCone);
         }
 
-        public Translation2d getRequiredArmPose() {
-            return armPose;
+        public Translation2d getPoseFromWall(GameObject gameObject) {
+            if (gameObject.equals(GameObject.CONE)) {
+                return cone;
+            }
+            return cube;
         }
     }
 
@@ -49,7 +53,8 @@ public class ScoringLocationManager {
         private final Translation2d centerPose;
 
         private Grid(int gridNumber) {
-            centerPose = new Translation2d(2, gridNumber*(1.6764)+1.069975);
+            // centerPose = new Translation2d(DISTANCE_FROM_WALL, gridNumber*(1.6764)+1.069975);
+            centerPose = new Translation2d(DISTANCE_FROM_WALL, gridNumber*Units.inchesToMeters(66)+Units.inchesToMeters(42));
         }
 
         public Translation2d getRequiredDrivetrainPose() {
@@ -58,9 +63,12 @@ public class ScoringLocationManager {
     }
 
     public enum GridSection {
-        CONE1(-0.569975),
+        // CONE1(-0.569975),
+        // CUBE(0),
+        // CONE2(0.569975);
+        CONE1(-Units.inchesToMeters(22)),
         CUBE(0),
-        CONE2(0.569975);
+        CONE2(Units.inchesToMeters(22));
 
         public static GridSection[] allCones = new GridSection[] {
             GridSection.CONE1,
@@ -116,8 +124,8 @@ public class ScoringLocationManager {
         }
     }
 
-    // TODO: May need different arm positions for different GameObjects
-    public static Translation2d getArmPosition(ScoringLevel scoringLevel) {
-        return scoringLevel.getRequiredArmPose();
+    public static Translation2d getArmPosition(GameObject gameObject, ScoringLevel scoringLevel) {
+        Translation2d poseFromWall = scoringLevel.getPoseFromWall(gameObject);
+        return new Translation2d(DISTANCE_FROM_WALL-poseFromWall.getX(), poseFromWall.getY());
     }
 }
