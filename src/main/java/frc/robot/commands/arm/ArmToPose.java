@@ -40,6 +40,15 @@ public class ArmToPose extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isAtDesiredPosition();
+  }
+
+  public static ArmToPose holdPose(Arm arm, Supplier<Translation2d> pose) {
+    return new ArmToPose(arm, pose) {
+      @Override
+      public boolean isFinished() {
+          return false;
+      }
+    };
   }
 }
