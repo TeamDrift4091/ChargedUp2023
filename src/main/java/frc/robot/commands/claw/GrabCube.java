@@ -19,7 +19,8 @@ public class GrabCube extends CommandBase {
     }
 
     @Override
-    protected void end() {
+    public void end() {
         claw.stopMotors(); 
         claw.closeGrip(); 
+    }
 }

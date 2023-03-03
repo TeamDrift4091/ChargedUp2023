@@ -8,7 +8,7 @@ public class EjectFromClaw extends CommandBase {
     public EjectFromClaw(Claw claw, double speed) {
         this.claw = claw;
         this.speed = speed;
-        addRequirements(claw); // This command requires the claw subsystem
+        addRequirements(claw);
     }
 
     
@@ -19,7 +19,7 @@ public class EjectFromClaw extends CommandBase {
     }
 
     @Override
-    protected void end() {
+    public void end() {
         claw.stopMotors(); 
         claw.openGrip(); 
     }
