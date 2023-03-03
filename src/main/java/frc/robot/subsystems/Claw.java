@@ -13,7 +13,15 @@ public class Claw extends SubsystemBase {
   private WPI_TalonFX leftClawMotor;
   private WPI_TalonFX rightClawMotor;
 
-  public Claw() {
+  private static Claw instance;
+  public static Claw getInstance() {
+    if (instance == null) {
+      instance = new Claw();
+    }
+    return instance;
+  }
+
+  private Claw() {
     gripSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.PNEUMATIC_FORWORD_CHANNEL, ClawConstants.PNEUMATIC_BACK_CHANNEL);
     leftClawMotor = new WPI_TalonFX(ClawConstants.LEFT_CLAW_CHANNEL);
     rightClawMotor = new WPI_TalonFX(ClawConstants.RIGHT_CLAW_CHANNEL);

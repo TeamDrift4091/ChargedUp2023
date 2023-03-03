@@ -30,13 +30,21 @@ public class Arm extends SubsystemBase {
 
     private final double startingAngleRadians = -Math.PI/2.;
 
+    private static Arm instance;
+    public static Arm getInstance() {
+      if (instance == null) {
+        instance = new Arm();
+      }
+      return instance;
+    }
+
     private double desiredExtension = ArmConstants.ARM_MIN_LENGTH;
     private Rotation2d desiredAngle = new Rotation2d(startingAngleRadians);
 
     private final double extensionTolerance = .1;
     private final Rotation2d angleTolernace = Rotation2d.fromDegrees(5);
 
-    public Arm(){
+    private Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
         rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
         clawString = new WPI_TalonFX(ArmConstants.CLAW_STRING_ID); //creates a nnew TalonFx instance for the claw string motor using its CAN ID
