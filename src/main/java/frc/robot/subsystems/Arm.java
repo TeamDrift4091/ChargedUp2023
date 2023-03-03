@@ -193,6 +193,7 @@ public class Arm extends Subsystem {
             arm.setLength(getArmExtensionDistance());
         }
     }
+    
     private static void configDriveMotor(WPI_TalonFX driveMotor){
         driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
         driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.

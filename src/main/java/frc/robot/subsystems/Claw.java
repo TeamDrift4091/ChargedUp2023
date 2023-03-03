@@ -49,18 +49,18 @@ public class Claw extends SubsystemBase {
    * Toggles the claw open or closed.
    */
   public void toggleClaw() {
-    gripSolenoid.get();
-      if (gripSolenoid.get().equals(DoubleSolenoid.Value.kReverse)) {
-          openGrip();// Open the claw
-      } else {
-        closeGrip();// Close the claw
-      }
+    if (gripSolenoid.get().equals(DoubleSolenoid.Value.kReverse)) {
+        openGrip();// Open the claw
+    } else {
+      closeGrip();// Close the claw
+    }
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
+  
   private static void configDriveMotor(WPI_TalonFX driveMotor){
     driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
     driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
