@@ -23,8 +23,8 @@ import static frc.robot.utility.MirrorPoses.mirror;
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
-  private final Arm arm = Arm.getInstance();
-  private final Claw claw = Claw.getInstance();
+  // private final Arm arm = Arm.getInstance();
+  // private final Claw claw = Claw.getInstance();
 
   // Controllers
   private final XboxController controller = new XboxController(1) {
