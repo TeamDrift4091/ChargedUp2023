@@ -45,4 +45,21 @@ public class SmartHolonomicTrajectoryCommandGenerator {
 
         return command.andThen(drivetrain::stop);
     }
+
+    public static Command leaveCommunity(Drivetrain drivetrain) {
+        ProfiledPIDController headingController = Drivetrain.getTunedRotationalPIDController();
+        headingController.enableContinuousInput(-Math.PI, Math.PI); // why -pi to pi?
+
+        Command command = new SmartHolonomicTrajectoryCommand(
+            () -> SmartHolonomicTrajectoryGenerator.leaveCommunity(drivetrain),
+            drivetrain::getPose2d,
+            Drivetrain.getTunedTranslationalPIDController(),
+            Drivetrain.getTunedTranslationalPIDController(),
+            headingController,
+            drivetrain::fromChassisSpeeds,
+            drivetrain
+        );
+
+        return command.andThen(drivetrain::stop);
+    }
 }
