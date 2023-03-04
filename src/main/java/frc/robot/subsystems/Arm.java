@@ -16,8 +16,7 @@ import frc.team1891.common.LazyDashboard;
 import frc.team1891.common.Subsystem;
 
 public class Arm extends Subsystem {
-    private final WPI_TalonFX leftClimber; //declares a variable "leftClimber" of type "TalonFX" which represents the left climber motor.
-    private final WPI_TalonFX rightClimber; //declares a variable "rightClimber" of type "TalonFX" which represents the right climber motor
+    private final WPI_TalonFX climberMotor; //declares a variable "climberMotor" of type "TalonFX" which represents the climber motor.
     private final WPI_TalonFX clawString; //declares a variable "clawString" of type "TalonFX" which represents the claw string motor
     private final WPI_TalonFX shoulderMotor; // declares a variable "shoulderMotor" of type "WPI_TalonFX" which represents the motor of the shoulder joint
 
@@ -31,14 +30,11 @@ public class Arm extends Subsystem {
     private final double startingAngleRadians = -Math.PI/2.;
 
     public Arm(){
-        leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
-        rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
+        climberMotor = new WPI_TalonFX(ArmConstants.CLIMBER_ID); //creates a new talonFX instance for the climber motor using its CAN ID
         clawString = new WPI_TalonFX(ArmConstants.CLAW_STRING_ID); //creates a nnew TalonFx instance for the claw string motor using its CAN ID
         shoulderMotor = new WPI_TalonFX(ArmConstants.SHOULDER_ID); // creates a new WPI_TalonFX instance for the shoulder of the robot arm using its CAN ID
 
-        configDriveMotor(leftClimber);
-        configDriveMotor(rightClimber);
-        rightClimber.follow(leftClimber);
+        configDriveMotor(climberMotor);
         configDriveMotor(clawString);
         configDriveMotor(shoulderMotor);
         // Assume the robot starts with its arm down and fully retracted.
@@ -58,8 +54,7 @@ public class Arm extends Subsystem {
      * Resets motor encoders, assuming the robot arm is facing straight down and fully retracted, with a claw parallel to the ground.
      */
     public void reset() {
-        leftClimber.setSelectedSensorPosition(0);
-        rightClimber.setSelectedSensorPosition(0);
+        climberMotor.setSelectedSensorPosition(0);
         clawString.setSelectedSensorPosition(0);
         shoulderMotor.setSelectedSensorPosition(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
     }
@@ -73,9 +68,7 @@ public class Arm extends Subsystem {
      * Sets the motors controlling the arm extension.
      */
     public void setExtension(ControlMode controlMode, double value){  //method that takes in ControlMode and a double value as parameters, sets the control mode and value parallel for all three motors
-        leftClimber.set(controlMode, value); //sets control mode and value for the left climber motor
-        // This isn't necessary since rightClimber follows leftClimber
-        // rightClimber.set(controlMode, value); //sets control mode and value for the right climber motor
+        climberMotor.set(controlMode, value); //sets control mode and value for the climber motor
         clawString.set(controlMode, value); //sets control mode and value for the claw string motor
     }
 
@@ -150,9 +143,9 @@ public class Arm extends Subsystem {
         if (Robot.isSimulation()) {
             return arm.getLength();
         }
-        // Calculates the extension of the arm based on the left climber motor.
+        // Calculates the extension of the arm based on the climber motor.
         // TODO: This may cause issues since we are just measuring from the left motor.
-        return ArmConstants.ARM_MIN_LENGTH + (leftClimber.getSelectedSensorPosition() / ArmConstants.ARM_GEAR_RATIO * ArmConstants.METERS_PER_CLIMBER_ROTATION);
+        return ArmConstants.ARM_MIN_LENGTH + (climberMotor.getSelectedSensorPosition() / ArmConstants.ARM_GEAR_RATIO * ArmConstants.METERS_PER_CLIMBER_ROTATION);
     }
 
     /**
@@ -178,8 +171,7 @@ public class Arm extends Subsystem {
 
     @Override
     public void stop() {
-        leftClimber.stopMotor();
-        rightClimber.stopMotor();
+        climberMotor.stopMotor();
         clawString.stopMotor();
         shoulderMotor.stopMotor();
     }
