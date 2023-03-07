@@ -94,8 +94,6 @@ public class Constants {
         public static final double ARM_MAX_ANGLE = 2*Math.PI/3.;
     }
     public static class ClawConstants {
-        public static final int LEFT_CLAW_CHANNEL = 13;
-        public static final int RIGHT_CLAW_CHANNEL = 14;
         public static final int PNEUMATIC_BACK_CHANNEL = 0;
         public static final int PNEUMATIC_FORWORD_CHANNEL = 1;
     }
