@@ -233,21 +233,23 @@ public class RobotContainer {
   private void flightSimControls() {
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
     drivetrain.setDefaultCommand(
-      new JoystickDrive(
+      new ThrottledJoystickDrive(
         drivetrain,
         () -> flightController.getJoystickY(),
         () -> flightController.getJoystickX(),
-        () -> flightController.getJoystickZ()
+        () -> flightController.getJoystickZ(),
+        () -> (flightController.getThrottle() - 1) / -2. // The throttle's range is [1, -1], but we want [0,1]
       )
     );
 
     zAxis = new AxisTrigger(flightController, X52ProfessionalHOTAS.Axis.JoystickZ.value);
     zAxis.onTrue(
-      new JoystickDrive(
+      new ThrottledJoystickDrive(
         drivetrain,
         () -> flightController.getJoystickY(),
         () -> flightController.getJoystickX(),
-        () -> flightController.getJoystickZ()
+        () -> flightController.getJoystickZ(),
+        () -> (flightController.getThrottle() - 1) / -2. // The throttle's range is [1, -1], but we want [0,1]
       )
     );
     holdNorth = new POVTrigger(flightController, POV.NORTH);

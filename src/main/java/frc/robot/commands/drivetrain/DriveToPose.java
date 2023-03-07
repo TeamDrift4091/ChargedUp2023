@@ -12,7 +12,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -38,17 +37,8 @@ public class DriveToPose extends CommandBase {
     this.drivetrain = drivetrain;
     this.targetPoseSupplier = targetPoseSupplier;
     this.targetPose = new Pose2d();
-    // xController = new PIDController(1, 0, 0);
-    // yController = new PIDController(1, 0, 0);
     xController = Drivetrain.getTunedTranslationalPIDController();
     yController = Drivetrain.getTunedTranslationalPIDController();
-    // angleController = new ProfiledPIDController(Constants.Drivetrain.rotationalP, Constants.Drivetrain.rotationalI, Constants.Drivetrain.rotationalD,
-    //   new TrapezoidProfile.Constraints(
-    //     drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-    //     drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
-    //   )
-    // );
-    // angleController.enableContinuousInput(0, 2*Math.PI);
     angleController = Drivetrain.getTunedRotationalPIDController();
   }
 
@@ -60,8 +50,6 @@ public class DriveToPose extends CommandBase {
     xController.reset();
     yController.reset();
     targetPose = targetPoseSupplier.get();
-
-    // SmartDashboard.putBoolean("Autonomous Finished", false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -77,25 +65,12 @@ public class DriveToPose extends CommandBase {
     double thetaFF = angleController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     drivetrain.fromChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFF, drivetrain.getPose2d().getRotation()));
-
-    // SmartDashboard.putNumber("DriveToPose/xTarget", targetPose.getX());
-    // SmartDashboard.putNumber("DriveToPose/yTarget", targetPose.getY());
-    // SmartDashboard.putNumber("DriveToPose/rotTarget", targetPose.getRotation().getDegrees());
-
-    // SmartDashboard.putNumber("DriveToPose/xEffort", xFeedback);
-    // SmartDashboard.putNumber("DriveToPose/yEffort", yFeedback);
-    // SmartDashboard.putNumber("DriveToPose/rotEffort", thetaFF);
-
-    // SmartDashboard.putNumber("DriveToPose/xCurrent", currentPose.getX());
-    // SmartDashboard.putNumber("DriveToPose/yCurrent", currentPose.getY());
-    // SmartDashboard.putNumber("DriveToPose/rotCurrent", currentPose.getRotation().getDegrees());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     drivetrain.stop();
-    // SmartDashboard.putBoolean("Autonomous Finished", true);
   }
 
   // Returns true when the command should end.
