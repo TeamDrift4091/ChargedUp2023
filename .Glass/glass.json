@@ -10,6 +10,7 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Arm (Mechanism2d)": "Mechanism2d",
       "/SmartDashboard/Autonomous Chooser": "String Chooser",
       "/SmartDashboard/Holonomic Trajectory (Field2d)": "Field2d",
       "/SmartDashboard/Modules (Field2d)": "Field2d",
@@ -17,6 +18,11 @@
       "/SmartDashboard/Robot (Field2d)": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Arm (Mechanism2d)": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Autonomous Chooser": {
         "window": {
           "visible": true

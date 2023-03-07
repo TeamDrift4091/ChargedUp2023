@@ -6,6 +6,8 @@ package frc.robot.commands.drivetrain;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.Util;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -59,7 +61,7 @@ public class DriveToPose extends CommandBase {
     yController.reset();
     targetPose = targetPoseSupplier.get();
 
-    SmartDashboard.putBoolean("Autonomous Finished", false);
+    // SmartDashboard.putBoolean("Autonomous Finished", false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -69,28 +71,31 @@ public class DriveToPose extends CommandBase {
     double xFeedback = xController.calculate(currentPose.getX(), targetPose.getX());
     double yFeedback = yController.calculate(currentPose.getY(), targetPose.getY());
 
+    xFeedback = Util.cap(xFeedback, 1.5);
+    yFeedback = Util.cap(yFeedback, 1.5);
+
     double thetaFF = angleController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     drivetrain.fromChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFF, drivetrain.getPose2d().getRotation()));
 
-    SmartDashboard.putNumber("DriveToPose/xTarget", targetPose.getX());
-    SmartDashboard.putNumber("DriveToPose/yTarget", targetPose.getY());
-    SmartDashboard.putNumber("DriveToPose/rotTarget", targetPose.getRotation().getDegrees());
+    // SmartDashboard.putNumber("DriveToPose/xTarget", targetPose.getX());
+    // SmartDashboard.putNumber("DriveToPose/yTarget", targetPose.getY());
+    // SmartDashboard.putNumber("DriveToPose/rotTarget", targetPose.getRotation().getDegrees());
 
-    SmartDashboard.putNumber("DriveToPose/xEffort", xFeedback);
-    SmartDashboard.putNumber("DriveToPose/yEffort", yFeedback);
-    SmartDashboard.putNumber("DriveToPose/rotEffort", thetaFF);
+    // SmartDashboard.putNumber("DriveToPose/xEffort", xFeedback);
+    // SmartDashboard.putNumber("DriveToPose/yEffort", yFeedback);
+    // SmartDashboard.putNumber("DriveToPose/rotEffort", thetaFF);
 
-    SmartDashboard.putNumber("DriveToPose/xCurrent", currentPose.getX());
-    SmartDashboard.putNumber("DriveToPose/yCurrent", currentPose.getY());
-    SmartDashboard.putNumber("DriveToPose/rotCurrent", currentPose.getRotation().getDegrees());
+    // SmartDashboard.putNumber("DriveToPose/xCurrent", currentPose.getX());
+    // SmartDashboard.putNumber("DriveToPose/yCurrent", currentPose.getY());
+    // SmartDashboard.putNumber("DriveToPose/rotCurrent", currentPose.getRotation().getDegrees());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     drivetrain.stop();
-    SmartDashboard.putBoolean("Autonomous Finished", true);
+    // SmartDashboard.putBoolean("Autonomous Finished", true);
   }
 
   // Returns true when the command should end.

@@ -47,7 +47,7 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
         // Default do nothing to avoid issues
-        commandChooser.addOption("Default - Do Nothing", new InstantCommand());
+        commandChooser.setDefaultOption("Default - Do Nothing", new InstantCommand());
 
         // Drive forward for 3 seconds at roughly .5 m/s
         commandChooser.addOption("Drive Forward (~1.5 meters)",  

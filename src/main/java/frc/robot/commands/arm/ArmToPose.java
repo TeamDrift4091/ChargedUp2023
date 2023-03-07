@@ -51,4 +51,8 @@ public class ArmToPose extends CommandBase {
       }
     };
   }
+
+  public static ArmToPose holdPose(Arm arm) {
+    return holdPose(arm, () -> arm.getPosition());
+  }
 }

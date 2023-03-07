@@ -23,11 +23,15 @@ public class Constants {
         public static final double rotationalI = 0.6;
         public static final double rotationalD = 0.5;
 
+        public static final double rotationalPForHolonomic = 4.5;
+        public static final double rotationalIForHolonomic = 0;
+        public static final double rotationalDForHolonomic = 0;
+
         public static final double translationalP = 2.5;
         public static final double translationalI = 0.5;
         public static final double translationalD = .4;
 
-        public static final double CHASSIS_MAX_VELOCITY = 2;
+        public static final double CHASSIS_MAX_VELOCITY = 2.75;
         public static final double CHASSIS_MAX_ACCELERATION = 1;
         public static final double CHASSIS_MAX_ANGULAR_VELOCITY = 2*Math.PI/3.;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
@@ -80,7 +84,7 @@ public class Constants {
         public static final int SHOULDER_ID = 18;
 
         // Motor gear ratios
-        public static final double SHOULDER_GEAR_RATIO = 1;
+        public static final double SHOULDER_GEAR_RATIO = 240;
         public static final double ARM_GEAR_RATIO = 1;
         public static final double METERS_PER_CLIMBER_ROTATION = .05;
 
