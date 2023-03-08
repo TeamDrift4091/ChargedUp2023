@@ -84,18 +84,18 @@ public class Constants {
         public static final int SHOULDER_ID = 18;
 
         // Motor gear ratios
-        public static final double SHOULDER_GEAR_RATIO = 240;
-        public static final double ARM_GEAR_RATIO = 1;
-        public static final double METERS_PER_CLIMBER_ROTATION = .05;
+        public static final double SHOULDER_GEAR_RATIO = 196;
+        public static final double ARM_GEAR_RATIO = 12;
+        public static final double METERS_PER_CLIMBER_ROTATION = .05; // TODO
 
         // Joint height from ground 
         public static final double SHOULDER_HEIGHT_FROM_GROUND = 1.2;
 
         // Arm length limits
-        public static final double ARM_MIN_LENGTH = .8;
-        public static final double ARM_MAX_LENGTH = 1.8;
+        public static final double ARM_MIN_LENGTH = .8; // TODO
+        public static final double ARM_MAX_LENGTH = 1.8; // TODO
 
-        public static final double ARM_MAX_ANGLE = 2*Math.PI/3.;
+        public static final double ARM_MAX_ANGLE = 0;
     }
     public static class ClawConstants {
         public static final int LEFT_CLAW_CHANNEL = 13;

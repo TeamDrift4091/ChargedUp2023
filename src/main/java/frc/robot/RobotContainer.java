@@ -44,7 +44,20 @@ public class RobotContainer {
   private final X52ProfessionalHOTAS flightController = new X52ProfessionalHOTAS(1) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
-    };
+    }
+    
+    public double getJoystickX() {
+      System.out.println(super.getJoystickX() +", " + ((super.getThrottle() - 1) / -2.));
+      return super.getJoystickX() * ((super.getThrottle() - 1) / -2.);
+    }
+
+    public double getJoystickY() {
+      return super.getJoystickY() * ((super.getThrottle() - 1) / -2.);
+    }
+
+    public double getJoystickZ() {
+      return super.getJoystickZ() * ((super.getThrottle() - 1) / -2.);
+    }
   };
   private final XboxController controller = new XboxController(0) {
     public double getRawAxis(int axis) {
@@ -56,8 +69,6 @@ public class RobotContainer {
   private Trigger zAxis;
   private Trigger holdNorth;
   private Trigger holdSouth;
-
-  private Trigger b;
 
   private Trigger testDrivetrian;
   private Trigger toZero;
@@ -151,7 +162,6 @@ public class RobotContainer {
     //   }, arm)
     // );
 
-    // b.onTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, 0.3), arm).andThen(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, 0), arm)));
     // TODO: negative is up
     raiseArm.whileTrue(new RunCommand(() -> arm.setShoulder(ControlMode.PercentOutput, -0.3), arm) {
       @Override
@@ -233,23 +243,21 @@ public class RobotContainer {
   private void flightSimControls() {
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
     drivetrain.setDefaultCommand(
-      new ThrottledJoystickDrive(
+      new JoystickDrive(
         drivetrain,
         () -> flightController.getJoystickY(),
         () -> flightController.getJoystickX(),
-        () -> flightController.getJoystickZ(),
-        () -> (flightController.getThrottle() - 1) / -2. // The throttle's range is [1, -1], but we want [0,1]
+        () -> flightController.getJoystickZ()
       )
     );
 
     zAxis = new AxisTrigger(flightController, X52ProfessionalHOTAS.Axis.JoystickZ.value);
     zAxis.onTrue(
-      new ThrottledJoystickDrive(
+      new JoystickDrive(
         drivetrain,
         () -> flightController.getJoystickY(),
         () -> flightController.getJoystickX(),
-        () -> flightController.getJoystickZ(),
-        () -> (flightController.getThrottle() - 1) / -2. // The throttle's range is [1, -1], but we want [0,1]
+        () -> flightController.getJoystickZ()
       )
     );
     holdNorth = new POVTrigger(flightController, POV.NORTH);
@@ -257,7 +265,9 @@ public class RobotContainer {
       drivetrain, 
       () -> flightController.getJoystickY(),
       () -> flightController.getJoystickX(),
-      () -> new Rotation2d()
+      Robot.isBlueAlliance()?
+        () -> new Rotation2d():
+        () -> Rotation2d.fromDegrees(180)
     ));
 
     holdSouth = new POVTrigger(flightController, POV.SOUTH);
@@ -265,7 +275,9 @@ public class RobotContainer {
       drivetrain, 
       () -> flightController.getJoystickY(),
       () -> flightController.getJoystickX(),
-      () -> Rotation2d.fromDegrees(180)
+      Robot.isBlueAlliance()?
+      () -> Rotation2d.fromDegrees(180):
+      () -> new Rotation2d()
     ));
 
     // testDrivetrian = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.MouseButton.value);
@@ -278,14 +290,13 @@ public class RobotContainer {
     retractArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVRight.value);
     anyPOV = raiseArm.or(lowerArm).or(extendArm).or(retractArm);
     resetArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
+    
 
     // Trigger scoreNearest = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
     // toggleObjectType = new POVTrigger(controller, POV.WEST);
 
     // toCommunity = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.A.value);
     // toLoadingStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
-
-    b = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

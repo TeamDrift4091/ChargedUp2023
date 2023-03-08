@@ -21,14 +21,7 @@ public class Arm extends SubsystemBase {
     // private final WPI_TalonFX clawString; //declares a variable "clawString" of type "TalonFX" which represents the claw string motor
     private final WPI_TalonFX shoulderMotor; // declares a variable "shoulderMotor" of type "WPI_TalonFX" which represents the motor of the shoulder joint
 
-    // Sim / SmartDashboard visuals
-    // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
-    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH*1.5, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
-    private final MechanismRoot2d armRoot = armMechanism2d.getRoot("shoulder", ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*.25, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND);
-    private final MechanismLigament2d arm = armRoot.append(new MechanismLigament2d("arm", ArmConstants.ARM_MIN_LENGTH, -90, 8, new Color8Bit(200, 200, 200)));
-    private final MechanismLigament2d claw = arm.append(new MechanismLigament2d("claw", .3, 90, 7, new Color8Bit(235, 0, 52)));
-
-    private final double startingAngleRadians = -Math.PI/2.;
+    private final double startingAngleRadians = -Math.PI/3.;
 
     private static Arm instance;
     public static Arm getInstance() {
@@ -44,6 +37,13 @@ public class Arm extends SubsystemBase {
 
     private final double extensionTolerance = .1;
     private final Rotation2d angleTolernace = Rotation2d.fromDegrees(5);
+
+    // Sim / SmartDashboard visuals
+    // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
+    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH*1.5, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
+    private final MechanismRoot2d armRoot = armMechanism2d.getRoot("shoulder", ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*.25, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND);
+    private final MechanismLigament2d arm = armRoot.append(new MechanismLigament2d("arm", ArmConstants.ARM_MIN_LENGTH, startingAngleRadians/Math.PI*180, 8, new Color8Bit(200, 200, 200)));
+    private final MechanismLigament2d claw = arm.append(new MechanismLigament2d("claw", .3, -startingAngleRadians/Math.PI*180, 7, new Color8Bit(235, 0, 52)));
 
     private Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
@@ -153,7 +153,21 @@ public class Arm extends SubsystemBase {
      * @return returns false if the desired position is impossible for the arm
      */
     public boolean toPosition(double extension, Rotation2d rotation) {
-        return toPosition(new Translation2d(extension, rotation).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)));
+        if (!isAtDesiredAngle()) {
+            toExtension(ArmConstants.ARM_MIN_LENGTH);
+            // Only start moving the angle if the arm has retracted enough to not be a concern
+            if (getArmExtensionDistance() < ArmConstants.ARM_MIN_LENGTH + extensionTolerance*4) {
+                toAngle(rotation);
+            } else {
+                toAngle(getArmAngle());
+            }
+        } else {
+            // Once the arm has reached it's target angle, extend and maintain position as normal
+            toExtension(extension);
+            toAngle(rotation);
+        }
+        return true;
+        // return toPosition(new Translation2d(extension, rotation).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)));
     }
 
     public void holdPosition() {
@@ -180,6 +194,9 @@ public class Arm extends SubsystemBase {
      * Returns false if the extensions length is impossible for our arm.
      */
     private boolean toExtension(double extensionMeters) {
+        if (!isExtensionAttainable(extensionMeters)) {
+            return false;
+        }
         desiredExtension = extensionMeters;
         // Handle sim visualization
         if (Robot.isSimulation()) {
@@ -205,13 +222,16 @@ public class Arm extends SubsystemBase {
      * @return returns true if the angle is possible
      */
     private boolean isAngleAttainable(Rotation2d rotation) {
-        return (rotation.getRadians() - startingAngleRadians < ArmConstants.ARM_MAX_ANGLE && rotation.getRadians() - startingAngleRadians > 0);
+        return (rotation.getRadians() < ArmConstants.ARM_MAX_ANGLE && rotation.getRadians() - startingAngleRadians > 0);
     }
 
     /**
      * Returns false if the rotation is impossible for our arm.
      */
     private boolean toAngle(Rotation2d rotation) {
+        if (!isAngleAttainable(rotation)) {
+            return false;
+        }
         desiredAngle = rotation;
         // Handle sim visualization
         if (Robot.isSimulation()) {
