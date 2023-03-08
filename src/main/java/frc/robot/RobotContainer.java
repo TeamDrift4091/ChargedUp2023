@@ -20,6 +20,7 @@ import frc.robot.commands.arm.Retract;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.autonomous.DriveToAndScore;
 import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
+import frc.robot.commands.claw.ToggleGrip;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.GameObject;
@@ -38,7 +39,7 @@ public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
   private final Arm arm = Arm.getInstance();
-  // private final Claw claw = Claw.getInstance();
+  private final Claw claw = Claw.getInstance();
 
   // Controllers
   private final X52ProfessionalHOTAS flightController = new X52ProfessionalHOTAS(1) {
@@ -64,7 +65,7 @@ public class RobotContainer {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
   };
-
+ 
   // Buttons and triggers (These are how we schedule commands).
   private Trigger zAxis;
   private Trigger holdNorth;
@@ -81,6 +82,8 @@ public class RobotContainer {
   private Trigger retractArm;
   private Trigger resetArm;
 
+  private Trigger toggleClaw;
+ 
   // private Trigger scoreNearestHigh;
   // private Trigger scoreNearestLow;
   // private Trigger scoreNearestMid;
@@ -132,6 +135,8 @@ public class RobotContainer {
         return new Pose2d(0,0, new Rotation2d());
       }
     }));
+     
+
 
 
 
@@ -179,14 +184,14 @@ public class RobotContainer {
 
 
     // TODO: Retract is extend
-    extendArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, -0.3), arm) {
+    extendArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, -0.6), arm) {
       @Override
       public void end(boolean interrupted) {
           arm.setExtension(ControlMode.PercentOutput, 0);
       }
     });
 
-    retractArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, 0.3), arm) {
+    retractArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, 0.6), arm) {
       @Override
       public void end(boolean interrupted) {
           arm.setExtension(ControlMode.PercentOutput, 0);
@@ -297,6 +302,9 @@ public class RobotContainer {
 
     // toCommunity = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.A.value);
     // toLoadingStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
+
+    toggleClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickTriggerFirstLevel.value);
+    toggleClaw.onTrue(new ToggleGrip(claw));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
