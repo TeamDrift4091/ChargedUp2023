@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.arm.ArmToPose;
+import frc.robot.commands.arm.LowerClaw;
+import frc.robot.commands.arm.RaiseClaw;
 import frc.robot.commands.arm.Retract;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.autonomous.DriveToAndScore;
@@ -48,7 +50,6 @@ public class RobotContainer {
     }
     
     public double getJoystickX() {
-      System.out.println(super.getJoystickX() +", " + ((super.getThrottle() - 1) / -2.));
       return super.getJoystickX() * ((super.getThrottle() - 1) / -2.);
     }
 
@@ -83,6 +84,9 @@ public class RobotContainer {
   private Trigger resetArm;
 
   private Trigger toggleClaw;
+
+  private Trigger raiseClaw;
+  private Trigger lowerClaw;
  
   // private Trigger scoreNearestHigh;
   // private Trigger scoreNearestLow;
@@ -90,8 +94,8 @@ public class RobotContainer {
   // private GameObject gameObjectMode = GameObject.CUBE;
   // private Trigger toggleObjectType;
 
-  // private Trigger toCommunity;
-  // private Trigger toLoadingStation;
+  private Trigger toCommunity;
+  private Trigger toLoadingStation;
 
   public RobotContainer() {
     // Connects the buttons and triggers to commands
@@ -210,6 +214,14 @@ public class RobotContainer {
     //     gameObjectMode = GameObject.CONE;
     //   }
     // }));
+
+    
+    toCommunity.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toCommunityZone(drivetrain));
+    toLoadingStation.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toLoadingStation(drivetrain));
+    
+
+    raiseClaw.whileTrue(new RaiseClaw(arm, .2));
+    lowerClaw.whileTrue(new LowerClaw(arm, -.2));
   }
 
   @SuppressWarnings("unused")
@@ -296,15 +308,17 @@ public class RobotContainer {
     anyPOV = raiseArm.or(lowerArm).or(extendArm).or(retractArm);
     resetArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
     
+    toCommunity = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T1Down.value);
+    toLoadingStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T1Up.value);
 
     // Trigger scoreNearest = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
     // toggleObjectType = new POVTrigger(controller, POV.WEST);
 
-    // toCommunity = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.A.value);
-    // toLoadingStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
-
     toggleClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickTriggerFirstLevel.value);
     toggleClaw.onTrue(new ToggleGrip(claw));
+
+    raiseClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.A.value);
+    lowerClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
