@@ -79,7 +79,7 @@ public class Constants {
     public final class ArmConstants{
         // CAN IDs for three motors
         public static final int LEFT_CLIMBER_ID = 15; 
-        public static final int RIGHT_CLIMBER_ID = 16;
+        // public static final int RIGHT_CLIMBER_ID = 16;
         public static final int CLAW_STRING_ID = 17;
         public static final int SHOULDER_ID = 18;
 

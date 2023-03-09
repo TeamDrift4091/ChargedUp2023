@@ -241,6 +241,12 @@ public class Drivetrain extends SwerveDrivetrain {
     }
   }
 
+  @Override
+  public void periodic() {
+    updateOdometry();
+    field.setRobotPose(getPose2d());
+  }
+
   private ChassisSpeeds simSpeeds = new ChassisSpeeds();
 
   @Override

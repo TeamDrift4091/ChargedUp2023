@@ -17,7 +17,7 @@ import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
     private final WPI_TalonFX leftClimber; //declares a variable "leftClimber" of type "TalonFX" which represents the left climber motor.
-    private final WPI_TalonFX rightClimber; //declares a variable "rightClimber" of type "TalonFX" which represents the right climber motor
+    // private final WPI_TalonFX rightClimber; //declares a variable "rightClimber" of type "TalonFX" which represents the right climber motor
     private final WPI_TalonFX clawString; //declares a variable "clawString" of type "TalonFX" which represents the claw string motor
     private final WPI_TalonFX shoulderMotor; // declares a variable "shoulderMotor" of type "WPI_TalonFX" which represents the motor of the shoulder joint
 
@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase {
 
     private Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
-        rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
+        // rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
         clawString = new WPI_TalonFX(ArmConstants.CLAW_STRING_ID); //creates a nnew TalonFx instance for the claw string motor using its CAN ID
         shoulderMotor = new WPI_TalonFX(ArmConstants.SHOULDER_ID); // creates a new WPI_TalonFX instance for the shoulder of the robot arm using its CAN ID
 
@@ -56,9 +56,9 @@ public class Arm extends SubsystemBase {
         clawString.setNeutralMode(NeutralMode.Brake);
 
         configClimbMotor(leftClimber);
-        configClimbMotor(rightClimber);
+        // configClimbMotor(rightClimber);
         // rightClimber.follow(leftClimber);
-        rightClimber.setInverted(false);
+        // rightClimber.setInverted(false);
         // configDriveMotor(clawString);
         configShoulderMotor(shoulderMotor);
         // Assume the robot starts with its arm down and fully retracted.
@@ -84,7 +84,7 @@ public class Arm extends SubsystemBase {
      */
     public void reset() {
         leftClimber.setSelectedSensorPosition(0);
-        rightClimber.setSelectedSensorPosition(0);
+        // rightClimber.setSelectedSensorPosition(0);
         clawString.setSelectedSensorPosition(0);
         shoulderMotor.setSelectedSensorPosition(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
     }
@@ -105,7 +105,7 @@ public class Arm extends SubsystemBase {
     public void setExtension(ControlMode controlMode, double value){  //method that takes in ControlMode and a double value as parameters, sets the control mode and value parallel for all three motors
         leftClimber.set(controlMode, value); //sets control mode and value for the left climber motor
         // This isn't necessary since rightClimber follows leftClimber
-        rightClimber.set(controlMode, value); //sets control mode and value for the right climber motor
+        // rightClimber.set(controlMode, value); //sets control mode and value for the right climber motor
         clawString.set(controlMode, -value*.1); //sets control mode and value for the claw string motor
     }
 
@@ -294,8 +294,8 @@ public class Arm extends SubsystemBase {
 
     public void stop() {
         leftClimber.stopMotor();
-        rightClimber.stopMotor();
-        // clawString.stopMotor();
+        // rightClimber.stopMotor();
+        clawString.stopMotor();
         shoulderMotor.stopMotor();
     }
 
