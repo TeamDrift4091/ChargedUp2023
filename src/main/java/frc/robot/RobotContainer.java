@@ -68,12 +68,12 @@ public class RobotContainer {
   };
  
   // Buttons and triggers (These are how we schedule commands).
-  private Trigger zAxis;
-  private Trigger holdNorth;
-  private Trigger holdSouth;
+  // private Trigger zAxis;
+  // private Trigger holdNorth;
+  // private Trigger holdSouth;
 
   private Trigger testDrivetrian;
-  private Trigger toZero;
+  // private Trigger toZero;
   private Trigger resetOdometry;
 
   private Trigger anyPOV;
@@ -94,8 +94,8 @@ public class RobotContainer {
   // private GameObject gameObjectMode = GameObject.CUBE;
   // private Trigger toggleObjectType;
 
-  private Trigger toCommunity;
-  private Trigger toLoadingStation;
+  // private Trigger toCommunity;
+  // private Trigger toLoadingStation;
 
   public RobotContainer() {
     // Connects the buttons and triggers to commands
@@ -132,13 +132,13 @@ public class RobotContainer {
     }));
 
     // testDrivetrian.onTrue(new DrivetrainTest(drivetrain));
-    toZero.whileTrue(new DriveToPose(drivetrain, () -> {
-      if (Robot.isRedAlliance()) {
-        return mirror(new Pose2d(0,0, new Rotation2d()));
-      } else {
-        return new Pose2d(0,0, new Rotation2d());
-      }
-    }));
+    // toZero.whileTrue(new DriveToPose(drivetrain, () -> {
+    //   if (Robot.isRedAlliance()) {
+    //     return mirror(new Pose2d(0,0, new Rotation2d()));
+    //   } else {
+    //     return new Pose2d(0,0, new Rotation2d());
+    //   }
+    // }));
      
 
 
@@ -216,8 +216,8 @@ public class RobotContainer {
     // }));
 
     
-    toCommunity.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toCommunityZone(drivetrain));
-    toLoadingStation.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toLoadingStation(drivetrain));
+    // toCommunity.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toCommunityZone(drivetrain));
+    // toLoadingStation.whileTrue(SmartHolonomicTrajectoryCommandGenerator.toLoadingStation(drivetrain));
     
 
     raiseClaw.whileTrue(new RaiseClaw(arm, .2));
@@ -237,7 +237,7 @@ public class RobotContainer {
         );
 
     testDrivetrian = new JoystickButton(controller, XboxController.Button.kA.value);
-    toZero = new JoystickButton(controller, XboxController.Button.kLeftBumper.value);
+    // toZero = new JoystickButton(controller, XboxController.Button.kLeftBumper.value);
     resetOdometry = new JoystickButton(controller, XboxController.Button.kRightBumper.value);
 
     anyPOV = POVTrigger.anyPOV(controller);
@@ -268,37 +268,37 @@ public class RobotContainer {
       )
     );
 
-    zAxis = new AxisTrigger(flightController, X52ProfessionalHOTAS.Axis.JoystickZ.value);
-    zAxis.onTrue(
-      new JoystickDrive(
-        drivetrain,
-        () -> flightController.getJoystickY(),
-        () -> flightController.getJoystickX(),
-        () -> flightController.getJoystickZ()
-      )
-    );
-    holdNorth = new POVTrigger(flightController, POV.NORTH);
-    holdNorth.onTrue(new AbsoluteAngleJoystickDrive(
-      drivetrain, 
-      () -> flightController.getJoystickY(),
-      () -> flightController.getJoystickX(),
-      Robot.isBlueAlliance()?
-        () -> new Rotation2d():
-        () -> Rotation2d.fromDegrees(180)
-    ));
+    // zAxis = new AxisTrigger(flightController, X52ProfessionalHOTAS.Axis.JoystickZ.value);
+    // zAxis.onTrue(
+    //   new JoystickDrive(
+    //     drivetrain,
+    //     () -> flightController.getJoystickY(),
+    //     () -> flightController.getJoystickX(),
+    //     () -> flightController.getJoystickZ()
+    //   )
+    // );
+    // holdNorth = new POVTrigger(flightController, POV.NORTH);
+    // holdNorth.onTrue(new AbsoluteAngleJoystickDrive(
+    //   drivetrain, 
+    //   () -> flightController.getJoystickY(),
+    //   () -> flightController.getJoystickX(),
+    //   Robot.isBlueAlliance()?
+    //     () -> new Rotation2d():
+    //     () -> Rotation2d.fromDegrees(180)
+    // ));
 
-    holdSouth = new POVTrigger(flightController, POV.SOUTH);
-    holdSouth.onTrue(new AbsoluteAngleJoystickDrive(
-      drivetrain, 
-      () -> flightController.getJoystickY(),
-      () -> flightController.getJoystickX(),
-      Robot.isBlueAlliance()?
-      () -> Rotation2d.fromDegrees(180):
-      () -> new Rotation2d()
-    ));
+    // holdSouth = new POVTrigger(flightController, POV.SOUTH);
+    // holdSouth.onTrue(new AbsoluteAngleJoystickDrive(
+    //   drivetrain, 
+    //   () -> flightController.getJoystickY(),
+    //   () -> flightController.getJoystickX(),
+    //   Robot.isBlueAlliance()?
+    //   () -> Rotation2d.fromDegrees(180):
+    //   () -> new Rotation2d()
+    // ));
 
     // testDrivetrian = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.MouseButton.value);
-    toZero = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.E.value);
+    // toZero = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.E.value);
     resetOdometry = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.Fire.value);
 
     raiseArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVUp.value);
@@ -308,8 +308,8 @@ public class RobotContainer {
     anyPOV = raiseArm.or(lowerArm).or(extendArm).or(retractArm);
     resetArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
     
-    toCommunity = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T1Down.value);
-    toLoadingStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T1Up.value);
+    // toCommunity = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T1Down.value);
+    // toLoadingStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T1Up.value);
 
     // Trigger scoreNearest = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
     // toggleObjectType = new POVTrigger(controller, POV.WEST);
