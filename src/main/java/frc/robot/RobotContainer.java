@@ -87,6 +87,8 @@ public class RobotContainer {
 
   private Trigger raiseClaw;
   private Trigger lowerClaw;
+
+  private Trigger autoChargeStation;
  
   // private Trigger scoreNearestHigh;
   // private Trigger scoreNearestLow;
@@ -222,6 +224,8 @@ public class RobotContainer {
 
     raiseClaw.whileTrue(new RaiseClaw(arm, .2));
     lowerClaw.whileTrue(new LowerClaw(arm, -.2));
+
+    autoChargeStation.whileTrue(new BalanceOnChargingStation(drivetrain));
   }
 
   @SuppressWarnings("unused")
@@ -319,6 +323,8 @@ public class RobotContainer {
 
     raiseClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.A.value);
     lowerClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
+
+    autoChargeStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T3Up.value);
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
