@@ -195,10 +195,11 @@ public class Drivetrain extends SwerveDrivetrain {
     fromChassisSpeeds(
       fieldRelative?
         // If the robot is on the red alliance, the field oriented drive needs to change directions.
-        (Robot.isBlueAlliance()?
-          ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
-        :
-          ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))
+        // (Robot.isBlueAlliance()?
+        //   ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
+        // :
+        //   ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))
+        ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
       :
         new ChassisSpeeds(xSpeed, ySpeed, rot)
     );
@@ -214,7 +215,7 @@ public class Drivetrain extends SwerveDrivetrain {
   public Rotation3d getGyroMeasurement() {
     // Certain axes of the gyro are inverted compared to the conventional Rotation3d.
     // Rotation3d assumes counterclockwise about each axis is positive.
-    return new Rotation3d(Units.degreesToRadians(-gyro.getRoll()), Units.degreesToRadians(gyro.getPitch()), Units.degreesToRadians(-gyro.getYaw()));
+    return new Rotation3d(Units.degreesToRadians(-_gyro.getRoll()), Units.degreesToRadians(_gyro.getPitch()), Units.degreesToRadians(-_gyro.getYaw()));
   }
 
   @Override
