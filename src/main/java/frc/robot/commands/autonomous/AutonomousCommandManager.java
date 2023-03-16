@@ -4,24 +4,14 @@
 
 package frc.robot.commands.autonomous;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.Robot;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
-import frc.robot.commands.drivetrain.DriveToPose;
-import frc.robot.commands.drivetrain.DrivetrainTest;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.utility.GameObject;
 import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
 
@@ -46,11 +36,11 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setRotationalPID(DrivetrainConstants.rotationalP, DrivetrainConstants.rotationalI, DrivetrainConstants.rotationalD);
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
-        // Default do nothing to avoid issues
-        commandChooser.setDefaultOption("Default - Do Nothing", new InstantCommand());
+        // Default do nothing to avoid issues // TODO
+        commandChooser.addOption("Default - Do Nothing", new InstantCommand());
 
         // Drive forward for 3 seconds at roughly .5 m/s
-        commandChooser.addOption("Drive Forward (~1.5 meters)",  
+        commandChooser.setDefaultOption("Drive Forward (~1.5 meters)",  
             new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         );
 
@@ -65,7 +55,7 @@ public class AutonomousCommandManager {
         // *******************************************************************************************************************
 
         // Leave the community without doing anything else
-        commandChooser.addOption("Leave Community", SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()));
+        // commandChooser.addOption("Leave Community", SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()));
 
         // // Drive from current position to the nearest cone scoring location and place a cone on the ground
         // commandChooser.addOption("Score Cone - Low",
