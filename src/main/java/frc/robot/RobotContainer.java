@@ -324,7 +324,7 @@ public class RobotContainer {
     raiseClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.A.value);
     lowerClaw = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.B.value);
 
-    autoChargeStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.T3Up.value);
+    autoChargeStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.D.value);
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
