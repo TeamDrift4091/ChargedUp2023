@@ -20,6 +20,7 @@ import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.claw.ToggleGrip;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
+import frc.team1891.common.control.AxisTrigger;
 import frc.team1891.common.control.X52ProfessionalHOTAS;
 
 import static frc.robot.utility.MirrorPoses.mirror;
@@ -159,10 +160,10 @@ public class RobotContainer {
         );
 
 
-    toggleClaw = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+    toggleClaw = new AxisTrigger(xboxController, XboxController.Axis.kRightTrigger.value);
 
-    raiseClaw = new JoystickButton(xboxController, XboxController.Button.kA.value);
-    lowerClaw = new JoystickButton(xboxController, XboxController.Button.kB.value);
+    raiseClaw = new JoystickButton(xboxController, XboxController.Button.kY.value);
+    lowerClaw = new JoystickButton(xboxController, XboxController.Button.kA.value);
   }
 
   @SuppressWarnings("unused")
