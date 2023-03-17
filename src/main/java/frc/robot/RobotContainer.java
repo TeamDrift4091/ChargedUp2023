@@ -51,6 +51,8 @@ public class RobotContainer {
       return super.getJoystickZ() * ((super.getThrottle() - 1) / -2.);
     }
   };
+
+  
   private final XboxController xboxController = new XboxController(0) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
@@ -63,7 +65,6 @@ public class RobotContainer {
   private Trigger lowerArm;
   private Trigger extendArm;
   private Trigger retractArm;
-  private Trigger resetArm;
 
   private Trigger toggleClaw;
 
@@ -94,7 +95,7 @@ public class RobotContainer {
 
 
     xBoxControls();
-    flightSimControls();
+    // flightSimControls();
 
 
     resetOdometry.onTrue(new InstantCommand(() -> {
@@ -136,8 +137,6 @@ public class RobotContainer {
       }
     });
 
-    resetArm.onTrue(new InstantCommand(() -> arm.reset()));
-
 
     raiseClaw.whileTrue(new RaiseClaw(arm, .2));
     lowerClaw.whileTrue(new LowerClaw(arm, -.2));
@@ -164,6 +163,13 @@ public class RobotContainer {
 
     raiseClaw = new JoystickButton(xboxController, XboxController.Button.kY.value);
     lowerClaw = new JoystickButton(xboxController, XboxController.Button.kA.value);
+
+    resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
+
+    raiseArm = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+    lowerArm = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
+    extendArm = new JoystickButton(xboxController, XboxController.Button.kB.value);
+    retractArm = new JoystickButton(xboxController, XboxController.Button.kX.value);
   }
 
   @SuppressWarnings("unused")
@@ -178,13 +184,14 @@ public class RobotContainer {
     //   )
     // );
 
-    resetOdometry = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.Fire.value);
 
-    raiseArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVUp.value);
-    lowerArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVDown.value);
-    extendArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVLeft.value);
-    retractArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVRight.value);
-    resetArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.C.value);
+
+    // resetOdometry = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.Fire.value);
+
+    // raiseArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVUp.value);
+    // lowerArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVDown.value);
+    // extendArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVLeft.value);
+    // retractArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVRight.value);
 
     autoChargeStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.D.value);
   }
