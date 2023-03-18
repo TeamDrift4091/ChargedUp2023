@@ -107,14 +107,14 @@ public class RobotContainer {
     }));
 
     // TODO: negative is up
-    raiseArm.whileTrue(new RunCommand(() -> arm.setShoulder(ControlMode.PercentOutput, -0.3), arm) {
+    raiseArm.whileTrue(new RunCommand(() -> arm.setShoulder(ControlMode.PercentOutput, -0.4), arm) {
       @Override
       public void end(boolean interrupted) {
           arm.setShoulder(ControlMode.PercentOutput, 0);
       }
     });
 
-    lowerArm.whileTrue(new RunCommand(() -> arm.setShoulder(ControlMode.PercentOutput, 0.3), arm) {
+    lowerArm.whileTrue(new RunCommand(() -> arm.setShoulder(ControlMode.PercentOutput, 0.4), arm) {
       @Override
       public void end(boolean interrupted) {
           arm.setShoulder(ControlMode.PercentOutput, 0);
@@ -123,14 +123,14 @@ public class RobotContainer {
 
 
     // TODO: Retract is extend
-    extendArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, -0.6), arm) {
+    extendArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, -1.0), arm) {
       @Override
       public void end(boolean interrupted) {
           arm.setExtension(ControlMode.PercentOutput, 0);
       }
     });
 
-    retractArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, 0.6), arm) {
+    retractArm.whileTrue(new RunCommand(() -> arm.setExtension(ControlMode.PercentOutput, 1.0), arm) {
       @Override
       public void end(boolean interrupted) {
           arm.setExtension(ControlMode.PercentOutput, 0);
