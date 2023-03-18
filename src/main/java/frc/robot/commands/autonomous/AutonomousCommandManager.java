@@ -60,7 +60,7 @@ public class AutonomousCommandManager {
         commandChooser.setDefaultOption("Charge Station",
             new SequentialCommandGroup(
                 new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(2.25)
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.6, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         ));
 
         // *******************************************************************************************************************
