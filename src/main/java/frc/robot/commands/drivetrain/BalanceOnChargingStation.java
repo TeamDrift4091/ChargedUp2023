@@ -4,18 +4,15 @@
 
 package frc.robot.commands.drivetrain;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class BalanceOnChargingStation extends CommandBase {
   private final Drivetrain drivetrain;
-  private final ProfiledPIDController angleController = Drivetrain.getTunedRotationalPIDController();
+  // private final ProfiledPIDController angleController = Drivetrain.getTunedRotationalPIDController();
   /**
    * Creates a new command that uses the tilt of the gyro to drive in the direction of the steepest incline.
    * @param drivetrain
@@ -28,7 +25,7 @@ public class BalanceOnChargingStation extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    angleController.reset(drivetrain.getPose2d().getRotation().getRadians());
+    // angleController.reset(drivetrain.getPose2d().getRotation().getRadians());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -59,25 +56,29 @@ public class BalanceOnChargingStation extends CommandBase {
     steepestSlope = steepestSlope.rotateBy(new Rotation2d(gyro.getZ()).minus(drivetrain.getPose2d().getRotation()));
 
     // Calculate nearest square angle
-    double currentChassisAngle = drivetrain.getPose2d().getRotation().getRadians();
-    double nearestSquareChassisAngle = Math.floor((currentChassisAngle + Math.PI / 4.) / Math.PI/2.) * Math.PI/2.;
+    // double currentChassisAngle = drivetrain.getPose2d().getRotation().getRadians();
+    // double nearestSquareChassisAngle = Math.floor((currentChassisAngle + Math.PI / 4.) / Math.PI/2.) * Math.PI/2.;
+
+    // Controls how fast the robot moves when trying to balance.
+    double MOVEMENT_SPEED = 1; // in meters per second
 
     drivetrain.fromChassisSpeeds(new ChassisSpeeds(
-      steepestSlope.getCos()*drivetrain.getConfig().chassisMaxVelocityMetersPerSecond*.3,
-      steepestSlope.getSin()*drivetrain.getConfig().chassisMaxVelocityMetersPerSecond*.3,
-      angleController.calculate(currentChassisAngle, nearestSquareChassisAngle)
+      steepestSlope.getCos()*MOVEMENT_SPEED,
+      steepestSlope.getSin()*MOVEMENT_SPEED,
+      // angleController.calculate(currentChassisAngle, nearestSquareChassisAngle),
+      0
     ));
 
-    // Show direction of steepest slope in SmartDashboard on the Modules (Field2d).
-    if (SmartDashboard.getBoolean("Modules Robot Relative", true)) {
-      steepestSlope = steepestSlope.rotateBy(drivetrain.getPose2d().getRotation());
-    }
+    // // Show direction of steepest slope in SmartDashboard on the Modules (Field2d).
+    // if (SmartDashboard.getBoolean("Modules Robot Relative", true)) {
+    //   steepestSlope = steepestSlope.rotateBy(drivetrain.getPose2d().getRotation());
+    // }
 
-    SmartDashboard.putNumberArray("Modules (Field2d)/Steepest Slope", new double[] {
-      DrivetrainConstants.WHEEL_BASE_LENGTH_METERS,
-      DrivetrainConstants.WHEEL_BASE_WIDTH_METERS,
-      steepestSlope.getDegrees()
-    });
+    // SmartDashboard.putNumberArray("Modules (Field2d)/Steepest Slope", new double[] {
+    //   DrivetrainConstants.WHEEL_BASE_LENGTH_METERS,
+    //   DrivetrainConstants.WHEEL_BASE_WIDTH_METERS,
+    //   steepestSlope.getDegrees()
+    // });
   }
 
   // Called once the command ends or is interrupted.
@@ -85,10 +86,11 @@ public class BalanceOnChargingStation extends CommandBase {
   public void end(boolean interrupted) {
     drivetrain.stop();
 
-    SmartDashboard.putNumberArray("Modules (Field2d)/Steepest Slope", new double[] {-10, -10, 0});
+    // SmartDashboard.putNumberArray("Modules (Field2d)/Steepest Slope", new double[] {-10, -10, 0});
   }
 
-  // Returns true when the command should end.
+  // We won't return true just in case the station is tipped by something else and we need to 
+  // rebalance. It ensure we don't end the command too early.
   @Override
   public boolean isFinished() {
     return false;
