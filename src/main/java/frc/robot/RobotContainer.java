@@ -201,7 +201,7 @@ public class RobotContainer {
     // Post to SmartDashboard that the command has started
     SmartDashboard.putBoolean("Autonomous Finished", false);
     // We need this in order to avoid a crash when running the same command twice. In a match this would never happen
-    // but it's necessary for testing.
+    // but it's necessary for testing.  We only need it because were adding the .andThen with the SmartDashboard output.
     CommandScheduler.getInstance().clearComposedCommands();
     // Returns the selected command from AutonomousCommandManager and appends a simple instant command that tells
     // SmartDashboard the command finished.

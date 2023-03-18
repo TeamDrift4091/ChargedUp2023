@@ -36,11 +36,11 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setRotationalPID(DrivetrainConstants.rotationalP, DrivetrainConstants.rotationalI, DrivetrainConstants.rotationalD);
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
-        // Default do nothing to avoid issues // TODO
+        // Default do nothing to avoid issues // TODO it's not default cause we have issus with Glass.
         commandChooser.addOption("Default - Do Nothing", new InstantCommand());
 
         // Drive forward for 3 seconds at roughly .5 m/s
-        commandChooser.setDefaultOption("Drive Forward (~1.5 meters)",  
+        commandChooser.addOption("Drive Forward (~1.5 meters)",  
             new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         );
 
@@ -48,6 +48,8 @@ public class AutonomousCommandManager {
         commandChooser.addOption("Drive Backward (~1.5 meters)",
             new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         );
+
+        commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
 
         // *******************************************************************************************************************
         // NOTE the robot must be placed so that the Limelight can see an AprilTag if you want to attempt anything besides the 
