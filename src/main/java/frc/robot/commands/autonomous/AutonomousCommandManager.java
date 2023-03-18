@@ -45,10 +45,10 @@ public class AutonomousCommandManager {
             new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         );
 
-        commandChooser.addOption("Backup then Forward",
+        commandChooser.setDefaultOption("Backup then Forward",
             new SequentialCommandGroup(
                 new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(4)
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6)
         ));
 
         // Drive backward for 3 seconds at roughly .5 m/s
@@ -57,7 +57,7 @@ public class AutonomousCommandManager {
         );
 
         // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
-        commandChooser.setDefaultOption("Charge Station",
+        commandChooser.addOption("Charge Station",
             new SequentialCommandGroup(
                 new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
                 new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.6, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
