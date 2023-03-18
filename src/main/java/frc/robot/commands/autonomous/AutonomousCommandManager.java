@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
@@ -40,16 +41,27 @@ public class AutonomousCommandManager {
         commandChooser.addOption("Default - Do Nothing", new InstantCommand());
 
         // Drive forward for 3 seconds at roughly .5 m/s
-        commandChooser.addOption("Drive Forward (~1.5 meters)",  
+        commandChooser.addOption("Drive Forward (~1.5 meters)",
             new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         );
+
+        commandChooser.addOption("Backup then Forward",
+            new SequentialCommandGroup(
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(4)
+        ));
 
         // Drive backward for 3 seconds at roughly .5 m/s
         commandChooser.addOption("Drive Backward (~1.5 meters)",
             new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         );
 
-        commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
+        // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
+        commandChooser.setDefaultOption("Charge Station",
+            new SequentialCommandGroup(
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(2)
+        ));
 
         // *******************************************************************************************************************
         // NOTE the robot must be placed so that the Limelight can see an AprilTag if you want to attempt anything besides the 
