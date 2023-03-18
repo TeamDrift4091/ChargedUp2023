@@ -50,22 +50,22 @@ public class Constants {
         public static class FrontLeft {
             public static final int DRIVE_CHANNEL = 3;
             public static final int STEER_CHANNEL = 4;
-            public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
         }
         public static class FrontRight {
             public static final int DRIVE_CHANNEL = 7;
             public static final int STEER_CHANNEL = 8;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI-Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = -Math.PI-Math.PI/2.;
         }
         public static class BackLeft {
             public static final int DRIVE_CHANNEL = 1;
             public static final int STEER_CHANNEL = 2;
-            public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
         }
         public static class BackRight {
             public static final int DRIVE_CHANNEL = 5;
             public static final int STEER_CHANNEL = 6;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI-Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = -Math.PI-Math.PI/2.;
         }
     }
     public static class VisionConstants {

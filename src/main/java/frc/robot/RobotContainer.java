@@ -165,6 +165,10 @@ public class RobotContainer {
     lowerClaw = new JoystickButton(xboxController, XboxController.Button.kA.value);
 
     resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
+    // autoChargeStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.D.value);
+
+    autoChargeStation = new Trigger(() -> xboxController.getRightTriggerAxis() > 0.1);
+
 
     raiseArm = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
     lowerArm = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
@@ -193,7 +197,6 @@ public class RobotContainer {
     // extendArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVLeft.value);
     // retractArm = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.JoystickBlackPOVRight.value);
 
-    autoChargeStation = new JoystickButton(flightController, X52ProfessionalHOTAS.Button.D.value);
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
