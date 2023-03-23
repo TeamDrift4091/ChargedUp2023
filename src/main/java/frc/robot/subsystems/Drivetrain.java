@@ -73,8 +73,8 @@ public class Drivetrain extends SwerveDrivetrain {
       rotationalI,
       rotationalD,
       new TrapezoidProfile.Constraints(
-        _config.chassisMaxAngularVelocityRadiansPerSecond,
-        _config.chassisMaxAngularAccelerationRadiansPerSecondSquared
+        _config.chassisMaxAngularVelocityRadiansPerSecond(),
+        _config.chassisMaxAngularAccelerationRadiansPerSecondSquared()
       )
     );
     controller.enableContinuousInput(0, 2*Math.PI);
@@ -188,9 +188,9 @@ public class Drivetrain extends SwerveDrivetrain {
 
   @Override
   public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed *= config.chassisMaxVelocityMetersPerSecond;
-    ySpeed *= config.chassisMaxVelocityMetersPerSecond;
-    rot *= config.chassisMaxAngularVelocityRadiansPerSecond;
+    xSpeed *= config.chassisMaxVelocityMetersPerSecond();
+    ySpeed *= config.chassisMaxVelocityMetersPerSecond();
+    rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
 
     fromChassisSpeeds(
       fieldRelative?

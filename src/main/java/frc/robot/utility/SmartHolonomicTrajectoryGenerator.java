@@ -84,8 +84,8 @@ public class SmartHolonomicTrajectoryGenerator {
 
 
         TrajectoryConfig config = new TrajectoryConfig(
-            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
+            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond(),
+            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared()
         ).setKinematics(drivetrain.getKinematics());
 
         HolonomicTrajectory trajectory = HolonomicTrajectoryGenerator.generateHolonomicTrajectory(
@@ -151,8 +151,8 @@ public class SmartHolonomicTrajectoryGenerator {
 
 
         TrajectoryConfig config = new TrajectoryConfig(
-            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
+            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond(),
+            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared()
         ).setKinematics(drivetrain.getKinematics());
 
         HolonomicTrajectory trajectory = HolonomicTrajectoryGenerator.generateHolonomicTrajectory(
@@ -208,8 +208,8 @@ public class SmartHolonomicTrajectoryGenerator {
 
 
         TrajectoryConfig config = new TrajectoryConfig(
-            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
+            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond(),
+            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared()
         ).setKinematics(drivetrain.getKinematics());
 
         HolonomicTrajectory trajectory = HolonomicTrajectoryGenerator.generateHolonomicTrajectory(

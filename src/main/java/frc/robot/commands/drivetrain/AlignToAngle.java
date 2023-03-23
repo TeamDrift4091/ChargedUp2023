@@ -27,8 +27,8 @@ public class AlignToAngle extends CommandBase {
 
     angleController = new ProfiledPIDController(.007, .001, 0,
       new TrapezoidProfile.Constraints(
-        drivetrain.getConfig().chassisMaxAngularVelocityRadiansPerSecond,
-        drivetrain.getConfig().chassisMaxAngularAccelerationRadiansPerSecondSquared
+        drivetrain.getConfig().chassisMaxAngularVelocityRadiansPerSecond(),
+        drivetrain.getConfig().chassisMaxAngularAccelerationRadiansPerSecondSquared()
       )
     );
     angleController.enableContinuousInput(0, 360);
