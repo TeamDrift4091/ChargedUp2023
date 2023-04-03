@@ -84,8 +84,8 @@ public class SmartHolonomicTrajectoryGenerator {
 
 
         TrajectoryConfig config = new TrajectoryConfig(
-            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
+            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond(),
+            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared()
         ).setKinematics(drivetrain.getKinematics());
 
         HolonomicTrajectory trajectory = HolonomicTrajectoryGenerator.generateHolonomicTrajectory(
@@ -151,8 +151,65 @@ public class SmartHolonomicTrajectoryGenerator {
 
 
         TrajectoryConfig config = new TrajectoryConfig(
-            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond,
-            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared
+            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond(),
+            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared()
+        ).setKinematics(drivetrain.getKinematics());
+
+        HolonomicTrajectory trajectory = HolonomicTrajectoryGenerator.generateHolonomicTrajectory(
+            points,
+            headings,
+            config
+        );
+
+        return trajectory;
+    }
+
+    public static HolonomicTrajectory leaveCommunity(Drivetrain drivetrain) {
+        Pose2d robotPose = drivetrain.getPose2d();
+        ArrayList<Pair<Pose2d, Rotation2d>> posesAndHeadings = new ArrayList<Pair<Pose2d, Rotation2d>>(List.of(new Pair<Pose2d, Rotation2d>(new Pose2d(5.5,2.75, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(180))));
+        if (robotPose.getY() < 2.75) {
+            posesAndHeadings.add(0, new Pair<Pose2d,Rotation2d>(new Pose2d(3, .75, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(180)));
+            posesAndHeadings.add(1, new Pair<Pose2d,Rotation2d>(new Pose2d(5.5, .75, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(180)));
+        } else {
+            posesAndHeadings.add(0, new Pair<Pose2d,Rotation2d>(new Pose2d(3, 4.75, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(180)));
+            posesAndHeadings.add(1, new Pair<Pose2d,Rotation2d>(new Pose2d(5.5, 4.75, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(180)));
+        }
+        // posesAndHeadings = new ArrayList<Pair<Pose2d, Rotation2d>>(List.of(
+        //     new Pair<Pose2d, Rotation2d>(new Pose2d(10, 7, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0)), // Waypoint necessary to avoid collisions from anywhere in the center of the field to the final point
+        //     new Pair<Pose2d, Rotation2d>(new Pose2d(14, 7, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0)) // Final point - right in front of the loading station
+        // ));
+        
+        // TODO: POINTS
+
+        if (Robot.isRedAlliance()) {
+            for (int i = 0; i < posesAndHeadings.size(); i++) {
+                posesAndHeadings.set(i, mirror(posesAndHeadings.get(i)));
+            }
+        }
+
+        if (posesAndHeadings.get(0).getFirst().relativeTo(robotPose).getTranslation().getNorm() < .5 && posesAndHeadings.size() == 1) {
+            throw new TrajectoryGenerationException("This trajectory is too small, and will likely result in a malformed spline.");
+        }
+
+        Pose2d robotNoRotationPose = new Pose2d(robotPose.getTranslation(), new Rotation2d());
+        posesAndHeadings.add(0, new Pair<Pose2d,Rotation2d>(new Pose2d(robotPose.getTranslation(), posesAndHeadings.get(0).getFirst().relativeTo(robotNoRotationPose).getTranslation().getAngle()), robotPose.getRotation()));
+
+        Pose2d[] poses = new Pose2d[posesAndHeadings.size()];
+        Rotation2d[] rotations = new Rotation2d[posesAndHeadings.size()];
+        for (int i = 0; i < posesAndHeadings.size(); i++) {
+            poses[i] = posesAndHeadings.get(i).getFirst();
+            rotations[i] = posesAndHeadings.get(i).getSecond();
+        }
+
+        ArrayList<Pose2d> points = new ArrayList<>();
+        Collections.addAll(points, poses);
+        ArrayList<Rotation2d> headings = new ArrayList<>();
+        Collections.addAll(headings, rotations);
+
+
+        TrajectoryConfig config = new TrajectoryConfig(
+            drivetrain.getConfig().chassisMaxVelocityMetersPerSecond(),
+            drivetrain.getConfig().chassisMaxAccelerationMetersPerSecondSquared()
         ).setKinematics(drivetrain.getKinematics());
 
         HolonomicTrajectory trajectory = HolonomicTrajectoryGenerator.generateHolonomicTrajectory(

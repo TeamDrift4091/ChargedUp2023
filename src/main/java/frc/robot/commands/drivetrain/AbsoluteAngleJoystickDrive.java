@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class AbsoluteAngleJoystickDrive extends CommandBase {
@@ -36,7 +37,7 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
     this.strafe = strafe;
     this.rotation = rotation;
 
-    angleController = Drivetrain.getTunedRotationalPIDControllerForHolonomicDrive();
+    angleController = Drivetrain.getTunedRotationalPIDController();
   }
 
   // Called when the command is initially scheduled.
@@ -54,6 +55,7 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
     targetAngle = (targetAngle == null) ? previousTarget : targetAngle;
 
     double twist = angleController.calculate(currentAngle.getRadians(), targetAngle.getRadians());
+    twist /= DrivetrainConstants.CHASSIS_MAX_ANGULAR_VELOCITY;
 
     drivetrain.holonomicDrive(-forward.getAsDouble(), -strafe.getAsDouble(), twist, true);
 

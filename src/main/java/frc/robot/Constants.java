@@ -23,11 +23,15 @@ public class Constants {
         public static final double rotationalI = 0.6;
         public static final double rotationalD = 0.5;
 
+        public static final double rotationalPForHolonomic = 4.5;
+        public static final double rotationalIForHolonomic = 0;
+        public static final double rotationalDForHolonomic = 0;
+
         public static final double translationalP = 2.5;
         public static final double translationalI = 0.5;
         public static final double translationalD = .4;
 
-        public static final double CHASSIS_MAX_VELOCITY = 2;
+        public static final double CHASSIS_MAX_VELOCITY = 2.75;
         public static final double CHASSIS_MAX_ACCELERATION = 1;
         public static final double CHASSIS_MAX_ANGULAR_VELOCITY = 2*Math.PI/3.;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
@@ -46,22 +50,22 @@ public class Constants {
         public static class FrontLeft {
             public static final int DRIVE_CHANNEL = 3;
             public static final int STEER_CHANNEL = 4;
-            public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
         }
         public static class FrontRight {
             public static final int DRIVE_CHANNEL = 7;
             public static final int STEER_CHANNEL = 8;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI-Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = -Math.PI-Math.PI/2.;
         }
         public static class BackLeft {
             public static final int DRIVE_CHANNEL = 1;
             public static final int STEER_CHANNEL = 2;
-            public static final double ENCODER_OFFSET_RADIANS = -Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
         }
         public static class BackRight {
             public static final int DRIVE_CHANNEL = 5;
             public static final int STEER_CHANNEL = 6;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI-Math.PI/2.;
+            public static final double ENCODER_OFFSET_RADIANS = -Math.PI-Math.PI/2.;
         }
     }
     public static class VisionConstants {
@@ -75,23 +79,23 @@ public class Constants {
     public final class ArmConstants{
         // CAN IDs for three motors
         public static final int LEFT_CLIMBER_ID = 15; 
-        public static final int RIGHT_CLIMBER_ID = 16;
+        // public static final int RIGHT_CLIMBER_ID = 16;
         public static final int CLAW_STRING_ID = 17;
         public static final int SHOULDER_ID = 18;
 
         // Motor gear ratios
-        public static final double SHOULDER_GEAR_RATIO = 1;
-        public static final double ARM_GEAR_RATIO = 1;
-        public static final double METERS_PER_CLIMBER_ROTATION = .05;
+        public static final double SHOULDER_GEAR_RATIO = 196;
+        public static final double ARM_GEAR_RATIO = 12;
+        public static final double METERS_PER_CLIMBER_ROTATION = .05; // TODO
 
         // Joint height from ground 
         public static final double SHOULDER_HEIGHT_FROM_GROUND = 1.2;
 
         // Arm length limits
-        public static final double ARM_MIN_LENGTH = .8;
-        public static final double ARM_MAX_LENGTH = 1.8;
+        public static final double ARM_MIN_LENGTH = .8; // TODO
+        public static final double ARM_MAX_LENGTH = 1.8; // TODO
 
-        public static final double ARM_MAX_ANGLE = 2*Math.PI/3.;
+        public static final double ARM_MAX_ANGLE = 0;
     }
     public static class ClawConstants {
         public static final int PNEUMATIC_BACK_CHANNEL = 0;

@@ -2,6 +2,9 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "Drivetrain": {
+          "open": true
+        },
         "Robot (Field2d)": {
           "open": true
         },
@@ -10,6 +13,7 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Arm (Mechanism2d)": "Mechanism2d",
       "/SmartDashboard/Autonomous Chooser": "String Chooser",
       "/SmartDashboard/Holonomic Trajectory (Field2d)": "Field2d",
       "/SmartDashboard/Modules (Field2d)": "Field2d",
@@ -17,6 +21,11 @@
       "/SmartDashboard/Robot (Field2d)": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Arm (Mechanism2d)": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Autonomous Chooser": {
         "window": {
           "visible": true
@@ -98,7 +107,6 @@
       "/SmartDashboard/Robot (Field2d)": {
         "bottom": 544,
         "height": 8.013679504394531,
-        "image": "C:\\Users\\Steph\\OnceDriven\\Programming\\FRC\\TeamDRIFT\\ChargedUp2023\\2023-field.png",
         "left": 46,
         "right": 1088,
         "top": 36,
@@ -118,7 +126,7 @@
     "Plot <0>": {
       "plots": [
         {
-          "height": -35,
+          "height": 2,
           "series": [
             {
               "color": [
@@ -146,7 +154,7 @@
               "autoFit": true
             }
           ],
-          "height": -35,
+          "height": 2,
           "series": [
             {
               "color": [
@@ -178,7 +186,7 @@
           ]
         },
         {
-          "height": -35,
+          "height": 2,
           "series": [
             {
               "color": [

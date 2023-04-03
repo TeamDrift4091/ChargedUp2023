@@ -4,20 +4,17 @@
 
 package frc.robot.commands.autonomous;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.commands.drivetrain.DriveToPose;
-import frc.robot.commands.drivetrain.DrivetrainTest;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.utility.SmartHolonomicTrajectoryCommandGenerator;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
-
-import static frc.robot.utility.MirrorPoses.mirror;
 
 /**
  * Helper class to hold our autonomous commands.
@@ -30,7 +27,7 @@ public class AutonomousCommandManager {
     private AutonomousCommandManager() {}
 
     // This object appears on SmartDashboard, allowing us to select which autonomous routine we want, while the robot is on.
-    private static SendableChooser<Pair<Command, Command>> commandChooser = new SendableChooser<>();
+    private static SendableChooser<Command> commandChooser = new SendableChooser<>();
 
     /**
      * Loads the sendable chooser with all the autonomous options.
@@ -40,100 +37,105 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setRotationalPID(DrivetrainConstants.rotationalP, DrivetrainConstants.rotationalI, DrivetrainConstants.rotationalD);
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
-        commandChooser.setDefaultOption("Default - Exit Community", new Pair<Command, Command>(
-            new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 5, Rotation2d.fromDegrees(190))),
-            new DriveToPose(Drivetrain.getInstance(), () -> mirror(new Pose2d(5, 5, Rotation2d.fromDegrees(190))))
+        // Default do nothing to avoid issues // TODO it's not default cause we have issus with Glass.
+        commandChooser.addOption("Default - Do Nothing", new InstantCommand());
+
+        // Drive forward for 3 seconds at roughly .5 m/s
+        commandChooser.addOption("Drive Forward (~1.5 meters)",
+            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
+        );
+
+        commandChooser.setDefaultOption("Backup then Forward",
+            new SequentialCommandGroup(
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6)
         ));
 
-        commandChooser.addOption("Circle", new Pair<Command,Command>(HolonomicTrajectoryCommandGenerator.generate(
-            Drivetrain.getInstance(), true, 
-            new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),
-            new Pair<Pose2d, Rotation2d>(new Pose2d(1,0, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0))
-        ), HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), true, 
-            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0))),
-            mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1, 0, Rotation2d.fromDegrees(0)), Rotation2d.fromDegrees(0)))
-        )));
+        // Drive backward for 3 seconds at roughly .5 m/s
+        commandChooser.addOption("Drive Backward (~1.5 meters)",
+            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
+        );
 
-        commandChooser.addOption("Curve Trajectory", new Pair<Command, Command>(
-            HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
-                new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(1,2, new Rotation2d()), Rotation2d.fromDegrees(90)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(135))
-            ),
-            HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1,2, new Rotation2d()), Rotation2d.fromDegrees(90))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(135)))
-            )
+        // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
+        commandChooser.addOption("Charge Station",
+            new SequentialCommandGroup(
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.6, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
         ));
 
-        // commandChooser.addOption("Curve Trajectory without Explicit Angle Control", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-        //     mirror(new Pose2d(0,0, new Rotation2d())),
-        //     mirror(new Pose2d(1,2, new Rotation2d())),
-        //     mirror(new Pose2d(4,4, Rotation2d.fromDegrees(90)))
-        // ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(4, 4, Rotation2d.fromDegrees(90))))
+        // *******************************************************************************************************************
+        // NOTE the robot must be placed so that the Limelight can see an AprilTag if you want to attempt anything besides the 
+        // default command and the simple drive commands.
+        // *******************************************************************************************************************
+
+        // Leave the community without doing anything else
+        // commandChooser.addOption("Leave Community", SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()));
+
+        // // Drive from current position to the nearest cone scoring location and place a cone on the ground
+        // commandChooser.addOption("Score Cone - Low",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CONE, ScoringLevel.LOW)
         // );
 
-        commandChooser.addOption("Curve Trajectory 2", new Pair<Command, Command>(
-            HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-                new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(3,2, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(90)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(110)), Rotation2d.fromDegrees(110)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(4,6, Rotation2d.fromDegrees(20)), Rotation2d.fromDegrees(20)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(7,3, Rotation2d.fromDegrees(-40)), Rotation2d.fromDegrees(140)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(8,1, Rotation2d.fromDegrees(-150)), Rotation2d.fromDegrees(0)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(5,1, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(0)))
-                .andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 1, Rotation2d.fromDegrees(0)))),
-            HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(0,0, new Rotation2d()), Rotation2d.fromDegrees(0))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3,2, Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(90))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(4,4, Rotation2d.fromDegrees(110)), Rotation2d.fromDegrees(110))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(4,6, Rotation2d.fromDegrees(20)), Rotation2d.fromDegrees(20))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(7,3, Rotation2d.fromDegrees(-40)), Rotation2d.fromDegrees(140))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(8,1, Rotation2d.fromDegrees(-150)), Rotation2d.fromDegrees(0))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(5,1, Rotation2d.fromDegrees(180)), Rotation2d.fromDegrees(0))))
-                .andThen(new DriveToPose(Drivetrain.getInstance(), () -> mirror(new Pose2d(5, 1, Rotation2d.fromDegrees(0)))))
-        ));
-        
-        // commandChooser.addOption("Curve Trajectory 2 without Explicit Angle Control", HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false, false,
-        //     mirror(new Pose2d(0,0, new Rotation2d())),
-        //     mirror(new Pose2d(3,2, Rotation2d.fromDegrees(90))),
-        //     mirror(new Pose2d(4,4, Rotation2d.fromDegrees(110))),
-        //     mirror(new Pose2d(4,6, Rotation2d.fromDegrees(20))),
-        //     mirror(new Pose2d(7,3, Rotation2d.fromDegrees(-40))),
-        //     mirror(new Pose2d(8,1, Rotation2d.fromDegrees(-150))),
-        //     mirror(new Pose2d(5,1, Rotation2d.fromDegrees(180)))
-        // ).andThen(new DriveToPose(Drivetrain.getInstance(), () -> new Pose2d(5, 1, Rotation2d.fromDegrees(180))))
+        // // Drive from current position to the nearest cone scoring location and place a cone on the lower spike
+        // commandChooser.addOption("Score Cone - Mid",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CONE, ScoringLevel.MEDIUM)
         // );
 
-        commandChooser.addOption("Clover Test", new Pair<Command, Command>(
-            HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
-                new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI)),
-                new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))
-            ), HolonomicTrajectoryCommandGenerator.generate(Drivetrain.getInstance(), false,
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))), 
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(1, 2, new Rotation2d(3*Math.PI/2.)), new Rotation2d(0))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 3, new Rotation2d(Math.PI)), new Rotation2d(3*Math.PI/2.))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(3, 2, new Rotation2d(Math.PI/2.)), new Rotation2d(Math.PI))),
-                mirror(new Pair<Pose2d, Rotation2d>(new Pose2d(2, 1, new Rotation2d(0)), new Rotation2d(Math.PI/2.))))
-        ));
+        // // Drive from current position to the nearest cone scoring location and place a cone on the highest spike
+        // commandChooser.addOption("Score Cone - High",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CONE, ScoringLevel.HIGH)
+        // );
 
-        commandChooser.addOption("Module Test", new Pair<Command,Command>(new DrivetrainTest(Drivetrain.getInstance()), new DrivetrainTest(Drivetrain.getInstance())));
+        // // Drive from current position to the nearest cube scoring location and place a cube on the ground
+        // commandChooser.addOption("Score Cube - Low",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CUBE, ScoringLevel.LOW)
+        // );
+
+        // // Drive from current position to the nearest cube scoring location and place a cube on the middle level
+        // commandChooser.addOption("Score Cube - Mid",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CUBE, ScoringLevel.MEDIUM)
+        // );
+
+        // // Drive from current position to the nearest cube scoring location and place a cube on the highest level
+        // commandChooser.addOption("Score Cube - High",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CUBE, ScoringLevel.HIGH)
+        // );
+
+        // Drive from current position to the nearest cone scoring location and place a cone on the ground and leave the community
+        // commandChooser.addOption("Score Cone and Leave - Low",
+            // new DriveToAndScore(Drivetrain.getInstance(), new Arm(), new Claw(), GameObject.CONE, ScoringLevel.LOW)
+            //     .andThen(SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()))
+        // );
+
+        // // Drive from current position to the nearest cone scoring location and place a cone on the lower spike and leave the community
+        // commandChooser.addOption("Score Cone and Leave - Mid",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CONE, ScoringLevel.MEDIUM)
+        //     .andThen(SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()))
+        // );
+
+        // // Drive from current position to the nearest cone scoring location and place a cone on the highest spike and leave the community
+        // commandChooser.addOption("Score Cone and Leave - High",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CONE, ScoringLevel.HIGH)
+            //     .andThen(SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()))
+        // );
+
+        // // Drive from current position to the nearest cube scoring location and place a cube on the ground and leave the community
+        // commandChooser.addOption("Score Cube and Leave - Low",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CUBE, ScoringLevel.LOW)
+            //     .andThen(SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()))
+        // );
+
+        // // Drive from current position to the nearest cube scoring location and place a cube on the middle level and leave the community
+        // commandChooser.addOption("Score Cube and Leave - Mid",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CUBE, ScoringLevel.MEDIUM)
+            //     .andThen(SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()))
+        // );
+
+        // // Drive from current position to the nearest cube scoring location and place a cube on the highest level and leave the community
+        // commandChooser.addOption("Score Cube and Leave - High",
+        //     new DriveToAndScore(Drivetrain.getInstance(), Arm.getInstance(), Claw.getInstance(), GameObject.CUBE, ScoringLevel.HIGH)
+            //     .andThen(SmartHolonomicTrajectoryCommandGenerator.leaveCommunity(Drivetrain.getInstance()))
+        // );
 
         SmartDashboard.putData("Autonomous Chooser", commandChooser);
     }
@@ -144,9 +146,6 @@ public class AutonomousCommandManager {
     public static Command getSelected() {
         // SmartDashboard.putBoolean("Autonomous Finished", false);
         // return commandChooser.getSelected().andThen(() -> SmartDashboard.putBoolean("Autonomous Finished", true));
-        if (Robot.isBlueAlliance()) {
-            return commandChooser.getSelected().getFirst();
-        }
-        return commandChooser.getSelected().getSecond();
+        return commandChooser.getSelected();
     }
 }

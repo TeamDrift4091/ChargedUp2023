@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
 public class JoystickDrive extends CommandBase {
-  private final Drivetrain drivetrain;
-  private final DoubleSupplier forward, strafe, twist;
+  protected final Drivetrain drivetrain;
+  protected final DoubleSupplier forward, strafe, twist;
   /**
    * Creates a new command that drives the robot according to joystick inputs (Double Suppliers). This is field oriented.
    * @param drivetrain

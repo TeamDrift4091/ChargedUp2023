@@ -17,18 +17,11 @@ import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
     private final WPI_TalonFX leftClimber; //declares a variable "leftClimber" of type "TalonFX" which represents the left climber motor.
-    private final WPI_TalonFX rightClimber; //declares a variable "rightClimber" of type "TalonFX" which represents the right climber motor
+    // private final WPI_TalonFX rightClimber; //declares a variable "rightClimber" of type "TalonFX" which represents the right climber motor
     private final WPI_TalonFX clawString; //declares a variable "clawString" of type "TalonFX" which represents the claw string motor
     private final WPI_TalonFX shoulderMotor; // declares a variable "shoulderMotor" of type "WPI_TalonFX" which represents the motor of the shoulder joint
 
-    // Sim / SmartDashboard visuals
-    // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
-    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH*1.5, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
-    private final MechanismRoot2d armRoot = armMechanism2d.getRoot("shoulder", ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*.25, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND);
-    private final MechanismLigament2d arm = armRoot.append(new MechanismLigament2d("arm", ArmConstants.ARM_MIN_LENGTH, -90, 8, new Color8Bit(200, 200, 200)));
-    private final MechanismLigament2d claw = arm.append(new MechanismLigament2d("claw", .3, 90, 7, new Color8Bit(235, 0, 52)));
-
-    private final double startingAngleRadians = -Math.PI/2.;
+    private final double startingAngleRadians = -Math.PI/3.;
 
     private static Arm instance;
     public static Arm getInstance() {
@@ -40,32 +33,50 @@ public class Arm extends SubsystemBase {
 
     private double desiredExtension = ArmConstants.ARM_MIN_LENGTH;
     private Rotation2d desiredAngle = new Rotation2d(startingAngleRadians);
+    private double clawOffset = 0;
 
     private final double extensionTolerance = .1;
     private final Rotation2d angleTolernace = Rotation2d.fromDegrees(5);
 
+    // Sim / SmartDashboard visuals
+    // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
+    private final Mechanism2d armMechanism2d = new Mechanism2d(ArmConstants.ARM_MAX_LENGTH*1.5, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*1.5);
+    private final MechanismRoot2d armRoot = armMechanism2d.getRoot("shoulder", ArmConstants.SHOULDER_HEIGHT_FROM_GROUND*.25, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND);
+    private final MechanismLigament2d arm = armRoot.append(new MechanismLigament2d("arm", ArmConstants.ARM_MIN_LENGTH, startingAngleRadians/Math.PI*180, 8, new Color8Bit(200, 200, 200)));
+    private final MechanismLigament2d claw = arm.append(new MechanismLigament2d("claw", .3, -startingAngleRadians/Math.PI*180, 7, new Color8Bit(235, 0, 52)));
+
     private Arm(){
         leftClimber = new WPI_TalonFX(ArmConstants.LEFT_CLIMBER_ID); //creates a new talonFX instance for the left climber motor  using its CAN ID
-        rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
+        // rightClimber = new WPI_TalonFX(ArmConstants.RIGHT_CLIMBER_ID); //creates a new TalonFx instance for the right climber motor using its CAN ID
         clawString = new WPI_TalonFX(ArmConstants.CLAW_STRING_ID); //creates a nnew TalonFx instance for the claw string motor using its CAN ID
         shoulderMotor = new WPI_TalonFX(ArmConstants.SHOULDER_ID); // creates a new WPI_TalonFX instance for the shoulder of the robot arm using its CAN ID
 
-        configDriveMotor(leftClimber);
-        configDriveMotor(rightClimber);
-        rightClimber.follow(leftClimber);
-        configDriveMotor(clawString);
-        configDriveMotor(shoulderMotor);
+
+        clawString.configFactoryDefault();
+        clawString.setNeutralMode(NeutralMode.Brake);
+
+        configClimbMotor(leftClimber);
+        // configClimbMotor(rightClimber);
+        // rightClimber.follow(leftClimber);
+        // rightClimber.setInverted(false);
+        // configDriveMotor(clawString);
+        configShoulderMotor(shoulderMotor);
         // Assume the robot starts with its arm down and fully retracted.
         reset();
         // Publish arm visualization.
         SmartDashboard.putData("Arm (Mechanism2d)", armMechanism2d);
     }
 
+    public void adjustClawStringOffset(double offsetAdjustment) {
+        clawOffset += offsetAdjustment;
+    }
+
     /** 
      * If for some reason the claw isn't level when the robot turns on, or it drifts as the match goes on, this method can be used to adjust the sensor measurement of the claw string
      */ 
     public void offsetClawString(double offset) {
-        clawString.setSelectedSensorPosition(clawString.getSelectedSensorPosition() + offset);
+        // clawString.setSelectedSensorPosition(clawString.getSelectedSensorPosition() + offset);
+        clawOffset = offset;
     }
 
     /**
@@ -73,7 +84,7 @@ public class Arm extends SubsystemBase {
      */
     public void reset() {
         leftClimber.setSelectedSensorPosition(0);
-        rightClimber.setSelectedSensorPosition(0);
+        // rightClimber.setSelectedSensorPosition(0);
         clawString.setSelectedSensorPosition(0);
         shoulderMotor.setSelectedSensorPosition(startingAngleRadians / (2*Math.PI) * ArmConstants.SHOULDER_GEAR_RATIO * 2048);
     }
@@ -95,7 +106,7 @@ public class Arm extends SubsystemBase {
         leftClimber.set(controlMode, value); //sets control mode and value for the left climber motor
         // This isn't necessary since rightClimber follows leftClimber
         // rightClimber.set(controlMode, value); //sets control mode and value for the right climber motor
-        clawString.set(controlMode, value); //sets control mode and value for the claw string motor
+        clawString.set(controlMode, -value*.1); //sets control mode and value for the claw string motor
     }
 
     /**
@@ -108,6 +119,10 @@ public class Arm extends SubsystemBase {
         shoulderMotor.set(controlMode, value);
     }
 
+    public void setClawString(ControlMode controlMode, double value) {
+        clawString.set(controlMode, value);
+    }
+
     /**
      * Drive the robot arm to get the tip of the arm to the desired position relative to the robot center and the height above the ground.
      * @param position the target position
@@ -117,16 +132,19 @@ public class Arm extends SubsystemBase {
         Translation2d target = position.minus((new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)));
         double extension = target.getNorm();
         Rotation2d rotation = target.getAngle();
+        // System.out.println(isAngleAttainable(rotation)+", "+isExtensionAttainable(extension));
         // Don't do anything if the desired movement isn't possible
-        if (!(isAngleAttainable(rotation) && isExtensionAttainable(extension))) {
-            return false;
-        }
+        // if (!(isAngleAttainable(rotation) && isExtensionAttainable(extension))) {
+        //     return false;
+        // }
         // Only start extending if the arm is at the right angle to protect against hitting something
         if (!isAtDesiredAngle()) {
             toExtension(ArmConstants.ARM_MIN_LENGTH);
             // Only start moving the angle if the arm has retracted enough to not be a concern
             if (getArmExtensionDistance() < ArmConstants.ARM_MIN_LENGTH + extensionTolerance*4) {
                 toAngle(rotation);
+            } else {
+                toAngle(getArmAngle());
             }
         } else {
             // Once the arm has reached it's target angle, extend and maintain position as normal
@@ -143,7 +161,25 @@ public class Arm extends SubsystemBase {
      * @return returns false if the desired position is impossible for the arm
      */
     public boolean toPosition(double extension, Rotation2d rotation) {
-        return toPosition(new Translation2d(extension, rotation).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)));
+        if (!isAtDesiredAngle()) {
+            toExtension(ArmConstants.ARM_MIN_LENGTH);
+            // Only start moving the angle if the arm has retracted enough to not be a concern
+            if (getArmExtensionDistance() < ArmConstants.ARM_MIN_LENGTH + extensionTolerance*4) {
+                toAngle(rotation);
+            } else {
+                toAngle(getArmAngle());
+            }
+        } else {
+            // Once the arm has reached it's target angle, extend and maintain position as normal
+            toExtension(extension);
+            toAngle(rotation);
+        }
+        return true;
+        // return toPosition(new Translation2d(extension, rotation).plus(new Translation2d(0, ArmConstants.SHOULDER_HEIGHT_FROM_GROUND)));
+    }
+
+    public void holdPosition() {
+        toPosition(desiredExtension, desiredAngle);
     }
 
     /**
@@ -166,6 +202,9 @@ public class Arm extends SubsystemBase {
      * Returns false if the extensions length is impossible for our arm.
      */
     private boolean toExtension(double extensionMeters) {
+        if (!isExtensionAttainable(extensionMeters)) {
+            return false;
+        }
         desiredExtension = extensionMeters;
         // Handle sim visualization
         if (Robot.isSimulation()) {
@@ -191,13 +230,16 @@ public class Arm extends SubsystemBase {
      * @return returns true if the angle is possible
      */
     private boolean isAngleAttainable(Rotation2d rotation) {
-        return (rotation.getRadians() - startingAngleRadians < ArmConstants.ARM_MAX_ANGLE && rotation.getRadians() - startingAngleRadians > 0);
+        return (rotation.getRadians() < ArmConstants.ARM_MAX_ANGLE && rotation.getRadians() - startingAngleRadians > 0);
     }
 
     /**
      * Returns false if the rotation is impossible for our arm.
      */
     private boolean toAngle(Rotation2d rotation) {
+        if (!isAngleAttainable(rotation)) {
+            return false;
+        }
         desiredAngle = rotation;
         // Handle sim visualization
         if (Robot.isSimulation()) {
@@ -252,7 +294,7 @@ public class Arm extends SubsystemBase {
 
     public void stop() {
         leftClimber.stopMotor();
-        rightClimber.stopMotor();
+        // rightClimber.stopMotor();
         clawString.stopMotor();
         shoulderMotor.stopMotor();
     }
@@ -260,20 +302,29 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         // Update the visualization with real values.
-        if (Robot.isReal()) {
-            arm.setAngle(getArmAngle());
-            claw.setAngle(-getArmAngle().getDegrees());
-            arm.setLength(getArmExtensionDistance());
-        }
+        // if (Robot.isReal()) {
+        //     arm.setAngle(getArmAngle());
+        //     claw.setAngle(-getArmAngle().getDegrees()+clawOffset/100.);
+        //     arm.setLength(getArmExtensionDistance());
+        // }
     }
-    private static void configDriveMotor(WPI_TalonFX driveMotor){
-        driveMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
-        driveMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
+    private static void configClimbMotor(WPI_TalonFX climbMotor){
+        climbMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
+        climbMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
         // Default PID will likely be good enough.
         // driveMotor.config_kP(0, 1);
         // driveMotor.config_kI(0, 0);
         // driveMotor.config_kD(0, 0);
         // driveMotor.config_kF(0, 0);
+    }
 
+    private static void configShoulderMotor(WPI_TalonFX shoulderMotor){
+        shoulderMotor.configFactoryDefault(); // resets the motor to its factory default settings. 
+        shoulderMotor.setNeutralMode(NeutralMode.Brake); //sets neutral mode of robot to break.
+        // Default PID will likely be good enough.
+        // driveMotor.config_kP(0, 1);
+        // driveMotor.config_kI(0, 0);
+        // driveMotor.config_kD(0, 0);
+        // driveMotor.config_kF(0, 0);
     }
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -62,20 +63,6 @@ public class Drivetrain extends SwerveDrivetrain {
   }
 
   /**
-   * Returns a new PID controller that can be used to control the position of the robot chassis in one axis.
-   * @return a new {@link PIDController}
-   */
-  public static PIDController getTunedTranslationalPIDControllerForHolonomicDrive() {
-    PIDController controller =  new PIDController(
-      translationalP,
-      translationalI,
-      translationalD
-    );
-    controller.setTolerance(TRANSLATIONAL_TOLERANCE);
-    return controller;
-  }
-
-  /**
    * Returns a new PID controller that can be used to control the angle of the robot chassis.
    * The output will be in radians per second, representing the desired angular velocity.
    * @return a new {@link ProfiledPIDController}
@@ -86,8 +73,8 @@ public class Drivetrain extends SwerveDrivetrain {
       rotationalI,
       rotationalD,
       new TrapezoidProfile.Constraints(
-        _config.chassisMaxAngularVelocityRadiansPerSecond,
-        _config.chassisMaxAngularAccelerationRadiansPerSecondSquared
+        _config.chassisMaxAngularVelocityRadiansPerSecond(),
+        _config.chassisMaxAngularAccelerationRadiansPerSecondSquared()
       )
     );
     controller.enableContinuousInput(0, 2*Math.PI);
@@ -101,9 +88,9 @@ public class Drivetrain extends SwerveDrivetrain {
    */
   public static ProfiledPIDController getTunedRotationalPIDControllerForHolonomicDrive() {
     ProfiledPIDController controller = new ProfiledPIDController(
-      rotationalP,
-      rotationalI,
-      rotationalD,
+      rotationalPForHolonomic,
+      rotationalIForHolonomic,
+      rotationalDForHolonomic,
       new TrapezoidProfile.Constraints(1, 1)
     );
     controller.enableContinuousInput(0, 2*Math.PI);
@@ -164,6 +151,7 @@ public class Drivetrain extends SwerveDrivetrain {
     configDriveMotor(backLeftDriveMotor);
     configDriveMotor(backRightDriveMotor);
 
+    // TODO: There may be some issues because this isn't reset before poseEstimator is initialized (@BullBotsLib).
     gyro.reset();
 
     photonVision = PhotonVisionWrapper.getInstance();
@@ -181,34 +169,37 @@ public class Drivetrain extends SwerveDrivetrain {
 
     if (Robot.isRedAlliance()) {
       poseEstimator.resetPosition(gyro.getRotation2d(), getSwerveModulePositions(), mirror(getPose2d()));
+    } else {
+      poseEstimator.resetPosition(gyro.getRotation2d(), getSwerveModulePositions(), getPose2d());
     }
   }
 
   private static void configDriveMotor(WPI_TalonFX motor) {
     motor.configFactoryDefault();
+    motor.setNeutralMode(NeutralMode.Brake);
     motor.config_kP(0, driveP);
     motor.config_kI(0, driveI);
     motor.config_kD(0, driveD);
     motor.config_kF(0, driveF);
     // Not sure if this will need tuned, I think it should be faster than the chassis
     // max to make sure the expected chassis movement isn't limited in auto.
-    motor.configClosedloopRamp(.8*CHASSIS_MAX_VELOCITY/CHASSIS_MAX_ACCELERATION);
+    motor.configClosedloopRamp(.4*CHASSIS_MAX_VELOCITY/CHASSIS_MAX_ACCELERATION);
   }
 
   @Override
   public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed *= config.chassisMaxVelocityMetersPerSecond;
-    ySpeed *= config.chassisMaxVelocityMetersPerSecond;
-    rot *= config.chassisMaxAngularVelocityRadiansPerSecond;
+    xSpeed *= config.chassisMaxVelocityMetersPerSecond();
+    ySpeed *= config.chassisMaxVelocityMetersPerSecond();
+    rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
 
     fromChassisSpeeds(
       fieldRelative?
         // If the robot is on the red alliance, the field oriented drive needs to change directions.
-        (Robot.isBlueAlliance()
-?
-          ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
-        :
-          ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))
+        // (Robot.isBlueAlliance()?
+        //   ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
+        // :
+        //   ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation().rotateBy(Rotation2d.fromDegrees(180))))
+        ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
       :
         new ChassisSpeeds(xSpeed, ySpeed, rot)
     );
@@ -224,7 +215,7 @@ public class Drivetrain extends SwerveDrivetrain {
   public Rotation3d getGyroMeasurement() {
     // Certain axes of the gyro are inverted compared to the conventional Rotation3d.
     // Rotation3d assumes counterclockwise about each axis is positive.
-    return new Rotation3d(Units.degreesToRadians(-gyro.getRoll()), Units.degreesToRadians(gyro.getPitch()), Units.degreesToRadians(-gyro.getYaw()));
+    return new Rotation3d(Units.degreesToRadians(-_gyro.getRoll()), Units.degreesToRadians(_gyro.getPitch()), Units.degreesToRadians(-_gyro.getYaw()));
   }
 
   @Override
@@ -249,6 +240,12 @@ public class Drivetrain extends SwerveDrivetrain {
         }
       }
     }
+  }
+
+  @Override
+  public void periodic() {
+    updateOdometry();
+    field.setRobotPose(getPose2d());
   }
 
   private ChassisSpeeds simSpeeds = new ChassisSpeeds();
