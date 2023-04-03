@@ -14,7 +14,7 @@ public class Constants {
     public static class DrivetrainConstants {
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
         public static final double DRIVETRAIN_DRIVE_GEAR_RATIO = 4.71; // 14T REV MAXSwerve
-        // public static final double DRIVETRAIN_STEER_GEAR_RATIO = 1;
+        public static final double DRIVETRAIN_STEER_GEAR_RATIO = 1; // TODO: Find actual gear ratio
         // Dimensions
         public static final double WHEEL_BASE_LENGTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
         public static final double WHEEL_BASE_WIDTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
@@ -50,22 +50,26 @@ public class Constants {
         public static class FrontLeft {
             public static final int DRIVE_CHANNEL = 3;
             public static final int STEER_CHANNEL = 4;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
+            public static final int CANCODER_CHANNEL = 10;
+            public static final double ENCODER_OFFSET_RADIANS = 0;
         }
         public static class FrontRight {
             public static final int DRIVE_CHANNEL = 7;
             public static final int STEER_CHANNEL = 8;
-            public static final double ENCODER_OFFSET_RADIANS = -Math.PI-Math.PI/2.;
+            public static final int CANCODER_CHANNEL = 12;
+            public static final double ENCODER_OFFSET_RADIANS = 0;
         }
         public static class BackLeft {
             public static final int DRIVE_CHANNEL = 1;
             public static final int STEER_CHANNEL = 2;
-            public static final double ENCODER_OFFSET_RADIANS = Math.PI/2.;
+            public static final int CANCODER_CHANNEL = 9;
+            public static final double ENCODER_OFFSET_RADIANS = 0;
         }
         public static class BackRight {
             public static final int DRIVE_CHANNEL = 5;
             public static final int STEER_CHANNEL = 6;
-            public static final double ENCODER_OFFSET_RADIANS = -Math.PI-Math.PI/2.;
+            public static final int CANCODER_CHANNEL = 11;
+            public static final double ENCODER_OFFSET_RADIANS = 0;
         }
     }
     public static class VisionConstants {
@@ -75,30 +79,5 @@ public class Constants {
             new Translation3d(0, 0, 0), // in meters
             new Rotation3d()
         );
-    }
-    public final class ArmConstants{
-        // CAN IDs for three motors
-        public static final int LEFT_CLIMBER_ID = 15; 
-        // public static final int RIGHT_CLIMBER_ID = 16;
-        public static final int CLAW_STRING_ID = 17;
-        public static final int SHOULDER_ID = 18;
-
-        // Motor gear ratios
-        public static final double SHOULDER_GEAR_RATIO = 196;
-        public static final double ARM_GEAR_RATIO = 12;
-        public static final double METERS_PER_CLIMBER_ROTATION = .05; // TODO
-
-        // Joint height from ground 
-        public static final double SHOULDER_HEIGHT_FROM_GROUND = 1.2;
-
-        // Arm length limits
-        public static final double ARM_MIN_LENGTH = .8; // TODO
-        public static final double ARM_MAX_LENGTH = 1.8; // TODO
-
-        public static final double ARM_MAX_ANGLE = 0;
-    }
-    public static class ClawConstants {
-        public static final int PNEUMATIC_BACK_CHANNEL = 0;
-        public static final int PNEUMATIC_FORWORD_CHANNEL = 1;
     }
 }

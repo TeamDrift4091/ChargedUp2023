@@ -10,6 +10,7 @@ import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.WPI_CANCoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -23,10 +24,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.utility.MAX_NeoSteerController_BugFix;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
+import frc.team1891.common.drivetrains.swervemodules.BSF_FalconSteerController;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
 import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
 import frc.team1891.common.drivetrains.swervemodules.SteerController;
@@ -117,19 +118,27 @@ public class Drivetrain extends SwerveDrivetrain {
   // Objects to hold module related things, such as motors, and motor wrappers (drive and steer controllers)
   private static final WPI_TalonFX frontLeftDriveMotor = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveMotor, _config);
-  private static final SteerController frontLeftSteerController = new MAX_NeoSteerController_BugFix(FrontLeft.STEER_CHANNEL, FrontLeft.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
+  private static final WPI_TalonFX frontLeftSteerMotor = new WPI_TalonFX(FrontLeft.STEER_CHANNEL);
+  private static final WPI_CANCoder frontLeftEncoder = new WPI_CANCoder(FrontLeft.CANCODER_CHANNEL);
+  private static final SteerController frontLeftSteerController = new BSF_FalconSteerController(frontLeftSteerMotor, frontLeftEncoder, DRIVETRAIN_STEER_GEAR_RATIO, FrontLeft.ENCODER_OFFSET_RADIANS);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
   private static final WPI_TalonFX frontRightDriveMotor = new WPI_TalonFX(FrontRight.DRIVE_CHANNEL);
   private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveMotor, _config);
-  private static final SteerController frontRightSteerController = new MAX_NeoSteerController_BugFix(FrontRight.STEER_CHANNEL, FrontRight.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
+  private static final WPI_TalonFX frontRightSteerMotor = new WPI_TalonFX(FrontRight.STEER_CHANNEL);
+  private static final WPI_CANCoder frontRightEncoder = new WPI_CANCoder(FrontRight.CANCODER_CHANNEL);
+  private static final SteerController frontRightSteerController = new BSF_FalconSteerController(frontRightSteerMotor, frontRightEncoder, DRIVETRAIN_STEER_GEAR_RATIO, FrontRight.ENCODER_OFFSET_RADIANS);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final WPI_TalonFX backLeftDriveMotor = new WPI_TalonFX(BackLeft.DRIVE_CHANNEL);
   private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveMotor, _config);
-  private static final SteerController backLeftSteerController = new MAX_NeoSteerController_BugFix(BackLeft.STEER_CHANNEL, BackLeft.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
+  private static final WPI_TalonFX backLeftSteerMotor = new WPI_TalonFX(BackLeft.STEER_CHANNEL);
+  private static final WPI_CANCoder backLeftEncoder = new WPI_CANCoder(BackLeft.CANCODER_CHANNEL);
+  private static final SteerController backLeftSteerController = new BSF_FalconSteerController(backLeftSteerMotor, backLeftEncoder, DRIVETRAIN_STEER_GEAR_RATIO, BackLeft.ENCODER_OFFSET_RADIANS);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
   private static final WPI_TalonFX backRightDriveMotor = new WPI_TalonFX(BackRight.DRIVE_CHANNEL);
   private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveMotor, _config);
-  private static final SteerController backRightSteerController = new MAX_NeoSteerController_BugFix(BackRight.STEER_CHANNEL, BackRight.ENCODER_OFFSET_RADIANS, steerP, steerI, steerD, steerF);
+  private static final WPI_TalonFX backRightSteerMotor = new WPI_TalonFX(BackRight.STEER_CHANNEL);
+  private static final WPI_CANCoder backRightEncoder = new WPI_CANCoder(BackRight.CANCODER_CHANNEL);
+  private static final SteerController backRightSteerController = new BSF_FalconSteerController(backRightSteerMotor, backRightEncoder, DRIVETRAIN_STEER_GEAR_RATIO, BackRight.ENCODER_OFFSET_RADIANS);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
@@ -146,10 +155,16 @@ public class Drivetrain extends SwerveDrivetrain {
       MODULE_MAX_VELOCITY
     );
 
+    // Steer motors are configured internally by the BSF_FalconSteerController
     configDriveMotor(frontLeftDriveMotor);
     configDriveMotor(frontRightDriveMotor);
     configDriveMotor(backLeftDriveMotor);
     configDriveMotor(backRightDriveMotor);
+    
+    configCANCoder(frontLeftEncoder);
+    configCANCoder(frontRightEncoder);
+    configCANCoder(backLeftEncoder);
+    configCANCoder(backRightEncoder);
 
     // TODO: There may be some issues because this isn't reset before poseEstimator is initialized (@BullBotsLib).
     gyro.reset();
@@ -184,6 +199,10 @@ public class Drivetrain extends SwerveDrivetrain {
     // Not sure if this will need tuned, I think it should be faster than the chassis
     // max to make sure the expected chassis movement isn't limited in auto.
     motor.configClosedloopRamp(.4*CHASSIS_MAX_VELOCITY/CHASSIS_MAX_ACCELERATION);
+  }
+
+  private static void configCANCoder(WPI_CANCoder encoder) {
+    encoder.configFactoryDefault();
   }
 
   @Override
