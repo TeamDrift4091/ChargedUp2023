@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.drivetrain.*;
@@ -29,7 +30,7 @@ public class RobotContainer {
     };
   };
  
-  private Trigger resetOdometry;
+  private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
 
   public RobotContainer() {
     // Connects the buttons and triggers to commands

@@ -160,7 +160,7 @@ public class Drivetrain extends SwerveDrivetrain {
     configDriveMotor(frontRightDriveMotor);
     configDriveMotor(backLeftDriveMotor);
     configDriveMotor(backRightDriveMotor);
-    
+
     configCANCoder(frontLeftEncoder);
     configCANCoder(frontRightEncoder);
     configCANCoder(backLeftEncoder);
@@ -179,6 +179,7 @@ public class Drivetrain extends SwerveDrivetrain {
     //   LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
     //   LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
     // }
+    
     
     configureSmartDashboard();
 
@@ -261,11 +262,11 @@ public class Drivetrain extends SwerveDrivetrain {
     }
   }
 
-  @Override
-  public void periodic() {
-    updateOdometry();
-    field.setRobotPose(getPose2d());
-  }
+  // @Override
+  // public void periodic() {
+  //   updateOdometry();
+  //   field.setRobotPose(getPose2d());
+  // }
 
   private ChassisSpeeds simSpeeds = new ChassisSpeeds();
 

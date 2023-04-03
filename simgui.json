@@ -1,18 +1,4 @@
 {
-  "HALProvider": {
-    "Other Devices": {
-      "CANCoder[9]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[2]": {
-        "header": {
-          "open": true
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -221,9 +207,6 @@
         }
       },
       "SmartDashboard": {
-        "Modules (Field2d)": {
-          "open": true
-        },
         "RotatingHolonomicDriveController": {
           "open": true
         },
