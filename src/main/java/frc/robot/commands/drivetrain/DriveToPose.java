@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -50,6 +51,7 @@ public class DriveToPose extends CommandBase {
     xController.reset();
     yController.reset();
     targetPose = targetPoseSupplier.get();
+    SmartDashboard.putNumberArray("Robot (Field2d)/targetPose", new double[] {targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -71,6 +73,7 @@ public class DriveToPose extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     drivetrain.stop();
+    SmartDashboard.putNumberArray("Robot (Field2d)/targetPose", new double[] {-100, -100, 0});
   }
 
   // Returns true when the command should end.

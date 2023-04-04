@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
+import frc.robot.commands.autonomous.DriveToAndScore;
+import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 
@@ -30,7 +32,12 @@ public class RobotContainer {
     };
   };
  
+  // Triggers and button bindings
   private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
+
+  private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
+  private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
+  private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
 
   public RobotContainer() {
     // Connects the buttons and triggers to commands
@@ -64,6 +71,10 @@ public class RobotContainer {
         drivetrain.resetOdometry(mirror(new Pose2d()));
       }
     }));
+
+    scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));
+    scoreMid.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.MID));
+    scoreHigh.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HIGH));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

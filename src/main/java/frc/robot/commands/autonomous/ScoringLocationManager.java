@@ -6,126 +6,73 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.utility.GameObject;
 
 import static frc.robot.utility.MirrorPoses.mirror;
 
 public class ScoringLocationManager {
-    private static final double DISTANCE_FROM_WALL = 2;
     private ScoringLocationManager() {}
 
-    /** https://www.desmos.com/calculator/hmytultfgz */
     public enum ScoringLevel {
-        LOW(1.191514, 0.254, 1.191514, 0.254),
-        MEDIUM(0.79629, 0.851662, 0.79629, 1.1176),
-        HIGH(0.363728, 1.1557, 0.363728, 1.4224);
+        HYBRID(.2, 0),
+        MID(.6, Math.PI/5.),
+        HIGH(1, Math.PI/3.);
 
-        private final Translation2d cube, cone;
-
-        private ScoringLevel(double xCube, double yCube, double xCone, double yCone) {
-            this.cube = new Translation2d(xCube, yCube);
-            this.cone = new Translation2d(xCone, yCone);
+        private final double motorSpeed;
+        private final double clawAngleRadians;
+        ScoringLevel(double motorSpeed, double clawAngleRadians) {
+            this.motorSpeed = motorSpeed;
+            this.clawAngleRadians = clawAngleRadians;
         }
 
-        public Translation2d getPoseFromWall(GameObject gameObject) {
-            if (gameObject.equals(GameObject.CONE)) {
-                return cone;
-            }
-            return cube;
+        public double getRequiredMotorSpeed() {
+            return motorSpeed;
         }
-    }
-
-    public enum Grid {
-        BY_LOADING_ZONE(2),
-        COOPERTITION(1),
-        BY_WALL(0);
-
-        public static Grid[] allGrids = new Grid[] {
-            Grid.BY_LOADING_ZONE,
-            Grid.COOPERTITION,
-            Grid.BY_WALL
-        };
-
-        private final Translation2d centerPose;
-
-        private Grid(int gridNumber) {
-            // centerPose = new Translation2d(DISTANCE_FROM_WALL, gridNumber*(1.6764)+1.069975);
-            centerPose = new Translation2d(DISTANCE_FROM_WALL, gridNumber*Units.inchesToMeters(66)+Units.inchesToMeters(42));
-        }
-
-        public Translation2d getRequiredDrivetrainPose() {
-            return centerPose;
+        
+        public double getRequiredClawAngle() {
+            return clawAngleRadians;
         }
     }
 
-    public enum GridSection {
-        // CONE1(-0.569975),
-        // CUBE(0),
-        // CONE2(0.569975);
-        CONE1(-Units.inchesToMeters(22)),
-        CUBE(0),
-        CONE2(Units.inchesToMeters(22));
+    private static final double DISTANCE_FROM_WALL = 2;
 
-        public static GridSection[] allCones = new GridSection[] {
-            GridSection.CONE1,
-            GridSection.CONE2
-        };
+    public static Pose2d getNearestNodeAlignment() {
+        final double currentPoseY = Drivetrain.getInstance().getPose2d().getY();
+        final double nodeSpacing = Units.inchesToMeters(22);
+        final double firstNodePosition = Units.inchesToMeters(20);
+        final double offset = firstNodePosition - (nodeSpacing / 2.);
 
-        private final Translation2d offsetFromGridCenter;
-
-        private GridSection(double yOffset) {
-            offsetFromGridCenter = new Translation2d(0, yOffset);
+        final int nodeNumber = (int) ((currentPoseY - offset) / nodeSpacing);
+        // Return if the robot's pose is too high
+        if (nodeNumber > 8) {
+            return Drivetrain.getInstance().getPose2d();
         }
-
-        public Translation2d getRequiredDrivetrainPose(Grid grid) {
-            return grid.centerPose.plus(offsetFromGridCenter);
+        
+        final double nearestPoseY = nodeNumber * nodeSpacing + (nodeSpacing / 2.) + offset;
+        if (Robot.isRedAlliance()) {
+            return mirror(new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180)));
         }
+        return new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180));
     }
 
-    public static Pose2d getNearestScoringPosition(GameObject gameObject) {
-        Drivetrain drivetrain = Drivetrain.getInstance();
-        Translation2d currentPos = drivetrain.getPose2d().getTranslation();
+    public static Pose2d getNearestCubeNodeAlignment() {
+        final double currentPoseY = Drivetrain.getInstance().getPose2d().getY();
+        final double nodeSpacing = Units.inchesToMeters(66);
+        final double firstNodePosition = Units.inchesToMeters(42);
+        final double offset = firstNodePosition - (nodeSpacing / 2.);
 
-        // Find nearest Grid
-        Grid nearestGrid = Grid.COOPERTITION;
-        double nearestDistance = Double.POSITIVE_INFINITY;
-        for (Grid grid : Grid.allGrids) {
-            double dist = currentPos.getDistance(grid.centerPose);
-            if (dist < nearestDistance) {
-                nearestDistance = dist;
-                nearestGrid = grid;
-            }
+        final int nodeNumber = (int) ((currentPoseY - offset) / nodeSpacing);
+        // Return if the robot's pose is too high
+        if (nodeNumber > 2) {
+            return Drivetrain.getInstance().getPose2d();
         }
-
-        if (gameObject.equals(GameObject.CUBE)) {
-            if (Robot.isRedAlliance()) {
-                return mirror(new Pose2d(nearestGrid.getRequiredDrivetrainPose(), Rotation2d.fromDegrees(180)));
-            }
-            return new Pose2d(nearestGrid.getRequiredDrivetrainPose(), Rotation2d.fromDegrees(180));
-        } else {
-            // Find nearest cone Section within Grid
-            GridSection nearestSection = null;
-            double nearestSectionDistance = Double.POSITIVE_INFINITY;
-            for (GridSection section : GridSection.allCones) {
-                double dist = currentPos.getDistance(section.getRequiredDrivetrainPose(nearestGrid));
-                if (dist < nearestSectionDistance) {
-                    nearestSectionDistance = dist;
-                    nearestSection = section;
-                }
-            }
-            if (Robot.isRedAlliance()) {
-                return mirror(new Pose2d(nearestSection.getRequiredDrivetrainPose(nearestGrid), Rotation2d.fromDegrees(180)));
-            }
-            return new Pose2d(nearestSection.getRequiredDrivetrainPose(nearestGrid), Rotation2d.fromDegrees(180));
+        
+        final double nearestPoseY = nodeNumber * nodeSpacing + (nodeSpacing / 2.) + offset;
+        if (Robot.isRedAlliance()) {
+            return mirror(new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180)));
         }
-    }
-
-    public static Translation2d getArmPosition(GameObject gameObject, ScoringLevel scoringLevel) {
-        Translation2d poseFromWall = scoringLevel.getPoseFromWall(gameObject);
-        return new Translation2d(DISTANCE_FROM_WALL-poseFromWall.getX(), poseFromWall.getY());
+        return new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180));
     }
 }
