@@ -14,7 +14,6 @@ public class Constants {
     public static class DrivetrainConstants {
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
         public static final double DRIVETRAIN_DRIVE_GEAR_RATIO = 4.71; // 14T REV MAXSwerve
-        public static final double DRIVETRAIN_STEER_GEAR_RATIO = 1; // TODO: Find actual gear ratio
         // Dimensions
         public static final double WHEEL_BASE_LENGTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
         public static final double WHEEL_BASE_WIDTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
