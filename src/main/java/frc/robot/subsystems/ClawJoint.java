@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.AbsoluteEncoder;
 
-public class Claw extends SubsystemBase {
+
 
 public class ClawJoint{
 
@@ -38,4 +38,3 @@ public double getAngularVelocity() {
   return angularVelocity; // The method returns the angular velocity as a double.
     } 
   }
-}
