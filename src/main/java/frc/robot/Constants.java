@@ -83,6 +83,10 @@ public class Constants {
             new Rotation3d()
         );
     }
+    public static class ClawConstants {
+        public static final int LEFT_MOTOR_ID = 14;
+        public static final int RIGHT_MOTOR_ID = 15;
+    }
     public static class ClawJointConstants {
         public static final int MOTOR_ID = 13;
         public static final int ENCODER_OFFSET_RADIANS = 0;

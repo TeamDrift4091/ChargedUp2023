@@ -2,21 +2,21 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
-    private WPI_TalonFX motor1;
-    private WPI_TalonFX motor2;
+    private final WPI_TalonFX leftMotor, rightMotor;
 
-    public Claw(int motor1ID, int motor2ID) {
-        motor1 = new WPI_TalonFX(motor1ID);
-        motor2 = new WPI_TalonFX(motor2ID);
+    public Claw() {
+        leftMotor = new WPI_TalonFX(ClawConstants.LEFT_MOTOR_ID);
+        rightMotor = new WPI_TalonFX(ClawConstants.RIGHT_MOTOR_ID);
 
-        motor1.configFactoryDefault();
-        motor2.configFactoryDefault();
+        leftMotor.configFactoryDefault();
+        rightMotor.configFactoryDefault();
     }
 
     public void setMotorSpeed(double speed) {
-        motor1.set(speed);
-        motor2.set(speed);
+        leftMotor.set(speed);
+        rightMotor.set(speed);
     }
 }
