@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.AbsoluteEncoder;
 
+public class Claw extends SubsystemBase {
+
 public class ClawJoint{
 
   private WPI_TalonFX motor; // motor is an object of the WPI_TalonFX class that represents the motor. We will use this object to control the motor, such as setting its speed or position.
@@ -35,5 +37,6 @@ public double getAngularVelocity() {
   double velocity = encoder.getVelocity(); // The getVelocity() method reads the velocity of the joint from the encoder and stores it in the velocity variable.
   double angularVelocity = velocity * velocityConversionFactor; //The velocityConversionFactor is a scaling factor that helps convert the velocity measurement from the encoder into degrees per second. The angularVelocity variable stores the angular velocity of the joint, which helps the robot understand how fast the joint is moving. 
   return angularVelocity; // The method returns the angular velocity as a double.
-  } 
+    } 
+  }
 }
