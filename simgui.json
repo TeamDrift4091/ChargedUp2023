@@ -202,6 +202,12 @@
         }
       },
       "SmartDashboard": {
+        "Drivetrain": {
+          "Back Left": {
+            "open": true
+          },
+          "open": true
+        },
         "RotatingHolonomicDriveController": {
           "open": true
         },

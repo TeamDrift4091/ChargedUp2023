@@ -16,16 +16,19 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.autonomous.DriveToAndScore;
 import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
+import frc.robot.commands.claw.ShootWithDelay;
 import frc.robot.commands.clawjoint.ManualControl;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
+import frc.robot.utility.PhotonVisionWrapper;
 
 import static frc.robot.utility.MirrorPoses.mirror;
 
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
-  private final ClawJoint clawJoint = ClawJoint.getInstance();
+  // private final ClawJoint clawJoint = ClawJoint.getInstance();
+  // private final Claw claw = Claw.getInstance();
 
   // Controllers
   private final XboxController xboxController = new XboxController(0) {
@@ -37,11 +40,15 @@ public class RobotContainer {
   // Triggers and button bindings
   private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
 
+  private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+
   private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
   private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
   private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
 
   public RobotContainer() {
+    // TODO: Disabling this only until we install the camera on the robot
+    PhotonVisionWrapper.getInstance().disable();
     // Connects the buttons and triggers to commands
     configureBindings();
     // Loads the autonomous chooser with all of the available autonomous routines.
@@ -66,17 +73,18 @@ public class RobotContainer {
       )
     );
 
-    clawJoint.setDefaultCommand(
-      new ManualControl(
-        clawJoint,
-        () -> xboxController.getPOV() == 0,
-        () -> xboxController.getPOV() == 180
-      )
-    );
+    // clawJoint.setDefaultCommand(
+    //   new ManualControl(
+    //     clawJoint,
+    //     () -> xboxController.getPOV() == 0,
+    //     () -> xboxController.getPOV() == 180
+    //   )
+    // );
 
     resetOdometry.onTrue(new InstantCommand(() -> {
+      System.out.println("reset odometry.");
       if (Robot.isBlueAlliance()) {
-        drivetrain.resetOdometry();
+        drivetrain.resetGyro();
       } else {
         drivetrain.resetOdometry(mirror(new Pose2d()));
       }
@@ -85,6 +93,8 @@ public class RobotContainer {
     scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));
     scoreMid.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.MID));
     scoreHigh.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HIGH));
+
+    // shootSimple.whileTrue(new ShootWithDelay(claw));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

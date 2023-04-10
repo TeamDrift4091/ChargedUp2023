@@ -6,9 +6,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
+    private static Claw instance = null;
+    public static Claw getInstance() {
+        if (instance == null) {
+            instance = new Claw();
+        }
+        return instance;
+    }
+    
     private final WPI_TalonFX innerLeftMotor, innerRightMotor, outerLeftMotor, outerRightMotor;
 
-    public Claw() {
+    private Claw() {
         innerLeftMotor = new WPI_TalonFX(ClawConstants.INNER_LEFT_MOTOR_ID);
         innerRightMotor = new WPI_TalonFX(ClawConstants.INNER_RIGHT_MOTOR_ID);
         outerLeftMotor = new WPI_TalonFX(ClawConstants.OUTER_LEFT_MOTOR_ID);
@@ -51,4 +59,11 @@ public class Claw extends SubsystemBase {
 
     @Override
     public void periodic() {}
+
+    public void stop() {
+        outerLeftMotor.stopMotor();
+        outerRightMotor.stopMotor();
+        innerLeftMotor.stopMotor();
+        innerRightMotor.stopMotor();
+    }
 }

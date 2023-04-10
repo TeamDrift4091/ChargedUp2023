@@ -57,6 +57,16 @@ public class PhotonVisionWrapper {
     public PhotonCamera photonCamera;
     public PhotonPoseEstimator photonPoseEstimator;
 
+    private boolean enabled = true;
+    
+    public void enable() {
+        enabled = true;
+    }
+
+    public void disable() {
+        enabled = false;
+    }
+
     private PhotonVisionWrapper() {
         // Create a simple field layout.  This should be overwritten by reading from the json file, but it's necessary to have something just in case.
         AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(List.of(
@@ -82,8 +92,11 @@ public class PhotonVisionWrapper {
      * @return the new estimated pose using vision.
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
+        if (enabled) {
+            photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+            return photonPoseEstimator.update();    
+        }
+        return Optional.empty();
     }
 
     /**

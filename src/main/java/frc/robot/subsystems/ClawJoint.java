@@ -27,7 +27,7 @@ public class ClawJoint extends SubsystemBase {
   private final SparkMaxPIDController pidController;
 
   private ClawJoint() {
-    motor = new WPI_CANSparkMax(ClawJointConstants.MOTOR_ID, WPI_CANSparkMax.MotorType.kBrushless);
+    motor = new WPI_CANSparkMax(ClawJointConstants.MOTOR_ID, WPI_CANSparkMax.MotorType.kBrushed);
     
     // Configure the motor
     motor.restoreFactoryDefaults();
