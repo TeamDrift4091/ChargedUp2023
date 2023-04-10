@@ -8,7 +8,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.drivetrain.BalanceOnChargingStation;
+import frc.robot.commands.drivetrain.BalanceOnChargingStationLinear;
+import frc.robot.commands.drivetrain.FaceModules;
 import frc.robot.subsystems.Drivetrain;
 
 public class AutoChargeStation extends SequentialCommandGroup {
@@ -19,6 +20,9 @@ public class AutoChargeStation extends SequentialCommandGroup {
       new InstantCommand(() -> {
         drivetrain.resetGyro();
       }, drivetrain),
+
+      // Align wheels forward before we start moving
+      new FaceModules(drivetrain).withTimeout(2), // with a timeout just in case it doesn't end properly
 
       // Drive forward until the gyro angle is steep enough
       new RunCommand(() -> {
@@ -31,7 +35,7 @@ public class AutoChargeStation extends SequentialCommandGroup {
       },
 
       // Attempt to balance
-      new BalanceOnChargingStation(drivetrain) // drive in the 'steepest' direction, and stop if it's flat
+      new BalanceOnChargingStationLinear(drivetrain) // attempt to balance until gyro reads close to 0 in pitch
     );
   }
 }
