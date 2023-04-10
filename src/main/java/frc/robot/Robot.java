@@ -28,9 +28,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     // Port forward ports connected to the camera.  This allows us to access them when connected
     // to the robot over USB.
-    // PortForwarder.add(5800, "photonvision.local", 5800); // may need to be limelight.local
     for (int port = 5800; port < 5805; port++) {
-      PortForwarder.add(port, "limelight.local", port);
+      PortForwarder.add(port, "limelight.local", port); // Should be photonvision.local ?
     }
   }
 
