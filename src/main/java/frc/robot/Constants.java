@@ -16,8 +16,8 @@ public class Constants {
     public static double FIELD_WIDTH = Units.feetToMeters(27);
     public static double FIELD_LENGTH = Units.feetToMeters(54);
     public static class DrivetrainConstants {
-        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
-        public static final double DRIVETRAIN_DRIVE_GEAR_RATIO = 4.71; // 14T REV MAXSwerve
+        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2);
+        public static final double DRIVETRAIN_DRIVE_GEAR_RATIO = 8.14; // 14T REV MAXSwerve
         // Dimensions
         public static final double WHEEL_BASE_LENGTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
         public static final double WHEEL_BASE_WIDTH_METERS = Units.inchesToMeters(30 - (1.75 * 2));
@@ -34,11 +34,11 @@ public class Constants {
         public static final double translationalI = 0.5;
         public static final double translationalD = .4;
 
-        public static final double CHASSIS_MAX_VELOCITY = 2.75;
-        public static final double CHASSIS_MAX_ACCELERATION = 1;
+        public static final double CHASSIS_MAX_VELOCITY = 3.25;
+        public static final double CHASSIS_MAX_ACCELERATION = 1.5;
         public static final double CHASSIS_MAX_ANGULAR_VELOCITY = 2*Math.PI/3.;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
-        public static final double MODULE_MAX_VELOCITY = 3.5; // Free speed max is ~4.11 for REV MAXSwerve
+        public static final double MODULE_MAX_VELOCITY = 3.75; // Free speed max is ~3.96 for MK4i with L1
 
         public static final double driveP = 0.02;
         public static final double driveI = 0.0;
