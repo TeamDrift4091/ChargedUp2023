@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
-public class ClawJoint{
+public class ClawJoint extends SubsystemBase{
 
   private WPI_TalonFX motor; // motor is an object of the WPI_TalonFX class that represents the motor. We will use this object to control the motor, such as setting its speed or position.
   private Encoder encoder; // encoder is an object of the AbsoluteEncoder class that represents the encoder. We will use this object to read the position and velocity of the joint.
