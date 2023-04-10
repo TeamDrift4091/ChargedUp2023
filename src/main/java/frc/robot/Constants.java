@@ -84,8 +84,10 @@ public class Constants {
         );
     }
     public static class ClawConstants {
-        public static final int LEFT_MOTOR_ID = 14;
-        public static final int RIGHT_MOTOR_ID = 15;
+        public static final int INNER_LEFT_MOTOR_ID = 14;
+        public static final int INNER_RIGHT_MOTOR_ID = 15;
+        public static final int OUTER_LEFT_MOTOR_ID = 16;
+        public static final int OUTER_RIGHT_MOTOR_ID = 17;
     }
     public static class ClawJointConstants {
         public static final int MOTOR_ID = 13;
