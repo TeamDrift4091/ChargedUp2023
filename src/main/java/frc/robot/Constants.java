@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -78,5 +82,14 @@ public class Constants {
             new Translation3d(0, 0, 0), // in meters
             new Rotation3d()
         );
+    }
+    public static class ClawJointConstants {
+        public static final int MOTOR_ID = 13;
+        public static final int ENCODER_OFFSET_RADIANS = 0;
+        public static final double MIN_ANGLE = 0;
+        public static final double MAX_ANGLE = Math.PI/2.;
+
+        // https://docs.revrobotics.com/through-bore-encoder/specifications
+        public static final int ENCODER_PULSES_PER_ROTATION = 1024;
     }
 }
