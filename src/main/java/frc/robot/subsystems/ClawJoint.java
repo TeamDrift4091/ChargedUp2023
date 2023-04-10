@@ -2,14 +2,14 @@ package frc.robot.subsystems;
 
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.revrobotics.AbsoluteEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class ClawJoint{
 
   private WPI_TalonFX motor; // motor is an object of the WPI_TalonFX class that represents the motor. We will use this object to control the motor, such as setting its speed or position.
-  private AbsoluteEncoder encoder; // encoder is an object of the AbsoluteEncoder class that represents the encoder. We will use this object to read the position and velocity of the joint.
+  private Encoder encoder; // encoder is an object of the AbsoluteEncoder class that represents the encoder. We will use this object to read the position and velocity of the joint.
   private double positionConversionFactor; // positionConversionFactor is a double variable that we will use to convert the encoder's position to an angle in degrees. We will set this variable in the constructor of our class.
   private double velocityConversionFactor; //velocityConversionFactor is a double variable that we will use to convert the encoder's velocity to an angular velocity in degrees per second. We will set this variable in the constructor of our class.
   
