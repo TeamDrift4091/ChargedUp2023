@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.autonomous.DriveToAndScore;
 import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
+import frc.robot.commands.clawjoint.ManualControl;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 
@@ -24,6 +25,7 @@ import static frc.robot.utility.MirrorPoses.mirror;
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
+  private final ClawJoint clawJoint = ClawJoint.getInstance();
 
   // Controllers
   private final XboxController xboxController = new XboxController(0) {
@@ -61,6 +63,14 @@ public class RobotContainer {
         () -> xboxController.getLeftY(),
         () -> xboxController.getLeftX(),
         () -> xboxController.getRightX()
+      )
+    );
+
+    clawJoint.setDefaultCommand(
+      new ManualControl(
+        clawJoint,
+        () -> xboxController.getPOV() == 0,
+        () -> xboxController.getPOV() == 180
       )
     );
 

@@ -202,9 +202,6 @@
         }
       },
       "SmartDashboard": {
-        "Modules (Field2d)": {
-          "open": true
-        },
         "RotatingHolonomicDriveController": {
           "open": true
         },
