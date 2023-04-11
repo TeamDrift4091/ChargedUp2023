@@ -11,10 +11,13 @@ import frc.robot.subsystems.Claw;
 public class ShootWithDelay extends CommandBase {
   private final Claw claw;
   private final Timer timer;
-  public ShootWithDelay(Claw claw) {
+  private final double motorSpeed;
+  public ShootWithDelay(Claw claw, double motorSpeed) {
     addRequirements(claw);
     this.claw = claw;
     timer = new Timer();
+
+    this.motorSpeed = motorSpeed;
   }
 
   // Called when the command is initially scheduled.
@@ -27,7 +30,7 @@ public class ShootWithDelay extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    claw.setShootingMotors(.5);
+    claw.setShootingMotors(motorSpeed);
     if (timer.hasElapsed(.5)) {
       claw.setInnerMotors(.5);
     }
