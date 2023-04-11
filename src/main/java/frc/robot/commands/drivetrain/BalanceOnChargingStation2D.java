@@ -10,14 +10,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
-public class BalanceOnChargingStation extends CommandBase {
+public class BalanceOnChargingStation2D extends CommandBase {
   private final Drivetrain drivetrain;
   // private final ProfiledPIDController angleController = Drivetrain.getTunedRotationalPIDController();
   /**
    * Creates a new command that uses the tilt of the gyro to drive in the direction of the steepest incline.
    * @param drivetrain
    */
-  public BalanceOnChargingStation(Drivetrain drivetrain) {
+  public BalanceOnChargingStation2D(Drivetrain drivetrain) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
   }
@@ -31,11 +31,11 @@ public class BalanceOnChargingStation extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Rotation3d gyro = drivetrain.getGyroMeasurement();
+    Rotation3d gyroMeasurement = drivetrain.getGyroMeasurement();
 
     // Get the roll and pitch measurements from the gyro.
-    double roll = gyro.getX();
-    double pitch = gyro.getY();
+    double roll = gyroMeasurement.getX();
+    double pitch = gyroMeasurement.getY();
 
     // Get the 'steepness' in the x (forward) and y (left) directions.
     double y = Math.sin(roll);
@@ -53,14 +53,14 @@ public class BalanceOnChargingStation extends CommandBase {
 
     // Rotate the steepest slope by the error between the gyro measurement and the robot pose angle because if pose
     // is reset, the gyro and pose won't have the same angle.
-    steepestSlope = steepestSlope.rotateBy(new Rotation2d(gyro.getZ()).minus(drivetrain.getPose2d().getRotation()));
+    steepestSlope = steepestSlope.rotateBy(new Rotation2d(gyroMeasurement.getZ()).minus(drivetrain.getPose2d().getRotation()));
 
     // Calculate nearest square angle
     // double currentChassisAngle = drivetrain.getPose2d().getRotation().getRadians();
     // double nearestSquareChassisAngle = Math.floor((currentChassisAngle + Math.PI / 4.) / Math.PI/2.) * Math.PI/2.;
 
     // Controls how fast the robot moves when trying to balance.
-    double MOVEMENT_SPEED = 1; // in meters per second
+    final double MOVEMENT_SPEED = 1; // in meters per second
 
     drivetrain.fromChassisSpeeds(new ChassisSpeeds(
       steepestSlope.getCos()*MOVEMENT_SPEED,
