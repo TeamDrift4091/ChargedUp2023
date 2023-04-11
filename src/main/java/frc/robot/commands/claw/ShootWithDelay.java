@@ -19,6 +19,9 @@ public class ShootWithDelay extends CommandBase {
 
     this.motorSpeed = motorSpeed;
   }
+  public Shoot(Claw claw, ScoringLevel scoringLevel) {
+    this(claw, scoringLevel.getRequiredMotorSpeed());
+  }
 
   // Called when the command is initially scheduled.
   @Override
