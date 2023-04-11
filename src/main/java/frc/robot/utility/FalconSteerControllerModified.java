@@ -23,6 +23,9 @@ public class FalconSteerControllerModified implements SteerController {
 
     private final double encoderOffsetDegrees;
 
+    // TODO: Neutral mode and encoder invert params
+    // TODO: Don't take object as param if configuring.  Trust user to configure if object is passed.  Take CAN IDs instead
+
     // Uses the defaults based on an MK4i module
     public FalconSteerControllerModified(WPI_TalonFX steerMotor, CANCoder encoder, double encoderOffsetDegrees) {
         this(steerMotor, encoder, (150/7.), encoderOffsetDegrees, .3, 0, 0, 0);
@@ -56,10 +59,12 @@ public class FalconSteerControllerModified implements SteerController {
         steerMotor.configAllSettings(configuration);
         steerMotor.setInverted(true);
         steerMotor.setNeutralMode(NeutralMode.Brake);
-        resetToAbsolute();
+
+        calibrateEncoders();
     }
 
-    private void resetToAbsolute() {
+    public void calibrateEncoders() {
+        System.out.println("INFO: FalconSteerController: Calibrating Encoders.");
         double absolutePosition = SwerveModule.degreesToMotorEncoderTicks(encoder.getAbsolutePosition() - encoderOffsetDegrees, steeringGearRatio, 2048);
         steerMotor.setSelectedSensorPosition(absolutePosition);
     }

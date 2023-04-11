@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,13 +15,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.autonomous.DriveToAndScore;
 import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
-import frc.robot.commands.claw.ShootWithDelay;
-import frc.robot.commands.clawjoint.ManualControl;
+import frc.robot.commands.claw.*;
+import frc.robot.commands.clawjoint.*;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.PhotonVisionWrapper;
-
-import static frc.robot.utility.MirrorPoses.mirror;
 
 public class RobotContainer {
   // Subsystems
@@ -82,12 +79,8 @@ public class RobotContainer {
     // );
 
     resetOdometry.onTrue(new InstantCommand(() -> {
-      System.out.println("reset odometry.");
-      if (Robot.isBlueAlliance()) {
-        drivetrain.resetGyro();
-      } else {
-        drivetrain.resetOdometry(mirror(new Pose2d()));
-      }
+      System.out.println("reset gyro.");
+      drivetrain.resetGyro();
     }));
 
     scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));

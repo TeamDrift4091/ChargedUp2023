@@ -31,7 +31,6 @@ import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
 import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
-import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 import frc.team1891.common.hardware.SimNavX;
 
@@ -121,25 +120,25 @@ public class Drivetrain extends SwerveDrivetrain {
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveMotor, _config);
   private static final WPI_TalonFX frontLeftSteerMotor = new WPI_TalonFX(FrontLeft.STEER_CHANNEL);
   private static final WPI_CANCoder frontLeftEncoder = new WPI_CANCoder(FrontLeft.CANCODER_CHANNEL);
-  private static final SteerController frontLeftSteerController = new FalconSteerControllerModified(frontLeftSteerMotor, frontLeftEncoder, FrontLeft.ENCODER_OFFSET_DEGREES);
+  private static final FalconSteerControllerModified frontLeftSteerController = new FalconSteerControllerModified(frontLeftSteerMotor, frontLeftEncoder, FrontLeft.ENCODER_OFFSET_DEGREES);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
   private static final WPI_TalonFX frontRightDriveMotor = new WPI_TalonFX(FrontRight.DRIVE_CHANNEL);
   private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveMotor, _config);
   private static final WPI_TalonFX frontRightSteerMotor = new WPI_TalonFX(FrontRight.STEER_CHANNEL);
   private static final WPI_CANCoder frontRightEncoder = new WPI_CANCoder(FrontRight.CANCODER_CHANNEL);
-  private static final SteerController frontRightSteerController = new FalconSteerControllerModified(frontRightSteerMotor, frontRightEncoder, FrontRight.ENCODER_OFFSET_DEGREES);
+  private static final FalconSteerControllerModified frontRightSteerController = new FalconSteerControllerModified(frontRightSteerMotor, frontRightEncoder, FrontRight.ENCODER_OFFSET_DEGREES);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final WPI_TalonFX backLeftDriveMotor = new WPI_TalonFX(BackLeft.DRIVE_CHANNEL);
   private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveMotor, _config);
   private static final WPI_TalonFX backLeftSteerMotor = new WPI_TalonFX(BackLeft.STEER_CHANNEL);
   private static final WPI_CANCoder backLeftEncoder = new WPI_CANCoder(BackLeft.CANCODER_CHANNEL);
-  private static final SteerController backLeftSteerController = new FalconSteerControllerModified(backLeftSteerMotor, backLeftEncoder, BackLeft.ENCODER_OFFSET_DEGREES);
+  private static final FalconSteerControllerModified backLeftSteerController = new FalconSteerControllerModified(backLeftSteerMotor, backLeftEncoder, BackLeft.ENCODER_OFFSET_DEGREES);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
   private static final WPI_TalonFX backRightDriveMotor = new WPI_TalonFX(BackRight.DRIVE_CHANNEL);
   private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveMotor, _config);
   private static final WPI_TalonFX backRightSteerMotor = new WPI_TalonFX(BackRight.STEER_CHANNEL);
   private static final WPI_CANCoder backRightEncoder = new WPI_CANCoder(BackRight.CANCODER_CHANNEL);
-  private static final SteerController backRightSteerController = new FalconSteerControllerModified(backRightSteerMotor, backRightEncoder, BackRight.ENCODER_OFFSET_DEGREES);
+  private static final FalconSteerControllerModified backRightSteerController = new FalconSteerControllerModified(backRightSteerMotor, backRightEncoder, BackRight.ENCODER_OFFSET_DEGREES);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
@@ -211,6 +210,14 @@ public class Drivetrain extends SwerveDrivetrain {
   private static void configCANCoder(WPI_CANCoder encoder) {
     encoder.configFactoryDefault();
     encoder.configSensorDirection(true);
+  }
+
+  // Since we seem to have issues when calibrating the encoders on robot startup, I'm adding this method so we can recalibrate them every time the robot enables
+  public void calibrateEncoders() {
+    frontLeftSteerController.calibrateEncoders();
+    frontRightSteerController.calibrateEncoders();
+    backLeftSteerController.calibrateEncoders();
+    backRightSteerController.calibrateEncoders();
   }
 
   @Override

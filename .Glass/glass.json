@@ -2,12 +2,6 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
-        "Drivetrain": {
-          "open": true
-        },
-        "Robot (Field2d)": {
-          "open": true
-        },
         "open": true
       }
     },
