@@ -5,13 +5,16 @@
 package frc.robot.commands.claw;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
-
+import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.subsystems.Claw;
 
 public class Shoot extends CommandBase {
   private final Claw claw;
   private final double motorSpeed;
+
+  public Shoot(Claw claw, ScoringLevel scoringLevel) {
+    this(claw, scoringLevel.getRequiredMotorSpeed());
+  }
 
   public Shoot(Claw claw, double motorSpeed) {
     addRequirements(claw);
