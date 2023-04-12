@@ -19,7 +19,7 @@ public class ClawToAngle extends CommandBase {
   }
 
   @Override
-  public void initialize() {
+  public void execute() {
     clawJoint.setAngle(targetAngleRadians);
   }
 }
