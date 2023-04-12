@@ -85,6 +85,7 @@ public class Constants {
         );
     }
     public static class ClawConstants {
+        public static final int DIGITAL_INPUT_CHANNEL = 1;
         public static final int INNER_LEFT_MOTOR_ID = 14;
         public static final int INNER_RIGHT_MOTOR_ID = 15;
         public static final int OUTER_LEFT_MOTOR_ID = 16;
