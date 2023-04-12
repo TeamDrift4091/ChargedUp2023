@@ -6,12 +6,19 @@ package frc.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.subsystems.Claw;
 
 public class ShootWithDelay extends CommandBase {
   private final Claw claw;
   private final Timer timer;
   private final double motorSpeed;
+  
+  public ShootWithDelay(Claw claw, ScoringLevel scoringLevel) {
+    this(claw, scoringLevel.getRequiredMotorSpeed());
+
+  }
+
   public ShootWithDelay(Claw claw, double motorSpeed) {
     addRequirements(claw);
     this.claw = claw;
@@ -19,9 +26,7 @@ public class ShootWithDelay extends CommandBase {
 
     this.motorSpeed = motorSpeed;
   }
-  public Shoot(Claw claw, ScoringLevel scoringLevel) {
-    this(claw, scoringLevel.getRequiredMotorSpeed());
-  }
+
 
   // Called when the command is initially scheduled.
   @Override
