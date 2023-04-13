@@ -48,6 +48,6 @@ public class BalanceOnChargingStationLinear extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false;
-    return drivetrain.getGyroMeasurement().getY() < .08; // Made up number
+    return drivetrain.getGyroMeasurement().getY() < .08; // TODO: Made up number
   }
 }
