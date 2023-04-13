@@ -6,16 +6,20 @@ package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
 public class BalanceOnChargingStationLinear extends CommandBase {
   private final Drivetrain drivetrain;
-  private final double kP = 2; // proportion coefficient
+  // private final double kP = 2; // proportion coefficient
   
   public BalanceOnChargingStationLinear(Drivetrain drivetrain) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
+
+    SmartDashboard.putNumber("BalaceOnCharingStation-kP", 2);
+    SmartDashboard.putNumber("BalaceOnCharingStation-balanceTolerance", .08);
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +35,7 @@ public class BalanceOnChargingStationLinear extends CommandBase {
 
     drivetrain.fromChassisSpeeds(
       new ChassisSpeeds(
-        pitch * kP,
+        pitch * SmartDashboard.getNumber("BalaceOnCharingStation-kP", 0),
         0,
         0
       )
@@ -48,6 +52,6 @@ public class BalanceOnChargingStationLinear extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false;
-    return drivetrain.getGyroMeasurement().getY() < .08; // TODO: Made up number
+    return drivetrain.getGyroMeasurement().getY() < SmartDashboard.getNumber("BalaceOnCharingStation-balanceTolerance", 0.1);
   }
 }

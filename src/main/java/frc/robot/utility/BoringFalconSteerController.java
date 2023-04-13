@@ -32,7 +32,7 @@ public class BoringFalconSteerController implements SteerController {
 
     @Override
     public void drive(SwerveModuleState state) {
-        steerMotor.set(ControlMode.PercentOutput, pidController.calculate(getRadians(), state.angle.getRadians()));
+        steerMotor.set(ControlMode.PercentOutput, pidController.calculate(this.getRadians(), state.angle.getRadians()));
     }
 
     @Override
