@@ -48,6 +48,11 @@ public class ClawJoint extends SubsystemBase {
     pidController.setFF(.2);
     pidController.setOutputRange(-1, 1);
 
+    // TODO: Need to figure out units
+    // pidController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
+    // pidController.setSmartMotionMaxVelocity(Math.PI/8., 0);
+    // pidController.setSmartMotion
+
     // Sets the conversion factors, so when we ask for the encoder position it returns a value in radians
     encoder.setPositionConversionFactor((2 * Math.PI));
     encoder.setVelocityConversionFactor((2 * Math.PI) / 60.);

@@ -171,14 +171,6 @@ public class Drivetrain extends SwerveDrivetrain {
 
     photonVision = PhotonVisionWrapper.getInstance();
 
-    // Add some SmartDashboard settings
-    SmartDashboard.putBoolean("showPhotonEstimate", true);
-
-    LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
-
     // if (Robot.isSimulation()) {
     //   LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
     //   LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
@@ -322,5 +314,18 @@ public class Drivetrain extends SwerveDrivetrain {
     );
 
     poseEstimator.resetPosition(_gyro.getRotation2d(), getSwerveModulePositions(), newPose);
+  }
+
+  @Override
+  protected void configureSmartDashboard() {
+    super.configureSmartDashboard();
+    LazyDashboard.addBoolean("isGyroConnected", 100, this::isGyroConnected);
+    
+    SmartDashboard.putBoolean("showPhotonEstimate", true);
+
+    LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
+    LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
+    LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
+    LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
   }
 }
