@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,14 +41,15 @@ public class RobotContainer {
   private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
   private final Trigger intake = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
 
-  // private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
-  // private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
-  // private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
+  private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
+  private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
+  private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
 
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
     PhotonVisionWrapper.getInstance().disable();
     // Connects the buttons and triggers to commands
+    DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
     configureBindings();
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
@@ -84,9 +86,9 @@ public class RobotContainer {
       drivetrain.resetGyro();
     }));
 
-    // scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));
-    // scoreMid.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.MID));
-    // scoreHigh.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HIGH));
+    scoreLow.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HYBRID));
+    scoreMid.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.MID));
+    scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
 
     shootSimple.whileTrue(new ShootWithDelay(claw, .3));
     intake.whileTrue(new Intake(claw));

@@ -68,7 +68,7 @@ public class FalconSteerControllerModified implements SteerController {
         double absolutePosition = SwerveModule.degreesToMotorEncoderTicks(encoder.getAbsolutePosition() - cancoderOffsetDegrees, steeringGearRatio, 2048);
         ErrorCode errorCode = steerMotor.setSelectedSensorPosition(absolutePosition, 0, 30);
         System.out.printf("INFO: FalconSteerController: Calibrated Encoders. (ErrorCode: %s)\n", errorCode.name());
-        System.out.printf("\tPrevious sensor position: %f  - New sensor position: %f\n", initialPosition, steerMotor.getSelectedSensorPosition());
+        System.out.printf("\tPrevious sensor position: %f\n\tNew sensor position:      %f\n", initialPosition, steerMotor.getSelectedSensorPosition());
     }
 
     @Override

@@ -54,5 +54,4 @@ public class BoringFalconSteerController implements SteerController {
     public double getDegrees() {
         return encoder.getAbsolutePosition();
     }
-
 }
