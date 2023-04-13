@@ -86,7 +86,12 @@ public class DriveToPose extends CommandBase {
     xFeedback = Util.cap(xFeedback, 1.5);
     yFeedback = Util.cap(yFeedback, 1.5);
 
-    double thetaFF = angleController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    double thetaFF;
+    if (drivetrain.isGyroConnected()) {
+      thetaFF = angleController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    } else {
+      thetaFF = 0;
+    }
 
     drivetrain.fromChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, thetaFF, drivetrain.getPose2d().getRotation()));
   }
@@ -101,6 +106,6 @@ public class DriveToPose extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atSetpoint() && yController.atSetpoint() && angleController.atGoal();
+    return xController.atSetpoint() && yController.atSetpoint() && (angleController.atGoal() || !drivetrain.isGyroConnected());
   }
 }
