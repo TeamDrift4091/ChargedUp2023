@@ -24,8 +24,8 @@ import frc.robot.utility.PhotonVisionWrapper;
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
-  // private final ClawJoint clawJoint = ClawJoint.getInstance();
-  // private final Claw claw = Claw.getInstance();
+  private final ClawJoint clawJoint = ClawJoint.getInstance();
+  private final Claw claw = Claw.getInstance();
 
   // Controllers
   private final XboxController xboxController = new XboxController(0) {
@@ -38,10 +38,11 @@ public class RobotContainer {
   private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
 
   private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+  private final Trigger intake = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
 
-  private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
-  private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
-  private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
+  // private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
+  // private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
+  // private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
 
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
@@ -83,11 +84,12 @@ public class RobotContainer {
       drivetrain.resetGyro();
     }));
 
-    scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));
-    scoreMid.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.MID));
-    scoreHigh.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HIGH));
+    // scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));
+    // scoreMid.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.MID));
+    // scoreHigh.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HIGH));
 
-    // shootSimple.whileTrue(new ShootWithDelay(claw));
+    shootSimple.whileTrue(new ShootWithDelay(claw, .3));
+    intake.whileTrue(new Intake(claw));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

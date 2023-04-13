@@ -31,9 +31,11 @@ public class ClawJoint extends SubsystemBase {
     
     // Configure the motor
     motor.restoreFactoryDefaults();
+    motor.setInverted(true);
     motor.setIdleMode(WPI_CANSparkMax.IdleMode.kBrake);
 
     encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    encoder.setInverted(true);
     pidController = motor.getPIDController();
 
     // Give the PID controller access to the encoder position

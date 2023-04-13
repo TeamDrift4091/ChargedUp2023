@@ -4,56 +4,36 @@
 
 package frc.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.subsystems.Claw;
 
-public class ShootWithDelay extends CommandBase {
+public class Intake extends CommandBase {
   private final Claw claw;
-  private final Timer timer;
-  private final double motorSpeed;
-  
-  public ShootWithDelay(Claw claw, ScoringLevel scoringLevel) {
-    this(claw, scoringLevel.getRequiredMotorSpeed());
-
-  }
-
-  public ShootWithDelay(Claw claw, double motorSpeed) {
+  public Intake(Claw claw) {
     addRequirements(claw);
     this.claw = claw;
-    timer = new Timer();
-
-    this.motorSpeed = motorSpeed;
   }
-
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    timer.reset();
-    timer.start();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    claw.setShootingMotors(motorSpeed);
-    if (timer.hasElapsed(.5)) {
-      claw.setInnerMotors(.2);
-    }
+    claw.setAllMotors(-.175);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     claw.stop();
-    timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // return claw.hasGamePiece();
     return false;
   }
 }

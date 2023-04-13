@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -82,13 +84,16 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    Drivetrain.getInstance().setNeutralMode(NeutralMode.Coast);
   }
 
   @Override
   public void testPeriodic() {}
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+    Drivetrain.getInstance().setNeutralMode(NeutralMode.Brake);
+  }
 
   public static boolean isRedAlliance() {
     return DriverStation.getAlliance().equals(Alliance.Red);

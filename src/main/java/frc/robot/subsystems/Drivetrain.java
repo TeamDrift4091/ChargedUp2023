@@ -220,6 +220,17 @@ public class Drivetrain extends SwerveDrivetrain {
     backRightSteerController.calibrateEncoders();
   }
 
+  public void setNeutralMode(NeutralMode mode) {
+    frontLeftDriveMotor.setNeutralMode(mode);
+    frontRightDriveMotor.setNeutralMode(mode);
+    backLeftDriveMotor.setNeutralMode(mode);
+    backRightDriveMotor.setNeutralMode(mode);
+    frontLeftSteerMotor.setNeutralMode(mode);
+    frontRightSteerMotor.setNeutralMode(mode);
+    backLeftSteerMotor.setNeutralMode(mode);
+    backRightSteerMotor.setNeutralMode(mode);
+  }
+
   @Override
   public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     xSpeed *= config.chassisMaxVelocityMetersPerSecond();

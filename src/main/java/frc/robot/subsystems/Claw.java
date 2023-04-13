@@ -37,6 +37,9 @@ public class Claw extends SubsystemBase {
         outerLeftMotor.setNeutralMode(NeutralMode.Coast);
         outerRightMotor.setNeutralMode(NeutralMode.Coast);
 
+        innerLeftMotor.setInverted(true);
+        outerLeftMotor.setInverted(true);
+
         
         // Configure SmartDashboard
         LazyDashboard.addBoolean("Claw/hasGamePiece", this::hasGamePiece);

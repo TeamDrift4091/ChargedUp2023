@@ -4,6 +4,7 @@
 
 package frc.robot.utility;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -21,7 +22,7 @@ public class FalconSteerControllerModified implements SteerController {
     private final CANCoder encoder;
     private final double steeringGearRatio;
 
-    private final double encoderOffsetDegrees;
+    private final double cancoderOffsetDegrees;
 
     // TODO: Neutral mode and encoder invert params
     // TODO: Don't take object as param if configuring.  Trust user to configure if object is passed.  Take CAN IDs instead
@@ -35,9 +36,8 @@ public class FalconSteerControllerModified implements SteerController {
         this.steerMotor = steerMotor;
         this.encoder = encoder;
         this.steeringGearRatio = steeringGearRatio;
-        this.encoderOffsetDegrees = encoderOffsetDegrees;
+        this.cancoderOffsetDegrees = encoderOffsetDegrees;
 
-        // TODO: configureCANCoder
         configureSteerMotor(kP, kI, kD, kFF);
     }
 
@@ -64,9 +64,11 @@ public class FalconSteerControllerModified implements SteerController {
     }
 
     public void calibrateEncoders() {
-        System.out.println("INFO: FalconSteerController: Calibrating Encoders.");
-        double absolutePosition = SwerveModule.degreesToMotorEncoderTicks(encoder.getAbsolutePosition() - encoderOffsetDegrees, steeringGearRatio, 2048);
-        steerMotor.setSelectedSensorPosition(absolutePosition);
+        double initialPosition = steerMotor.getSelectedSensorPosition();
+        double absolutePosition = SwerveModule.degreesToMotorEncoderTicks(encoder.getAbsolutePosition() - cancoderOffsetDegrees, steeringGearRatio, 2048);
+        ErrorCode errorCode = steerMotor.setSelectedSensorPosition(absolutePosition, 0, 30);
+        System.out.printf("INFO: FalconSteerController: Calibrated Encoders. (ErrorCode: %s)\n", errorCode.name());
+        System.out.printf("\tPrevious sensor position: %f  - New sensor position: %f\n", initialPosition, steerMotor.getSelectedSensorPosition());
     }
 
     @Override
