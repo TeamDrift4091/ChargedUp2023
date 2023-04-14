@@ -5,7 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,31 +25,45 @@ import frc.robot.utility.PhotonVisionWrapper;
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
-  private final ClawJoint clawJoint = ClawJoint.getInstance();
-  private final Claw claw = Claw.getInstance();
+  // private final ClawJoint clawJoint = ClawJoint.getInstance();
+  // private final Claw claw = Claw.getInstance();
 
-  // Controllers
-  private final XboxController xboxController = new XboxController(0) {
+  // Controllers; xbox
+  //private final XboxController xboxController = new XboxController(0) {
+   // public double getRawAxis(int axis) {
+     // return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
+   // };
+ // };
+ 
+  // Triggers and button bindings: xbpx
+ // private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
+
+  //private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+
+  //private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
+  //private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
+  //private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
+
+    // controllers: PS4
+   private final PS4Controller ps4Controller = new PS4Controller(0) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
   };
  
-  // Triggers and button bindings
-  private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
+   //Triggers and button bindings; PS4
+  private final Trigger resetOdometry = new JoystickButton(ps4Controller, PS4Controller.Button.kOptions.value);
 
-  private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
-  private final Trigger intake = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
+  
 
-  private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
-  private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
-  private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
+  private final Trigger scoreLow = new JoystickButton(ps4Controller, PS4Controller.Button.kCross.value);
+  private final Trigger scoreMid = new JoystickButton(ps4Controller, PS4Controller.Button.kCircle.value);
+  private final Trigger scoreHigh = new JoystickButton(ps4Controller, PS4Controller.Button.kTriangle.value);
 
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
     PhotonVisionWrapper.getInstance().disable();
     // Connects the buttons and triggers to commands
-    DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
     configureBindings();
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
@@ -60,18 +74,31 @@ public class RobotContainer {
     }, "AutonomousCommandManager.load();");
     loadAutoThread.run();
   }
-
-  private void configureBindings() {
+  //xbox
+ // private void configureBindings() {
     // DEFAULT COMMANDS
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
-    drivetrain.setDefaultCommand(
-      new JoystickDrive(
-        drivetrain,
-        () -> xboxController.getLeftY(),
-        () -> xboxController.getLeftX(),
-        () -> xboxController.getRightX()
-      )
-    );
+   // drivetrain.setDefaultCommand(
+     // new JoystickDrive(
+      //  drivetrain,
+      //  () -> xboxController.getLeftY(),
+      //  () -> xboxController.getLeftX(),
+       // () -> xboxController.getRightX()
+     // )
+    //);
+    
+    //ps4
+    private void configureBindings() {
+      // DEFAULT COMMANDS
+      // Whenever not told to do something else, the drivetrian will run JoystickDrive.
+      drivetrain.setDefaultCommand(
+        new JoystickDrive(
+          drivetrain,
+          () -> ps4Controller.getLeftY(),
+          () -> ps4Controller.getLeftX(),
+          () -> ps4Controller.getRightX()
+        )
+      );
 
     // clawJoint.setDefaultCommand(
     //   new ManualControl(
@@ -86,12 +113,11 @@ public class RobotContainer {
       drivetrain.resetGyro();
     }));
 
-    scoreLow.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HYBRID));
-    scoreMid.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.MID));
-    scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
+    scoreLow.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HYBRID));
+    scoreMid.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.MID));
+    scoreHigh.whileTrue(new DriveToAndScore(drivetrain, ScoringLevel.HIGH));
 
-    shootSimple.whileTrue(new ShootWithDelay(claw, .3));
-    intake.whileTrue(new Intake(claw));
+    // shootSimple.whileTrue(new ShootWithDelay(claw));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
