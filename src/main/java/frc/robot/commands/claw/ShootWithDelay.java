@@ -16,14 +16,12 @@ public class ShootWithDelay extends CommandBase {
   
   public ShootWithDelay(Claw claw, ScoringLevel scoringLevel) {
     this(claw, scoringLevel.getRequiredMotorSpeed());
-
   }
 
   public ShootWithDelay(Claw claw, double motorSpeed) {
     addRequirements(claw);
     this.claw = claw;
     timer = new Timer();
-
     this.motorSpeed = motorSpeed;
   }
 

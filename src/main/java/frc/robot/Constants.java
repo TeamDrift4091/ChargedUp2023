@@ -35,9 +35,9 @@ public class Constants {
         public static final double translationalD = 0.4;
 
         // public static final double CHASSIS_MAX_VELOCITY = 3.25;
-        public static final double CHASSIS_MAX_VELOCITY = 1.5;
+        public static final double CHASSIS_MAX_VELOCITY = 2;
         public static final double CHASSIS_MAX_ACCELERATION = 1.5;
-        public static final double CHASSIS_MAX_ANGULAR_VELOCITY = 2*Math.PI/3.;
+        public static final double CHASSIS_MAX_ANGULAR_VELOCITY = Math.PI;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
         public static final double MODULE_MAX_VELOCITY = 3.75; // Free speed max is ~3.96 for MK4i with L1
 
@@ -46,10 +46,10 @@ public class Constants {
         public static final double driveD = 0.0;
         public static final double driveF = 0.045;
 
-        // public static final double steerP = 1.0;
-        // public static final double steerI = 0.0;
-        // public static final double steerD = 0.0;
-        // public static final double steerF = 0.0;
+        public static final double steerP = 0.9;
+        public static final double steerI = 0.0;
+        public static final double steerD = 0.0;
+        public static final double steerF = 0.0;
 
         public static class FrontLeft {
             public static final int DRIVE_CHANNEL = 1;
@@ -94,8 +94,8 @@ public class Constants {
     public static class ClawJointConstants {
         public static final int MOTOR_ID = 13;
         public static final int ENCODER_OFFSET_RADIANS = 0;
-        public static final double MIN_ANGLE = 0;
-        public static final double MAX_ANGLE = Math.PI/2.;
+        public static final double MIN_ANGLE = 0; // .95 rotations
+        public static final double MAX_ANGLE = Math.PI/2.; //.314 rotations
 
         // https://docs.revrobotics.com/through-bore-encoder/specifications
         public static final int ENCODER_PULSES_PER_ROTATION = 1024;

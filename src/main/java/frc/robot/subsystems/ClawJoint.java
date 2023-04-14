@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawJointConstants;
 import frc.team1891.common.LazyDashboard;
@@ -53,12 +54,12 @@ public class ClawJoint extends SubsystemBase {
     // pidController.setSmartMotionMaxVelocity(Math.PI/8., 0);
     // pidController.setSmartMotion
 
-    // Sets the conversion factors, so when we ask for the encoder position it returns a value in radians
-    encoder.setPositionConversionFactor((2 * Math.PI));
-    encoder.setVelocityConversionFactor((2 * Math.PI) / 60.);
-
     // Give a SmartDashboard output of the angle
     LazyDashboard.addNumber("ClawJoint/angleRadians", this::getAngleRadians); // LazyDashboard updates the SmartDashboard value periodically using the getAngleRadians() method
+  }
+
+  public void drive(double speed) {
+    motor.set(MathUtil.clamp(speed, -1, 1));
   }
 
   /**
@@ -66,10 +67,10 @@ public class ClawJoint extends SubsystemBase {
    * @param radians target angle
    */
   public void setAngle(double radians) {
-    // Make sure the target angle is attainable before trying to move.
-    if (ClawJointConstants.MIN_ANGLE <= radians && radians <= ClawJointConstants.MAX_ANGLE) {
+    // TODO: Make sure the target angle is attainable before trying to move.
+    // if (ClawJointConstants.MIN_ANGLE <= radians && radians <= ClawJointConstants.MAX_ANGLE) {
       pidController.setReference(radians - ClawJointConstants.ENCODER_OFFSET_RADIANS, WPI_CANSparkMax.ControlType.kPosition);
-    }
+    // }
   }
 
   /**

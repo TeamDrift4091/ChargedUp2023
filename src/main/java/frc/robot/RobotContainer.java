@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
@@ -21,12 +22,15 @@ import frc.robot.commands.clawjoint.*;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.PhotonVisionWrapper;
+import frc.team1891.common.LazyDashboard;
 
 public class RobotContainer {
   // Subsystems
   private final Drivetrain drivetrain = Drivetrain.getInstance();
   private final ClawJoint clawJoint = ClawJoint.getInstance();
   private final Claw claw = Claw.getInstance();
+
+  public boolean clawDown = false;
 
   // Controllers
   private final XboxController xboxController = new XboxController(0) {
@@ -38,12 +42,15 @@ public class RobotContainer {
   // Triggers and button bindings
   private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
 
-  private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+  // private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
   private final Trigger intake = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
 
   private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
   private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
   private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
+
+  private final Trigger intakeDown = new Trigger(() -> clawDown);
+  private final Trigger toggleIntakeDeployment = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
 
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
@@ -51,6 +58,7 @@ public class RobotContainer {
     // Connects the buttons and triggers to commands
     DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
     configureBindings();
+    LazyDashboard.addBoolean("clawDown", () -> clawDown);
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
     Thread loadAutoThread = new Thread(() -> {
@@ -73,25 +81,37 @@ public class RobotContainer {
       )
     );
 
-    // clawJoint.setDefaultCommand(
-    //   new ManualControl(
-    //     clawJoint,
-    //     () -> xboxController.getPOV() == 0,
-    //     () -> xboxController.getPOV() == 180
-    //   )
-    // );
+    clawJoint.setDefaultCommand(
+      new ManualControl(
+        clawJoint,
+        () -> xboxController.getPOV() == 0,
+        () -> xboxController.getPOV() == 180
+      )
+    );
 
     resetOdometry.onTrue(new InstantCommand(() -> {
       System.out.println("reset gyro.");
       drivetrain.resetGyro();
     }));
 
-    scoreLow.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HYBRID));
-    scoreMid.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.MID));
-    scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
-
-    shootSimple.whileTrue(new ShootWithDelay(claw, .3));
+    // scoreLow.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HYBRID));
+    // scoreMid.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.MID));
+    // scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
+    scoreLow.onTrue(new Shoot(claw, .12).withTimeout(.4));
+    scoreMid.onTrue(new Shoot(claw, .2).withTimeout(.4));
+    scoreHigh.onTrue(new Shoot(claw, .25).withTimeout(.4));
+    // shootSimple.whileTrue(new Shoot(claw, .3));
     intake.whileTrue(new Intake(claw));
+
+    intakeDown.whileTrue(ClawToAngle.intake(clawJoint));
+
+    // toggleIntakeDeployment.onTrue(new InstantCommand(() -> {
+    //   clawDown = !clawDown;
+    // }));
+
+    intakeDown.whileTrue(new RunCommand(() -> {
+      clawJoint.drive(.3);
+    }, clawJoint));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

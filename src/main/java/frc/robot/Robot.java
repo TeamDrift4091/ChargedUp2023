@@ -51,6 +51,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     Drivetrain.getInstance().calibrateEncoders();
+    m_robotContainer.clawDown = false;
   }
 
   @Override
@@ -88,7 +89,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    // I guess this doesn't get called normally? We need it for diagnostics
+    Drivetrain.getInstance().periodic();
+  }
 
   @Override
   public void testExit() {

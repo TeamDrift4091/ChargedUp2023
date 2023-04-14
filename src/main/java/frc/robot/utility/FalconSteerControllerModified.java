@@ -14,15 +14,21 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 
 public class FalconSteerControllerModified implements SteerController {
+    private int moduleNum;
+    private static int numModules = 0;
+
     private final WPI_TalonFX steerMotor;
     private final CANCoder encoder;
     private final double steeringGearRatio;
 
     private final double cancoderOffsetDegrees;
+    private double motorEncoderOffsetDegrees;
 
     // TODO: Neutral mode and encoder invert params
     // TODO: Don't take object as param if configuring.  Trust user to configure if object is passed.  Take CAN IDs instead
@@ -39,6 +45,9 @@ public class FalconSteerControllerModified implements SteerController {
         this.cancoderOffsetDegrees = encoderOffsetDegrees;
 
         configureSteerMotor(kP, kI, kD, kFF);
+
+        numModules++;
+        moduleNum = numModules;
     }
 
     private void configureSteerMotor(double kP, double kI, double kD, double kFF) {
@@ -68,7 +77,9 @@ public class FalconSteerControllerModified implements SteerController {
         double absolutePosition = SwerveModule.degreesToMotorEncoderTicks(encoder.getAbsolutePosition() - cancoderOffsetDegrees, steeringGearRatio, 2048);
         ErrorCode errorCode = steerMotor.setSelectedSensorPosition(absolutePosition, 0, 30);
         System.out.printf("INFO: FalconSteerController: Calibrated Encoders. (ErrorCode: %s)\n", errorCode.name());
-        System.out.printf("\tPrevious sensor position: %f\n\tNew sensor position:      %f\n", initialPosition, steerMotor.getSelectedSensorPosition());
+        System.out.printf("\tPrevious sensor position: %f\nNew sensor position: %f\n", initialPosition, steerMotor.getSelectedSensorPosition());
+
+        // motorEncoderOffsetDegrees = encoder.getAbsolutePosition() - cancoderOffsetDegrees - (SwerveModule.motorEncoderTicksToDegrees(steerMotor.getSelectedSensorPosition(), steeringGearRatio, 2048));
     }
 
     @Override
@@ -76,7 +87,9 @@ public class FalconSteerControllerModified implements SteerController {
         Rotation2d angle = state.angle;
         double angleDegrees = placeInAppropriate0To360Scope(getDegrees(), angle.getDegrees());
 
-        steerMotor.set(ControlMode.Position, SwerveModule.degreesToMotorEncoderTicks(angleDegrees, steeringGearRatio, 2048));
+        SmartDashboard.putNumber(moduleNum+"currentAngle", getDegrees());
+        SmartDashboard.putNumber(moduleNum+"targetAngle", angleDegrees % 360.);
+        steerMotor.set(ControlMode.Position, SwerveModule.degreesToMotorEncoderTicks(angleDegrees + motorEncoderOffsetDegrees, steeringGearRatio, 2048));
     }
 
     @Override
