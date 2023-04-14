@@ -5,7 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,35 +30,45 @@ public class RobotContainer {
   private final ClawJoint clawJoint = ClawJoint.getInstance();
   private final Claw claw = Claw.getInstance();
 
-  public boolean clawDown = false;
+  // Controllers; xbox
+  //private final XboxController xboxController = new XboxController(0) {
+   // public double getRawAxis(int axis) {
+     // return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
+   // };
+ // };
+ 
+  // Triggers and button bindings: xbpx
+ // private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
 
-  // Controllers
-  private final XboxController xboxController = new XboxController(0) {
+  //private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+
+  //private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
+  //private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
+  //private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
+
+    // controllers: PS4
+   private final PS4Controller ps4Controller = new PS4Controller(0) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
   };
  
-  // Triggers and button bindings
-  private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
+   //Triggers and button bindings; PS4
+  private final Trigger resetOdometry = new JoystickButton(ps4Controller, PS4Controller.Button.kOptions.value);
 
-  // private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
-  private final Trigger intake = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
+  private final Trigger scoreLow = new JoystickButton(ps4Controller, PS4Controller.Button.kCross.value);
+  private final Trigger scoreMid = new JoystickButton(ps4Controller, PS4Controller.Button.kCircle.value);
+  private final Trigger scoreHigh = new JoystickButton(ps4Controller, PS4Controller.Button.kTriangle.value);
 
-  private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
-  private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
-  private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
-
-  private final Trigger intakeDown = new Trigger(() -> clawDown);
-  private final Trigger toggleIntakeDeployment = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
+  // private final Trigger intakeDown = new Trigger(() -> clawDown);
+  // private final Trigger toggleIntakeDeployment = new JoystickButton(ps4Controller, XboxController.Button.kLeftBumper.value);
 
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
     PhotonVisionWrapper.getInstance().disable();
     // Connects the buttons and triggers to commands
-    DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
     configureBindings();
-    LazyDashboard.addBoolean("clawDown", () -> clawDown);
+    // LazyDashboard.addBoolean("clawDown", () -> clawDown);
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
     Thread loadAutoThread = new Thread(() -> {
@@ -68,24 +78,37 @@ public class RobotContainer {
     }, "AutonomousCommandManager.load();");
     loadAutoThread.run();
   }
-
-  private void configureBindings() {
+  //xbox
+ // private void configureBindings() {
     // DEFAULT COMMANDS
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
-    drivetrain.setDefaultCommand(
-      new JoystickDrive(
-        drivetrain,
-        () -> xboxController.getLeftY(),
-        () -> xboxController.getLeftX(),
-        () -> xboxController.getRightX()
-      )
-    );
+   // drivetrain.setDefaultCommand(
+     // new JoystickDrive(
+      //  drivetrain,
+      //  () -> xboxController.getLeftY(),
+      //  () -> xboxController.getLeftX(),
+       // () -> xboxController.getRightX()
+     // )
+    //);
+    
+    //ps4
+    private void configureBindings() {
+      // DEFAULT COMMANDS
+      // Whenever not told to do something else, the drivetrian will run JoystickDrive.
+      drivetrain.setDefaultCommand(
+        new JoystickDrive(
+          drivetrain,
+          () -> ps4Controller.getLeftY(),
+          () -> ps4Controller.getLeftX(),
+          () -> ps4Controller.getRightX()
+        )
+      );
 
     clawJoint.setDefaultCommand(
       new ManualControl(
         clawJoint,
-        () -> xboxController.getPOV() == 0,
-        () -> xboxController.getPOV() == 180
+        () -> ps4Controller.getPOV() == 0,
+        () -> ps4Controller.getPOV() == 180
       )
     );
 
@@ -101,17 +124,17 @@ public class RobotContainer {
     scoreMid.onTrue(new Shoot(claw, .2).withTimeout(.4));
     scoreHigh.onTrue(new Shoot(claw, .25).withTimeout(.4));
     // shootSimple.whileTrue(new Shoot(claw, .3));
-    intake.whileTrue(new Intake(claw));
+    // intake.whileTrue(new Intake(claw));
 
-    intakeDown.whileTrue(ClawToAngle.intake(clawJoint));
+    // intakeDown.whileTrue(ClawToAngle.intake(clawJoint));
 
-    // toggleIntakeDeployment.onTrue(new InstantCommand(() -> {
-    //   clawDown = !clawDown;
-    // }));
+    // // toggleIntakeDeployment.onTrue(new InstantCommand(() -> {
+    // //   clawDown = !clawDown;
+    // // }));
 
-    intakeDown.whileTrue(new RunCommand(() -> {
-      clawJoint.drive(.3);
-    }, clawJoint));
+    // intakeDown.whileTrue(new RunCommand(() -> {
+    //   clawJoint.drive(.3);
+    // }, clawJoint));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
