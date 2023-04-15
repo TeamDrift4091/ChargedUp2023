@@ -93,7 +93,6 @@ public class Constants {
     }
     public static class ClawJointConstants {
         public static final int MOTOR_ID = 13;
-        public static final int ENCODER_OFFSET_RADIANS = 0;
         public static final double MIN_ANGLE = 0; // .95 rotations
         public static final double MAX_ANGLE = Math.PI/2.; //.314 rotations
 

@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     Drivetrain.getInstance().calibrateEncoders();
-    m_robotContainer.clawDown = false;
+    // m_robotContainer.clawDown = false;
   }
 
   @Override

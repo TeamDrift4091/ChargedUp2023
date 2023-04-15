@@ -41,13 +41,16 @@ public class ClawJoint extends SubsystemBase {
 
     // Give the PID controller access to the encoder position
     pidController.setFeedbackDevice(encoder);
+    pidController.setPositionPIDWrappingEnabled(true);
+    pidController.setPositionPIDWrappingMinInput(0);
+    pidController.setPositionPIDWrappingMaxInput(1);
 
     // Configure PID
-    pidController.setP(0);
+    pidController.setP(1.25);
     pidController.setI(0);
-    pidController.setD(0);
-    pidController.setFF(.2);
-    pidController.setOutputRange(-1, 1);
+    pidController.setD(0.3);
+    pidController.setFF(0);
+    pidController.setOutputRange(-.3, .5);
 
     // TODO: Need to figure out units
     // pidController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
@@ -55,7 +58,7 @@ public class ClawJoint extends SubsystemBase {
     // pidController.setSmartMotion
 
     // Give a SmartDashboard output of the angle
-    LazyDashboard.addNumber("ClawJoint/angleRadians", this::getAngleRadians); // LazyDashboard updates the SmartDashboard value periodically using the getAngleRadians() method
+    LazyDashboard.addNumber("ClawJoint/angleRadians", this::getAngleRotations); // LazyDashboard updates the SmartDashboard value periodically using the getAngleRadians() method
   }
 
   public void drive(double speed) {
@@ -64,21 +67,21 @@ public class ClawJoint extends SubsystemBase {
 
   /**
    * Drives the claw joint to the target angle
-   * @param radians target angle
+   * @param rotations target angle
    */
-  public void setAngle(double radians) {
+  public void setAngle(double rotations) {
     // TODO: Make sure the target angle is attainable before trying to move.
     // if (ClawJointConstants.MIN_ANGLE <= radians && radians <= ClawJointConstants.MAX_ANGLE) {
-      pidController.setReference(radians - ClawJointConstants.ENCODER_OFFSET_RADIANS, WPI_CANSparkMax.ControlType.kPosition);
+      pidController.setReference(rotations, WPI_CANSparkMax.ControlType.kPosition);
     // }
   }
 
   /**
-   * Returns the current angle of the claw joint in radians
-   * @return current angle in radians
+   * Returns the current angle of the claw joint in rotations
+   * @return current angle in rotations
    */
-  public double getAngleRadians() {
-    return encoder.getPosition() + ClawJointConstants.ENCODER_OFFSET_RADIANS;
+  public double getAngleRotations() {
+    return encoder.getPosition();
   }
 
   @Override

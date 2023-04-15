@@ -6,23 +6,18 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.PS4Controller;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
-import frc.robot.commands.autonomous.DriveToAndScore;
-import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.commands.claw.*;
 import frc.robot.commands.clawjoint.*;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.PhotonVisionWrapper;
-import frc.team1891.common.LazyDashboard;
 
 public class RobotContainer {
   // Subsystems
@@ -59,9 +54,12 @@ public class RobotContainer {
   private final Trigger scoreLow = new JoystickButton(ps4Controller, PS4Controller.Button.kCross.value);
   private final Trigger scoreMid = new JoystickButton(ps4Controller, PS4Controller.Button.kCircle.value);
   private final Trigger scoreHigh = new JoystickButton(ps4Controller, PS4Controller.Button.kTriangle.value);
+  private final Trigger runIntake = new JoystickButton(ps4Controller, PS4Controller.Button.kR1.value);
 
   // private final Trigger intakeDown = new Trigger(() -> clawDown);
-  // private final Trigger toggleIntakeDeployment = new JoystickButton(ps4Controller, XboxController.Button.kLeftBumper.value);
+  private final Trigger toggleIntakeDeployment = new JoystickButton(ps4Controller, PS4Controller.Button.kL1.value);
+
+  private final Trigger chargeStationBalance = new JoystickButton(ps4Controller, PS4Controller.Button.kL3.value);
 
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
@@ -79,7 +77,7 @@ public class RobotContainer {
     loadAutoThread.run();
   }
   //xbox
- // private void configureBindings() {
+ private void configureBindings() {
     // DEFAULT COMMANDS
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
    // drivetrain.setDefaultCommand(
@@ -92,9 +90,10 @@ public class RobotContainer {
     //);
     
     //ps4
-    private void configureBindings() {
+
       // DEFAULT COMMANDS
       // Whenever not told to do something else, the drivetrian will run JoystickDrive.
+
       drivetrain.setDefaultCommand(
         new JoystickDrive(
           drivetrain,
@@ -110,6 +109,7 @@ public class RobotContainer {
         () -> ps4Controller.getPOV() == 0,
         () -> ps4Controller.getPOV() == 180
       )
+      // new HomeClawPosition(clawJoint)
     );
 
     resetOdometry.onTrue(new InstantCommand(() -> {
@@ -123,18 +123,21 @@ public class RobotContainer {
     scoreLow.onTrue(new Shoot(claw, .12).withTimeout(.4));
     scoreMid.onTrue(new Shoot(claw, .2).withTimeout(.4));
     scoreHigh.onTrue(new Shoot(claw, .25).withTimeout(.4));
-    // shootSimple.whileTrue(new Shoot(claw, .3));
-    // intake.whileTrue(new Intake(claw));
 
+    runIntake.whileTrue(new Intake(claw));
+  
     // intakeDown.whileTrue(ClawToAngle.intake(clawJoint));
 
     // // toggleIntakeDeployment.onTrue(new InstantCommand(() -> {
     // //   clawDown = !clawDown;
     // // }));
+    toggleIntakeDeployment.whileTrue(ClawToAngle.intake(clawJoint));
 
     // intakeDown.whileTrue(new RunCommand(() -> {
     //   clawJoint.drive(.3);
     // }, clawJoint));
+
+    chargeStationBalance.whileTrue(new BalanceOnChargingStationLinear(drivetrain));
   }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.

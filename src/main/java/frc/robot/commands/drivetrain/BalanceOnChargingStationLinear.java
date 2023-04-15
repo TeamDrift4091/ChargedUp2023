@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.team1891.common.LazyDashboard;
 
 public class BalanceOnChargingStationLinear extends CommandBase {
   private final Drivetrain drivetrain;
@@ -18,8 +19,9 @@ public class BalanceOnChargingStationLinear extends CommandBase {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
 
-    SmartDashboard.putNumber("BalaceOnCharingStation-kP", 2);
-    SmartDashboard.putNumber("BalaceOnCharingStation-balanceTolerance", .08);
+    SmartDashboard.putNumber("BalanceOnChargingStation/kP", 6);
+    SmartDashboard.putNumber("BalanceOnChargingStation/balanceTolerance", .04);
+    LazyDashboard.addNumber("BalanceOnChargingStation/currentAngle", () -> drivetrain.getGyroMeasurement().getY());
   }
 
   // Called when the command is initially scheduled.
@@ -35,7 +37,7 @@ public class BalanceOnChargingStationLinear extends CommandBase {
 
     drivetrain.fromChassisSpeeds(
       new ChassisSpeeds(
-        pitch * SmartDashboard.getNumber("BalaceOnCharingStation-kP", 0),
+        pitch * SmartDashboard.getNumber("BalanceOnChargingStation/kP", 0),
         0,
         0
       )
@@ -52,6 +54,6 @@ public class BalanceOnChargingStationLinear extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false;
-    return drivetrain.getGyroMeasurement().getY() < SmartDashboard.getNumber("BalaceOnCharingStation-balanceTolerance", 0.1);
+    return Math.abs(drivetrain.getGyroMeasurement().getY()) < SmartDashboard.getNumber("BalanceOnChargingStation/balanceTolerance", 0.1);
   }
 }

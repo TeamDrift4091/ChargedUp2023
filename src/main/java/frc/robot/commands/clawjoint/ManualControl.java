@@ -6,9 +6,7 @@ package frc.robot.commands.clawjoint;
 
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ClawJointConstants;
 import frc.robot.subsystems.ClawJoint;
 
 public class ManualControl extends CommandBase {
@@ -32,13 +30,18 @@ public class ManualControl extends CommandBase {
   @Override
   public void execute() {
     if (up.getAsBoolean()) {
-      targetAngleRadians += .05;
-    }
+      // targetAngleRadians += .05;
+      clawJoint.drive(.5);
+    } else
     if (down.getAsBoolean()) {
-      targetAngleRadians -= .05;
+      // targetAngleRadians -= .05;
+      clawJoint.drive(-.3);
+    } else {
+      clawJoint.drive(0);
     }
-    targetAngleRadians = MathUtil.clamp(targetAngleRadians, ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE);
-    clawJoint.setAngle(targetAngleRadians);
+    // targetAngleRadians = MathUtil.clamp(targetAngleRadians, ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE);
+    // clawJoint.setAngle(targetAngleRadians);
+
   }
 
   // Called once the command ends or is interrupted.
