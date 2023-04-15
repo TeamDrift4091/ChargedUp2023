@@ -20,7 +20,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private Thread lazyDashboardThread = new Thread(() -> {
+  private final Thread lazyDashboardThread = new Thread(() -> {
     LazyDashboard.updateAll();
   }, "Update Lazy Dashboard");
 

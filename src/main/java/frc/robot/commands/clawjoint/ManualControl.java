@@ -12,14 +12,14 @@ import frc.robot.subsystems.ClawJoint;
 public class ManualControl extends CommandBase {
   private final ClawJoint clawJoint;
   private final BooleanSupplier up, down;
-  private double targetAngleRadians;
+  // private double targetAngleRadians;
   public ManualControl(ClawJoint clawJoint, BooleanSupplier up, BooleanSupplier down) {
     addRequirements(clawJoint);
     this.clawJoint = clawJoint;
     this.up = up;
     this.down = down;
 
-    targetAngleRadians = .1; // just a random number, just to be safe
+    // targetAngleRadians = .1; // just a random number, just to be safe
   }
 
   // Called when the command is initially scheduled.

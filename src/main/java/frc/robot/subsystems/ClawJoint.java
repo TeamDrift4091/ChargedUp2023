@@ -71,9 +71,9 @@ public class ClawJoint extends SubsystemBase {
    */
   public void setAngle(double rotations) {
     // TODO: Make sure the target angle is attainable before trying to move.
-    // if (ClawJointConstants.MIN_ANGLE <= radians && radians <= ClawJointConstants.MAX_ANGLE) {
+    if (ClawJointConstants.MIN_ANGLE <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {
       pidController.setReference(rotations, WPI_CANSparkMax.ControlType.kPosition);
-    // }
+    }
   }
 
   /**

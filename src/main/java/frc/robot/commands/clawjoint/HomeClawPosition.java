@@ -6,7 +6,7 @@ import frc.robot.subsystems.ClawJoint;
 public class HomeClawPosition extends CommandBase {
     private final ClawJoint clawJoint;
 
-    private static final double HOME_ANGLE = Math.PI / 2.0;
+    private static final double HOME_ANGLE = .31; // Rotations
 
     public HomeClawPosition(ClawJoint clawJoint) {
         this.clawJoint = clawJoint;
