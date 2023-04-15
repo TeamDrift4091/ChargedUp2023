@@ -14,7 +14,7 @@ import frc.robot.subsystems.Drivetrain;
 public class BalanceOnChargingStationLinearWithPID extends CommandBase {
   private final Drivetrain drivetrain;
   private final ProfiledPIDController pidController = new ProfiledPIDController(
-    .1, 0, 0, 
+    BalanceOnChargingStationLinear.kP, 0, 0, 
     new Constraints(1, 10));
   
   public BalanceOnChargingStationLinearWithPID(Drivetrain drivetrain) {
@@ -50,6 +50,6 @@ public class BalanceOnChargingStationLinearWithPID extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false;
-    return drivetrain.getGyroMeasurement().getY() < .08; // Made up number
+    return drivetrain.getGyroMeasurement().getY() < BalanceOnChargingStationLinear.balanceTolerance;
   }
 }

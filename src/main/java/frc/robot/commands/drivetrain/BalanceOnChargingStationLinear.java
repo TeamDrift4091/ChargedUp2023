@@ -13,14 +13,15 @@ import frc.team1891.common.LazyDashboard;
 
 public class BalanceOnChargingStationLinear extends CommandBase {
   private final Drivetrain drivetrain;
-  // private final double kP = 2; // proportion coefficient
+  public static final double kP = 6; // proportion coefficient
+  public static final double balanceTolerance = .04;
   
   public BalanceOnChargingStationLinear(Drivetrain drivetrain) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
 
-    SmartDashboard.putNumber("BalanceOnChargingStation/kP", 6);
-    SmartDashboard.putNumber("BalanceOnChargingStation/balanceTolerance", .04);
+    SmartDashboard.putNumber("BalanceOnChargingStation/kP", kP);
+    SmartDashboard.putNumber("BalanceOnChargingStation/balanceTolerance", balanceTolerance);
     LazyDashboard.addNumber("BalanceOnChargingStation/currentAngle", () -> drivetrain.getGyroMeasurement().getY());
   }
 
@@ -54,6 +55,6 @@ public class BalanceOnChargingStationLinear extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false;
-    return Math.abs(drivetrain.getGyroMeasurement().getY()) < SmartDashboard.getNumber("BalanceOnChargingStation/balanceTolerance", 0.1);
+    return Math.abs(drivetrain.getGyroMeasurement().getY()) < SmartDashboard.getNumber("BalanceOnChargingStation/balanceTolerance", balanceTolerance);
   }
 }
