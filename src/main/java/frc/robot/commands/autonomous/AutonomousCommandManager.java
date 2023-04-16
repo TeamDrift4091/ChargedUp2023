@@ -59,13 +59,20 @@ public class AutonomousCommandManager {
 
         // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
         commandChooser.addOption("Charge Station",
-            new AutoChargeStation(Drivetrain.getInstance())
+            ChargeStation.autoChargeStation(Drivetrain.getInstance())
         );
 
         commandChooser.addOption("Shoot High and Charge", 
             new SequentialCommandGroup(
                 new Shoot(Claw.getInstance(), .32).withTimeout(.4),
-                new AutoChargeStation(Drivetrain.getInstance())
+                ChargeStation.autoChargeStation(Drivetrain.getInstance())
+            )
+        );
+
+        commandChooser.addOption("Shoot High, Taxi, and Charge", 
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), .32).withTimeout(.4),
+                ChargeStation.autoChargeStationWithTaxi(Drivetrain.getInstance())
             )
         );
 
