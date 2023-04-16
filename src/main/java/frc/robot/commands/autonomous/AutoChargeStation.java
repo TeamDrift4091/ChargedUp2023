@@ -35,7 +35,7 @@ public class AutoChargeStation extends SequentialCommandGroup {
         }
         @Override
         public boolean isFinished() {
-            return Math.abs(drivetrain.getGyroMeasurement().getY()) > BalanceOnChargingStationLinear.balanceTolerance; // is pitch steeper than .2 rad
+            return Math.abs(drivetrain.getGyroMeasurement().getY() - BalanceOnChargingStationLinear.pitchOffset) > BalanceOnChargingStationLinear.balanceTolerance; // is pitch steeper than .2 rad
         }
       },
 
