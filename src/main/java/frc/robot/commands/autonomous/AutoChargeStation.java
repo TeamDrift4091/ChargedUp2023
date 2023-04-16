@@ -27,7 +27,7 @@ public class AutoChargeStation extends SequentialCommandGroup {
       // Drive forward until the gyro angle is steep enough
       new RunCommand(() -> {
         // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-        drivetrain.holonomicDrive(.2, 0, 0, false); // drive forward at 20% speed
+        drivetrain.holonomicDrive(.35, 0, 0, false); // drive forward at 20% speed
       }, drivetrain) {
         @Override
         public void end(boolean interrupted) {

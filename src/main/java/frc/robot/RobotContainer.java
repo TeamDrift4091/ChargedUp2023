@@ -159,7 +159,7 @@ public class RobotContainer {
     // scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
     scoreLow.onTrue(new Shoot(claw, .12).withTimeout(.4));
     scoreMid.onTrue(new Shoot(claw, .2).withTimeout(.4));
-    scoreHigh.onTrue(new Shoot(claw, .32).withTimeout(.4));
+    scoreHigh.onTrue(new Shoot(claw, .3).withTimeout(.4));
     shootFar.onTrue(new Shoot(claw, .75).withTimeout(.5));
 
     alignToCubeNode.whileTrue(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestCubeNodeAlignment()));
