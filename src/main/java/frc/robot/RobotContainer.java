@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +19,7 @@ import frc.robot.commands.autonomous.ScoringLocationManager;
 import frc.robot.commands.claw.*;
 import frc.robot.commands.clawjoint.*;
 import frc.robot.commands.drivetrain.*;
+import frc.robot.commands.leds.LEDDefaultCommand;
 import frc.robot.subsystems.*;
 import frc.robot.utility.MirrorPoses;
 import frc.robot.utility.PhotonVisionWrapper;
@@ -30,6 +32,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain = Drivetrain.getInstance();
   private final ClawJoint clawJoint = ClawJoint.getInstance();
   private final Claw claw = Claw.getInstance();
+  private final LEDs leds = LEDs.getInstance();
 
   // Controllers; xbox
   //private final XboxController xboxController = new XboxController(0) {
@@ -70,7 +73,6 @@ public class RobotContainer {
   private final Trigger alignToNode = new JoystickButton(ps4Controller, PS4Controller.Button.kR2.value);
   private final Trigger alignToCubeNode = new JoystickButton(ps4Controller, PS4Controller.Button.kL2.value);
 
-  // private final Trigger intakeDown = new Trigger(() -> clawDown);
   private final Trigger toggleIntakeDeployment = new JoystickButton(ps4Controller, PS4Controller.Button.kL1.value);
 
   private final Trigger chargeStationBalance = new JoystickButton(ps4Controller, PS4Controller.Button.kL3.value);
@@ -80,9 +82,11 @@ public class RobotContainer {
   public RobotContainer() {
     // TODO: Disabling this only until we install the camera on the robot
     PhotonVisionWrapper.getInstance().disable();
+    if (Robot.isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
     // Connects the buttons and triggers to commands
     configureBindings();
-    // LazyDashboard.addBoolean("clawDown", () -> clawDown);
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
     Thread loadAutoThread = new Thread(() -> {
@@ -93,8 +97,9 @@ public class RobotContainer {
     loadAutoThread.run();
   }
   //xbox
- private void configureBindings() {
+  private void configureBindings() {
     // DEFAULT COMMANDS
+    leds.setDefaultCommand(new LEDDefaultCommand(leds));
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
    // drivetrain.setDefaultCommand(
      // new JoystickDrive(
