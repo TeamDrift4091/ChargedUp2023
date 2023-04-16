@@ -34,9 +34,9 @@ public class JoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (drivetrain.isGyroConnected()) {
-      drivetrain.holonomicDrive(-forward.getAsDouble(), -strafe.getAsDouble(), -twist.getAsDouble(), true); // negative is forward on the joystick; chassis left is positive while joystick right is positive.
-    }
+    // if (drivetrain.isGyroConnected()) {
+    drivetrain.holonomicDrive(-forward.getAsDouble(), -strafe.getAsDouble(), -twist.getAsDouble(), true); // negative is forward on the joystick; chassis left is positive while joystick right is positive.
+    // }
   }
 
   // Called once the command ends or is interrupted.
