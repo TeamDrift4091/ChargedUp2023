@@ -78,10 +78,9 @@ public class Constants {
     }
     public static class VisionConstants {
         public static final String CAMERA_NAME = "Limelight";
-        // TODO: Physical location of the camera on the robot, relative to the center of the robot.
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
-            new Translation3d(0, 0, 0), // in meters
-            new Rotation3d()
+            new Translation3d(-0.1524, 0.3556, 0), // in meters
+            new Rotation3d(0, 0, Math.PI)
         );
     }
     public static class ClawConstants {
