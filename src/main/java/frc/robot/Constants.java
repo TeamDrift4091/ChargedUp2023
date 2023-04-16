@@ -35,7 +35,7 @@ public class Constants {
         public static final double translationalD = 0.4;
 
         // public static final double CHASSIS_MAX_VELOCITY = 3.25;
-        public static final double CHASSIS_MAX_VELOCITY = 2;
+        public static final double CHASSIS_MAX_VELOCITY = 2.25;
         public static final double CHASSIS_MAX_ACCELERATION = 1.5;
         public static final double CHASSIS_MAX_ANGULAR_VELOCITY = Math.PI;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;

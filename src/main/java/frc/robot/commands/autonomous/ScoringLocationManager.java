@@ -16,23 +16,17 @@ public class ScoringLocationManager {
     private ScoringLocationManager() {}
 
     public enum ScoringLevel {
-        HYBRID(.2, 0),
-        MID(.6, Math.PI/5.),
-        HIGH(1, Math.PI/3.);
+        HYBRID(.12),
+        MID(.2),
+        HIGH(.25);
 
         private final double motorSpeed;
-        private final double clawAngleRadians;
-        ScoringLevel(double motorSpeed, double clawAngleRadians) {
+        ScoringLevel(double motorSpeed) {
             this.motorSpeed = motorSpeed;
-            this.clawAngleRadians = clawAngleRadians;
         }
 
         public double getRequiredMotorSpeed() {
             return motorSpeed;
-        }
-        
-        public double getRequiredClawAngle() {
-            return clawAngleRadians;
         }
     }
 
@@ -52,9 +46,9 @@ public class ScoringLocationManager {
         
         final double nearestPoseY = nodeNumber * nodeSpacing + (nodeSpacing / 2.) + offset;
         if (Robot.isRedAlliance()) {
-            return mirror(new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180)));
+            return mirror(new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, new Rotation2d()));
         }
-        return new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180));
+        return new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, new Rotation2d());
     }
 
     public static Pose2d getNearestCubeNodeAlignment() {
@@ -71,8 +65,8 @@ public class ScoringLocationManager {
         
         final double nearestPoseY = nodeNumber * nodeSpacing + (nodeSpacing / 2.) + offset;
         if (Robot.isRedAlliance()) {
-            return mirror(new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180)));
+            return mirror(new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, new Rotation2d()));
         }
-        return new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, Rotation2d.fromDegrees(180));
+        return new Pose2d(DISTANCE_FROM_WALL, nearestPoseY, new Rotation2d());
     }
 }

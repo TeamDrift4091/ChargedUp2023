@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ClawJointConstants;
-import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.subsystems.ClawJoint;
 
 public class ClawToAngle extends CommandBase {
@@ -19,13 +18,9 @@ public class ClawToAngle extends CommandBase {
     SmartDashboard.putNumber("ClawJoint/targetAngle", targetAngleRotations);
   }
 
-  public ClawToAngle(ClawJoint clawJoint, ScoringLevel scoringLevel) {
-    this(clawJoint, scoringLevel.getRequiredClawAngle());
-  }
-
   @Override
   public void execute() {
-    clawJoint.setAngle(MathUtil.clamp(SmartDashboard.getNumber("ClawJoint/targetAngle", targetAngleRotations), ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE));
+    clawJoint.setAngle(MathUtil.clamp(SmartDashboard.getNumber("ClawJoint/targetAngle", targetAngleRotations), ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE), true);
   }
 
   public static ClawToAngle intake(ClawJoint clawJoint) {

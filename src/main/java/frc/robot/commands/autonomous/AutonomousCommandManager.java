@@ -57,10 +57,8 @@ public class AutonomousCommandManager {
 
         // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
         commandChooser.addOption("Charge Station",
-            new SequentialCommandGroup(
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.6, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
-        ));
+            new AutoChargeStation(Drivetrain.getInstance())
+        );
 
         SmartDashboard.putData("Autonomous Chooser", commandChooser);
     }

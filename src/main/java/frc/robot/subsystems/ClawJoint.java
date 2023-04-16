@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,11 +47,19 @@ public class ClawJoint extends SubsystemBase {
     pidController.setPositionPIDWrappingMaxInput(1);
 
     // Configure PID
-    pidController.setP(1.25);
-    pidController.setI(0);
-    pidController.setD(0.3);
-    pidController.setFF(0);
-    pidController.setOutputRange(-.3, .5);
+    // Going UP
+    pidController.setP(2.6, 0);
+    pidController.setI(0, 0);
+    pidController.setD(0.7, 0);
+    pidController.setFF(0, 0);
+    pidController.setOutputRange(-.25, .6, 0);
+
+    // Going DOWN
+    pidController.setP(1.2, 1);
+    pidController.setI(0, 1);
+    pidController.setD(1.6, 1);
+    pidController.setFF(0, 1);
+    pidController.setOutputRange(-.25, .6, 1);
 
     // TODO: Need to figure out units
     // pidController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
@@ -65,14 +74,19 @@ public class ClawJoint extends SubsystemBase {
     motor.set(MathUtil.clamp(speed, -1, 1));
   }
 
+  public void setIdleMode(IdleMode idleMode) {
+    motor.setIdleMode(idleMode);
+  }
+
   /**
    * Drives the claw joint to the target angle
    * @param rotations target angle
    */
-  public void setAngle(double rotations) {
+  public void setAngle(double rotations, boolean isDown) {
+    int pidSlot = isDown ? 1 : 0;
     // TODO: Make sure the target angle is attainable before trying to move.
     if (ClawJointConstants.MIN_ANGLE <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {
-      pidController.setReference(rotations, WPI_CANSparkMax.ControlType.kPosition);
+      pidController.setReference(rotations, WPI_CANSparkMax.ControlType.kPosition, pidSlot);
     }
   }
 

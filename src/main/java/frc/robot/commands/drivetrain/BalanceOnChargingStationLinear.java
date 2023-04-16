@@ -13,8 +13,12 @@ import frc.team1891.common.LazyDashboard;
 
 public class BalanceOnChargingStationLinear extends CommandBase {
   private final Drivetrain drivetrain;
-  public static final double kP = 6; // proportion coefficient
+  public static final double kP = 2; // proportion coefficient
   public static final double balanceTolerance = .04;
+
+  public static double pitchOffset = 0;
+  
+  private int balanceCount = 0;
   
   public BalanceOnChargingStationLinear(Drivetrain drivetrain) {
     addRequirements(drivetrain);
@@ -22,27 +26,33 @@ public class BalanceOnChargingStationLinear extends CommandBase {
 
     SmartDashboard.putNumber("BalanceOnChargingStation/kP", kP);
     SmartDashboard.putNumber("BalanceOnChargingStation/balanceTolerance", balanceTolerance);
-    LazyDashboard.addNumber("BalanceOnChargingStation/currentAngle", () -> drivetrain.getGyroMeasurement().getY());
+    LazyDashboard.addNumber("BalanceOnChargingStation/currentAngle", () -> drivetrain.getGyroMeasurement().getY() - pitchOffset);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    balanceCount = 0;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     Rotation3d gyroMeasurement = drivetrain.getGyroMeasurement();
 
-    double pitch = gyroMeasurement.getY(); // Rotation around the y axis
+    double pitch = gyroMeasurement.getY() - pitchOffset; // Rotation around the y axis
 
-    drivetrain.fromChassisSpeeds(
-      new ChassisSpeeds(
-        pitch * SmartDashboard.getNumber("BalanceOnChargingStation/kP", 0),
-        0,
-        0
-      )
-    );
+    if (Math.abs(pitch) > balanceTolerance) {
+      drivetrain.fromChassisSpeeds(
+        new ChassisSpeeds(
+          pitch * SmartDashboard.getNumber("BalanceOnChargingStation/kP", 0),
+          0,
+          0
+        )
+      );
+    } else {
+      drivetrain.stop();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -55,6 +65,15 @@ public class BalanceOnChargingStationLinear extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false;
-    return Math.abs(drivetrain.getGyroMeasurement().getY()) < SmartDashboard.getNumber("BalanceOnChargingStation/balanceTolerance", balanceTolerance);
+    if (Math.abs(drivetrain.getGyroMeasurement().getY() - pitchOffset) < SmartDashboard.getNumber("BalanceOnChargingStation/balanceTolerance", balanceTolerance)) {
+      balanceCount ++;
+    } else {
+      balanceCount = 0;
+    }
+    return balanceCount > 40;
+  }
+
+  public static void calibrateOffset() {
+    pitchOffset = Drivetrain.getInstance().getGyroMeasurement().getY();
   }
 }

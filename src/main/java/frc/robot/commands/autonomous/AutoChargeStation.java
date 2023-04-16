@@ -19,15 +19,20 @@ public class AutoChargeStation extends SequentialCommandGroup {
       // Reset the gyro before doing anything
       new InstantCommand(() -> {
         drivetrain.resetGyro();
+        BalanceOnChargingStationLinear.calibrateOffset();
       }, drivetrain),
 
       // Align wheels forward before we start moving
-      new FaceModules(drivetrain).withTimeout(2), // with a timeout just in case it doesn't end properly
+      new FaceModules(drivetrain).withTimeout(1), // with a timeout just in case it doesn't end properly
 
       // Drive forward until the gyro angle is steep enough
       new RunCommand(() -> {
         drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
       }, drivetrain) {
+        @Override
+        public void end(boolean interrupted) {
+          drivetrain.stop();
+        }
         @Override
         public boolean isFinished() {
             return Math.abs(drivetrain.getGyroMeasurement().getY()) > BalanceOnChargingStationLinear.balanceTolerance; // is pitch steeper than .2 rad

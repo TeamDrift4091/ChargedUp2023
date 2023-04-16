@@ -186,6 +186,7 @@ public class Drivetrain extends SwerveDrivetrain {
     configSteerMotor(backRightSteerMotor);
 
     // TODO: There may be some issues because this isn't reset before poseEstimator is initialized (@BullBotsLib).
+    gyro.calibrate();
     gyro.reset();
 
     photonVision = PhotonVisionWrapper.getInstance();

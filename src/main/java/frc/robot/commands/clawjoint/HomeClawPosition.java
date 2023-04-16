@@ -15,7 +15,6 @@ public class HomeClawPosition extends CommandBase {
 
     @Override
     public void execute() {
-        clawJoint.setAngle(HOME_ANGLE);
+        clawJoint.setAngle(HOME_ANGLE, false);
     }
 }
-
