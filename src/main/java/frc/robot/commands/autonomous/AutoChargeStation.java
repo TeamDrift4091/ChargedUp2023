@@ -4,7 +4,6 @@
 
 package frc.robot.commands.autonomous;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -27,7 +26,8 @@ public class AutoChargeStation extends SequentialCommandGroup {
 
       // Drive forward until the gyro angle is steep enough
       new RunCommand(() -> {
-        drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
+        // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
+        drivetrain.holonomicDrive(.2, 0, 0, false); // drive forward at 20% speed
       }, drivetrain) {
         @Override
         public void end(boolean interrupted) {
