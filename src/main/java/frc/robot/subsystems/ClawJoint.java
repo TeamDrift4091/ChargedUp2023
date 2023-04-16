@@ -48,16 +48,16 @@ public class ClawJoint extends SubsystemBase {
 
     // Configure PID
     // Going UP
-    pidController.setP(2.8, 0);
+    pidController.setP(2.6, 0);
     pidController.setI(0, 0);
-    pidController.setD(0.8, 0);
+    pidController.setD(0.7, 0);
     pidController.setFF(0, 0);
     pidController.setOutputRange(-.25, .6, 0);
 
     // Going DOWN
     pidController.setP(1.3, 1);
     pidController.setI(0, 1);
-    pidController.setD(1.65, 1);
+    pidController.setD(1.6, 1);
     pidController.setFF(0, 1);
     pidController.setOutputRange(-.25, .6, 1);
 
