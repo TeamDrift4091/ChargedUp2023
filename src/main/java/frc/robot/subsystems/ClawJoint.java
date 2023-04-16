@@ -84,10 +84,10 @@ public class ClawJoint extends SubsystemBase {
    */
   public void setAngle(double rotations, boolean isDown) {
     int pidSlot = isDown ? 1 : 0;
-    // TODO: Make sure the target angle is attainable before trying to move.
-    if ((ClawJointConstants.MIN_ANGLE - 1) <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {
+    // // TODO: Make sure the target angle is attainable before trying to move.
+    // if ((ClawJointConstants.MIN_ANGLE - 1) <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {
       pidController.setReference(rotations, WPI_CANSparkMax.ControlType.kPosition, pidSlot);
-    }
+    // }
   }
 
   /**
