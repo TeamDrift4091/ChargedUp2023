@@ -78,9 +78,7 @@ public class RobotContainer {
   private final Trigger resetGyroPitch = new JoystickButton(ps4Controller, PS4Controller.Button.kR3.value);
 
   public RobotContainer() {
-    // TODO: Disabling this only until we install the camera on the robot
-    PhotonVisionWrapper.getInstance().disable();
-    // Connects the buttons and triggers to commands
+   // Connects the buttons and triggers to commands
     configureBindings();
     // LazyDashboard.addBoolean("clawDown", () -> clawDown);
     // Loads the autonomous chooser with all of the available autonomous routines.
