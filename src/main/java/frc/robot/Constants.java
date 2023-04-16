@@ -93,8 +93,8 @@ public class Constants {
     }
     public static class ClawJointConstants {
         public static final int MOTOR_ID = 13;
-        public static final double MIN_ANGLE = 0; // .95 rotations
-        public static final double MAX_ANGLE = .4; //.314 rotations
+        public static final double MIN_ANGLE = .95; // .95 rotations
+        public static final double MAX_ANGLE = .314; //.314 rotations
 
         // https://docs.revrobotics.com/through-bore-encoder/specifications
         public static final int ENCODER_PULSES_PER_ROTATION = 1024;

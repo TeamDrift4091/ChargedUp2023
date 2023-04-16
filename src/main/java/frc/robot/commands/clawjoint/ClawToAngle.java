@@ -24,6 +24,6 @@ public class ClawToAngle extends CommandBase {
   }
 
   public static ClawToAngle intake(ClawJoint clawJoint) {
-    return new ClawToAngle(clawJoint, 0);
+    return new ClawToAngle(clawJoint, ClawJointConstants.MIN_ANGLE);
   }
 }
