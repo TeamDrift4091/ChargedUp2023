@@ -30,6 +30,10 @@ public class RobotContainer {
   private final ClawJoint clawJoint = ClawJoint.getInstance();
   private final Claw claw = Claw.getInstance();
 
+  private static final double normalSpeed = 2.5;
+  private static final double plaidSpeed = 3;
+  private static double currentMaxVelocity = normalSpeed;
+
   // Controllers; xbox
   //private final XboxController xboxController = new XboxController(0) {
    // public double getRawAxis(int axis) {
@@ -46,8 +50,14 @@ public class RobotContainer {
   //private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
   //private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
 
-    // controllers: PS4
-   private final PS4Controller ps4Controller = new PS4Controller(0) {
+  // controllers: PS4
+  private final PS4Controller ps4Controller = new PS4Controller(0) {
+    public double getRawAxis(int axis) {
+      return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
+    };
+  };
+
+  private final PS4Controller secondController = new PS4Controller(1) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
@@ -76,6 +86,9 @@ public class RobotContainer {
 
   private final Trigger resetGyroPitch = new JoystickButton(ps4Controller, PS4Controller.Button.kR3.value);
 
+  private final Trigger setPlaidSpeed = new JoystickButton(secondController, PS4Controller.Button.kCircle.value); // Should this be an xbox contoller?
+  private final Trigger setNormalSpeed = new JoystickButton(secondController, PS4Controller.Button.kCross.value); // Should this be an xbox contoller?
+
   public RobotContainer() {
    // Connects the buttons and triggers to commands
     configureBindings();
@@ -90,7 +103,7 @@ public class RobotContainer {
     loadAutoThread.run();
   }
   //xbox
- private void configureBindings() {
+  private void configureBindings() {
     // DEFAULT COMMANDS
     // Whenever not told to do something else, the drivetrian will run JoystickDrive.
    // drivetrain.setDefaultCommand(
@@ -179,7 +192,18 @@ public class RobotContainer {
     // }, clawJoint));
 
     chargeStationBalance.whileTrue(new BalanceOnChargingStationLinear(drivetrain));
+
+    setPlaidSpeed.onTrue(new InstantCommand(() -> {
+      currentMaxVelocity = plaidSpeed;
+    }));
+    setNormalSpeed.onTrue(new InstantCommand(() -> {
+      currentMaxVelocity = normalSpeed;
+    }));
   }
+
+  public static double getTeleopTranslationalVelocity() {
+    return currentMaxVelocity;
+  } 
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
   public Command getAutonomousCommand() {
