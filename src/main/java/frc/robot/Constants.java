@@ -35,7 +35,7 @@ public class Constants {
         public static final double translationalD = 0.4;
 
         // public static final double CHASSIS_MAX_VELOCITY = 3.25;
-        public static final double CHASSIS_MAX_VELOCITY = 2.25;
+        public static final double CHASSIS_MAX_VELOCITY = 2.7;
         public static final double CHASSIS_MAX_ACCELERATION = 1.5;
         public static final double CHASSIS_MAX_ANGULAR_VELOCITY = Math.PI;
         public static final double CHASSIS_MAX_ANGULAR_ACCELERATION = Math.PI;
@@ -78,10 +78,9 @@ public class Constants {
     }
     public static class VisionConstants {
         public static final String CAMERA_NAME = "Limelight";
-        // TODO: Physical location of the camera on the robot, relative to the center of the robot.
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
-            new Translation3d(0, 0, 0), // in meters
-            new Rotation3d()
+            new Translation3d(-0.1524, 0.3556, 0), // in meters
+            new Rotation3d(0, 0, Math.PI)
         );
     }
     public static class ClawConstants {
@@ -93,7 +92,7 @@ public class Constants {
     }
     public static class ClawJointConstants {
         public static final int MOTOR_ID = 13;
-        public static final double MIN_ANGLE = .95; // .95 rotations
+        public static final double MIN_ANGLE = .975; // .95 rotations
         public static final double MAX_ANGLE = .314; //.314 rotations
 
         // https://docs.revrobotics.com/through-bore-encoder/specifications

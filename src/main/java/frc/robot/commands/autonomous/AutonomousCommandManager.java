@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.claw.Shoot;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
 
@@ -57,7 +59,21 @@ public class AutonomousCommandManager {
 
         // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
         commandChooser.addOption("Charge Station",
-            new AutoChargeStation(Drivetrain.getInstance())
+            ChargeStation.autoChargeStation(Drivetrain.getInstance())
+        );
+
+        commandChooser.addOption("Shoot High and Charge", 
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), .32).withTimeout(.4),
+                ChargeStation.autoChargeStation(Drivetrain.getInstance())
+            )
+        );
+
+        commandChooser.addOption("Shoot High, Taxi, and Charge", 
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), .32).withTimeout(.4),
+                ChargeStation.autoChargeStationWithTaxi(Drivetrain.getInstance())
+            )
         );
 
         SmartDashboard.putData("Autonomous Chooser", commandChooser);

@@ -48,14 +48,14 @@ public class ClawJoint extends SubsystemBase {
 
     // Configure PID
     // Going UP
-    pidController.setP(2.6, 0);
+    pidController.setP(2.7, 0);
     pidController.setI(0, 0);
-    pidController.setD(0.7, 0);
+    pidController.setD(0.75, 0);
     pidController.setFF(0, 0);
     pidController.setOutputRange(-.25, .6, 0);
 
     // Going DOWN
-    pidController.setP(1.2, 1);
+    pidController.setP(1.3, 1);
     pidController.setI(0, 1);
     pidController.setD(1.6, 1);
     pidController.setFF(0, 1);
@@ -84,10 +84,10 @@ public class ClawJoint extends SubsystemBase {
    */
   public void setAngle(double rotations, boolean isDown) {
     int pidSlot = isDown ? 1 : 0;
-    // TODO: Make sure the target angle is attainable before trying to move.
-    if ((ClawJointConstants.MIN_ANGLE - 1) <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {
+    // // TODO: Make sure the target angle is attainable before trying to move.
+    // if ((ClawJointConstants.MIN_ANGLE - 1) <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {
       pidController.setReference(rotations, WPI_CANSparkMax.ControlType.kPosition, pidSlot);
-    }
+    // }
   }
 
   /**

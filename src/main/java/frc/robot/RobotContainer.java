@@ -22,7 +22,6 @@ import frc.robot.commands.drivetrain.*;
 import frc.robot.commands.leds.LEDDefaultCommand;
 import frc.robot.subsystems.*;
 import frc.robot.utility.MirrorPoses;
-import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.control.AxisTrigger; 
 import frc.team1891.common.control.POVTrigger;
 import frc.team1891.common.control.POVTrigger.POV;
@@ -33,6 +32,10 @@ public class RobotContainer {
   private final ClawJoint clawJoint = ClawJoint.getInstance();
   private final Claw claw = Claw.getInstance();
   private final LEDs leds = LEDs.getInstance();
+
+  private static final double normalSpeed = 2.5;
+  private static final double plaidSpeed = 3;
+  private static double currentMaxVelocity = normalSpeed;
 
   // Controllers; xbox
   //private final XboxController xboxController = new XboxController(0) {
@@ -50,8 +53,14 @@ public class RobotContainer {
   //private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
   //private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
 
-    // controllers: PS4
-   private final PS4Controller ps4Controller = new PS4Controller(0) {
+  // controllers: PS4
+  private final PS4Controller ps4Controller = new PS4Controller(0) {
+    public double getRawAxis(int axis) {
+      return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
+    };
+  };
+
+  private final PS4Controller secondController = new PS4Controller(1) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
@@ -79,12 +88,10 @@ public class RobotContainer {
 
   private final Trigger resetGyroPitch = new JoystickButton(ps4Controller, PS4Controller.Button.kR3.value);
 
+  private final Trigger setPlaidSpeed = new JoystickButton(secondController, PS4Controller.Button.kCircle.value); // Should this be an xbox contoller?
+  private final Trigger setNormalSpeed = new JoystickButton(secondController, PS4Controller.Button.kCross.value); // Should this be an xbox contoller?
+
   public RobotContainer() {
-    // TODO: Disabling this only until we install the camera on the robot
-    PhotonVisionWrapper.getInstance().disable();
-    if (Robot.isSimulation()) {
-      DriverStation.silenceJoystickConnectionWarning(true);
-    }
     // Connects the buttons and triggers to commands
     configureBindings();
     // Loads the autonomous chooser with all of the available autonomous routines.
@@ -167,7 +174,7 @@ public class RobotContainer {
     // scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
     scoreLow.onTrue(new Shoot(claw, .12).withTimeout(.4));
     scoreMid.onTrue(new Shoot(claw, .2).withTimeout(.4));
-    scoreHigh.onTrue(new Shoot(claw, .25).withTimeout(.4));
+    scoreHigh.onTrue(new Shoot(claw, .3).withTimeout(.4));
     shootFar.onTrue(new Shoot(claw, .75).withTimeout(.5));
 
     alignToCubeNode.whileTrue(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestCubeNodeAlignment()));
@@ -187,7 +194,18 @@ public class RobotContainer {
     // }, clawJoint));
 
     chargeStationBalance.whileTrue(new BalanceOnChargingStationLinear(drivetrain));
+
+    setPlaidSpeed.onTrue(new InstantCommand(() -> {
+      currentMaxVelocity = plaidSpeed;
+    }));
+    setNormalSpeed.onTrue(new InstantCommand(() -> {
+      currentMaxVelocity = normalSpeed;
+    }));
   }
+
+  public static double getTeleopTranslationalVelocity() {
+    return currentMaxVelocity;
+  } 
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
   public Command getAutonomousCommand() {

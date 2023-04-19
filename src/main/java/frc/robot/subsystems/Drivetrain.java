@@ -24,6 +24,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.utility.BoringFalconSteerController;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.LazyDashboard;
@@ -255,8 +256,8 @@ public class Drivetrain extends SwerveDrivetrain {
 
   @Override
   public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed *= config.chassisMaxVelocityMetersPerSecond();
-    ySpeed *= config.chassisMaxVelocityMetersPerSecond();
+    xSpeed *= RobotContainer.getTeleopTranslationalVelocity();
+    ySpeed *= RobotContainer.getTeleopTranslationalVelocity();
     rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
 
     fromChassisSpeeds(
