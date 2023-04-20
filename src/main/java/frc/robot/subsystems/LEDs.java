@@ -22,14 +22,15 @@ public class LEDs extends SubsystemBase {
     return instance;
   }
 
-  public static final int LENGTH = 150;
+  public static final int LENGTH = 147;
   public enum LEDMode {
     OFF,
     DISCONNECTED,
     DISABLED,
     AUTONOMOUS,
     TELEOP,
-    FAULT;
+    FAULT,
+    PLAID;
   }
   private LEDMode currentMode = null; // Set to OFf on init
 
@@ -39,7 +40,7 @@ public class LEDs extends SubsystemBase {
   private final Notifier periodicThread;
 
   private LEDs() {
-    leds = new LEDString(0, LENGTH);
+    leds = new LEDString(9, LENGTH);
 
     periodicThread = new Notifier(() -> {
       Consumer<LEDString> consumer = ledConsumer.get();
@@ -61,6 +62,11 @@ public class LEDs extends SubsystemBase {
     leds.stop();
   }
 
+  public void setCustomConsumer(Consumer<LEDString> customConsumer) {
+    ledConsumer.set(customConsumer);
+    currentMode = null;
+  }
+
   public void setMode(LEDMode mode) {
     if (mode != currentMode) {
       currentMode = mode;
@@ -74,21 +80,18 @@ public class LEDs extends SubsystemBase {
         case DISABLED:
           ledConsumer.set(
             (leds) -> leds.flash(2, 
-              () -> setAll(leds, 0, 200, 0)));
+              () -> setAll(leds, 0, 50, 0)));
           break;
         case AUTONOMOUS:
           ledConsumer.set((leds) -> rainbow(leds));
           break;
         case TELEOP:
           // Show alliance color
-          // if (Robot.isBlueAlliance()) {
-          //   ledConsumer.set((leds) -> setOnce(() -> twoColor(leds, 2, 0, 0, 200, 150, 150, 150)));
-          // } else {
-          //   ledConsumer.set((leds) -> setOnce(() -> twoColor(leds, 2, 200, 0, 0, 150, 150, 150)));
-          // }
-
-          // Joker
-          ledConsumer.set((leds) -> setOnce(() -> twoColor(leds, 5, 170, 90, 240, 30, 220, 50)));
+          if (Robot.isBlueAlliance()) {
+            ledConsumer.set((leds) -> setOnce(() -> twoColor(leds, 2, 0, 0, 200, 150, 150, 150)));
+          } else {
+            ledConsumer.set((leds) -> setOnce(() -> twoColor(leds, 2, 200, 0, 0, 150, 150, 150)));
+          }
           break;
         case FAULT:
           ledConsumer.set((leds) -> leds.alternate(.5, 
@@ -96,6 +99,11 @@ public class LEDs extends SubsystemBase {
             () -> setAll(leds, 100, 0, 0)
           ));
           break;
+        case PLAID:
+          // Joker
+          ledConsumer.set((leds) -> leds.alternate(.5, 
+            () -> twoColor(leds, 2, 10, 5, 20, 10, 70, 15),
+            () -> twoColor(leds, 2, 10, 70, 15, 10, 5, 20)));
       }
     }
   }

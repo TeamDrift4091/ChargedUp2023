@@ -6,6 +6,8 @@ package frc.robot.utility;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
+import frc.team1891.common.LazyDashboard;
 
 public class LEDString {
     private final AddressableLED leds;
@@ -17,6 +19,18 @@ public class LEDString {
         buffer = new AddressableLEDBuffer(length);
         leds.setLength(buffer.getLength());
         this.length = length;
+
+        LazyDashboard.addNumber("Estimated LED power draw", () -> {
+            double totalPower = 0;
+            for (int i = 0; i < length; i++) {
+                Color color = buffer.getLED(i); 
+                double sum = color.red + color.green + color.blue;
+                totalPower += sum / 3.;
+            }
+            
+            totalPower *= .06; // 60mA per led
+            return totalPower;
+        });
     }
 
 

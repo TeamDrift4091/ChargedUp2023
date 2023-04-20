@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -20,7 +20,9 @@ import frc.robot.commands.claw.*;
 import frc.robot.commands.clawjoint.*;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.commands.leds.LEDDefaultCommand;
+import frc.robot.commands.leds.LEDLimelightFault;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.LEDs.LEDMode;
 import frc.robot.utility.MirrorPoses;
 import frc.team1891.common.control.AxisTrigger; 
 import frc.team1891.common.control.POVTrigger;
@@ -33,8 +35,8 @@ public class RobotContainer {
   private final Claw claw = Claw.getInstance();
   private final LEDs leds = LEDs.getInstance();
 
-  private static final double normalSpeed = 2.5;
-  private static final double plaidSpeed = 3;
+  public static final double normalSpeed = 2.5;
+  public static final double plaidSpeed = 3;
   private static double currentMaxVelocity = normalSpeed;
 
   // Controllers; xbox
@@ -60,7 +62,7 @@ public class RobotContainer {
     };
   };
 
-  private final PS4Controller secondController = new PS4Controller(1) {
+  private final XboxController secondController = new XboxController(1) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
@@ -88,8 +90,8 @@ public class RobotContainer {
 
   private final Trigger resetGyroPitch = new JoystickButton(ps4Controller, PS4Controller.Button.kR3.value);
 
-  private final Trigger setPlaidSpeed = new JoystickButton(secondController, PS4Controller.Button.kCircle.value); // Should this be an xbox contoller?
-  private final Trigger setNormalSpeed = new JoystickButton(secondController, PS4Controller.Button.kCross.value); // Should this be an xbox contoller?
+  private final Trigger setPlaidSpeed = new JoystickButton(secondController, XboxController.Button.kA.value);
+  private final Trigger ledRainbow = new JoystickButton(secondController, XboxController.Button.kLeftBumper.value);
 
   public RobotContainer() {
     // Connects the buttons and triggers to commands
@@ -179,33 +181,39 @@ public class RobotContainer {
 
     alignToCubeNode.whileTrue(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestCubeNodeAlignment()));
     alignToNode.whileTrue(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestNodeAlignment()));
+    alignToCubeNode.whileTrue(new LEDLimelightFault(leds));
+    alignToNode.whileTrue(new LEDLimelightFault(leds));
 
     runIntake.whileTrue(new Intake(claw));
   
-    // intakeDown.whileTrue(ClawToAngle.intake(clawJoint));
-
-    // // toggleIntakeDeployment.onTrue(new InstantCommand(() -> {
-    // //   clawDown = !clawDown;
-    // // }));
     toggleIntakeDeployment.whileTrue(ClawToAngle.intake(clawJoint));
-
-    // intakeDown.whileTrue(new RunCommand(() -> {
-    //   clawJoint.drive(.3);
-    // }, clawJoint));
 
     chargeStationBalance.whileTrue(new BalanceOnChargingStationLinear(drivetrain));
 
     setPlaidSpeed.onTrue(new InstantCommand(() -> {
       currentMaxVelocity = plaidSpeed;
     }));
-    setNormalSpeed.onTrue(new InstantCommand(() -> {
+    setPlaidSpeed.onFalse(new InstantCommand(() -> {
       currentMaxVelocity = normalSpeed;
     }));
+
+    ledRainbow.onTrue(new InstantCommand(() -> {
+      leds.start();
+      leds.setMode(LEDMode.AUTONOMOUS);
+    }, leds) {
+      public void end(boolean interrupted) {
+        leds.setMode(LEDMode.OFF);
+        leds.stop();
+      };
+      public boolean isFinished() {
+        return false;
+      };
+    }.withTimeout(5));
   }
 
   public static double getTeleopTranslationalVelocity() {
     return currentMaxVelocity;
-  } 
+  }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
   public Command getAutonomousCommand() {
@@ -216,6 +224,10 @@ public class RobotContainer {
     CommandScheduler.getInstance().clearComposedCommands();
     // Returns the selected command from AutonomousCommandManager and appends a simple instant command that tells
     // SmartDashboard the command finished.
-    return AutonomousCommandManager.getSelected().andThen(() -> SmartDashboard.putBoolean("Autonomous Finished", true));
+    Command autoCommand = AutonomousCommandManager.getSelected();
+    if (autoCommand == null) {
+      autoCommand = new InstantCommand();
+    }
+    return autoCommand.andThen(() -> SmartDashboard.putBoolean("Autonomous Finished", true));
   } 
 }

@@ -6,6 +6,8 @@ package frc.robot.commands.leds;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
+import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LEDMode;
@@ -31,11 +33,20 @@ public class LEDDefaultCommand extends CommandBase {
     } else if (!Drivetrain.getInstance().isGyroConnected()) {
       leds.setMode(LEDMode.FAULT);
     } else if (DriverStation.isDisabled()) {
+      if (AutonomousCommandManager.getSelected() == null) {
+        leds.setMode(LEDMode.FAULT);
+      }
       leds.setMode(LEDMode.DISABLED);
     } else if (DriverStation.isAutonomousEnabled()) {
       leds.setMode(LEDMode.AUTONOMOUS);
     } else if (DriverStation.isTeleopEnabled()) {
-      leds.setMode(LEDMode.TELEOP);
+      if (RobotContainer.getTeleopTranslationalVelocity() == RobotContainer.plaidSpeed) {
+        leds.setMode(LEDMode.PLAID);
+      } else {
+        leds.setMode(LEDMode.TELEOP);
+      }
+    } else {
+      leds.setMode(LEDMode.OFF);
     }
   }
 

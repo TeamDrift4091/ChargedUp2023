@@ -8,7 +8,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
@@ -39,22 +38,18 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
         // Default do nothing to avoid issues
-        commandChooser.setDefaultOption("Default - Do Nothing", new InstantCommand());
+        commandChooser.setDefaultOption("Default - Do Nothing", null);
 
-        // Drive forward for 3 seconds at roughly .5 m/s
-        commandChooser.addOption("Drive Forward (~1.5 meters)",
-            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
+        commandChooser.addOption("Shoot High and Taxi", 
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), .32).withTimeout(.4),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6) 
+            )
         );
 
-        commandChooser.addOption("Backup then Forward",
-            new SequentialCommandGroup(
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6)
-        ));
-
-        // Drive backward for 3 seconds at roughly .5 m/s
-        commandChooser.addOption("Drive Backward (~1.5 meters)",
-            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
+        // Drive forward for 3 seconds at roughly .5 m/s
+        commandChooser.addOption("Drive Forward (~3 meters)",
+            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6)
         );
 
         // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));

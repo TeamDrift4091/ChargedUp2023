@@ -212,15 +212,6 @@
         }
       },
       "SmartDashboard": {
-        "ClawJoint": {
-          "open": true
-        },
-        "Drivetrain": {
-          "Back Left": {
-            "open": true
-          },
-          "open": true
-        },
         "RotatingHolonomicDriveController": {
           "open": true
         },

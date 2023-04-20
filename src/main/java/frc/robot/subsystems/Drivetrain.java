@@ -119,17 +119,7 @@ public class Drivetrain extends SwerveDrivetrain {
   // Objects to hold module related things, such as motors, and motor wrappers (drive and steer controllers)
   private static final WPI_TalonFX frontLeftDriveMotor = new WPI_TalonFX(FrontLeft.DRIVE_CHANNEL);
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveMotor, _config);
-  private static final WPI_TalonFX frontLeftSteerMotor = new WPI_TalonFX(FrontLeft.STEER_CHANNEL) {
-    double offset = 0;
-    public double getSelectedSensorPosition(int pidIdx) {
-      return super.getSelectedSensorPosition(pidIdx) + offset;
-    };
-
-    public com.ctre.phoenix.ErrorCode setSelectedSensorPosition(double sensorPos) {
-      offset = sensorPos - super.getSelectedSensorPosition();
-      return super.setSelectedSensorPosition(sensorPos);
-    };
-  };
+  private static final WPI_TalonFX frontLeftSteerMotor = new WPI_TalonFX(FrontLeft.STEER_CHANNEL);
   private static final WPI_CANCoder frontLeftEncoder = new WPI_CANCoder(FrontLeft.CANCODER_CHANNEL);
   // private static final FalconSteerControllerModified frontLeftSteerController = new FalconSteerControllerModified(frontLeftSteerMotor, frontLeftEncoder, FrontLeft.ENCODER_OFFSET_DEGREES);
   private static final BoringFalconSteerController frontLeftSteerController = new BoringFalconSteerController(frontLeftSteerMotor, frontLeftEncoder, steerP, steerI, steerD);
@@ -259,6 +249,8 @@ public class Drivetrain extends SwerveDrivetrain {
     xSpeed *= RobotContainer.getTeleopTranslationalVelocity();
     ySpeed *= RobotContainer.getTeleopTranslationalVelocity();
     rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
+
+    System.out.println(xSpeed);
 
     fromChassisSpeeds(
       fieldRelative?
