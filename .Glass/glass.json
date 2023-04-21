@@ -1,11 +1,14 @@
 {
   "NetworkTables": {
     "transitory": {
+      "CameraPublisher": {
+        "open": true
+      },
       "SmartDashboard": {
-        "Drivetrain": {
+        "BalanceOnChargingStation": {
           "open": true
         },
-        "Robot (Field2d)": {
+        "ClawJoint": {
           "open": true
         },
         "open": true
@@ -13,6 +16,36 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Claw": "Subsystem",
+      "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
+      "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[13]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/SparkMax [13]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [14]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [15]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [16]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [17]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [1]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [2]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [3]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [5]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [6]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [7]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [8]": "Motor Controller",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Arm (Mechanism2d)": "Mechanism2d",
       "/SmartDashboard/Autonomous Chooser": "String Chooser",
       "/SmartDashboard/Holonomic Trajectory (Field2d)": "Field2d",
@@ -21,11 +54,6 @@
       "/SmartDashboard/Robot (Field2d)": "Field2d"
     },
     "windows": {
-      "/SmartDashboard/Arm (Mechanism2d)": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Autonomous Chooser": {
         "window": {
           "visible": true
@@ -45,6 +73,12 @@
         "Robot": {
           "arrowSize": 100
         },
+        "bottom": 544,
+        "height": 8.013679504394531,
+        "left": 46,
+        "right": 1088,
+        "top": 36,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
@@ -98,18 +132,15 @@
           "weight": 1.0,
           "width": 0.15000000596046448
         },
-        "height": 1.4350999593734741,
-        "width": 1.4350999593734741,
+        "height": 0.9524999856948853,
+        "width": 0.9524999856948853,
         "window": {
           "visible": true
         }
       },
       "/SmartDashboard/Robot (Field2d)": {
-        "bottom": 544,
         "height": 8.013679504394531,
-        "left": 46,
-        "right": 1088,
-        "top": 36,
+        "image": "C:\\Users\\Pablo Herrera\\Documents\\GitHub\\ChargedUp2023\\2023-field.png",
         "width": 16.541748046875,
         "window": {
           "visible": true
@@ -222,12 +253,29 @@
     "Plot <1>": {
       "plots": [
         {
-          "height": 820
+          "height": 0,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/BalanceOnChargingStation/balanceTolerance"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/BalanceOnChargingStation/currentAngle"
+            }
+          ]
         }
-      ],
-      "window": {
-        "visible": false
-      }
+      ]
     }
   }
 }

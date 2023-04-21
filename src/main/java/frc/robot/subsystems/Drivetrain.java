@@ -24,13 +24,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.utility.BoringFalconSteerController;
 import frc.robot.utility.PhotonVisionWrapper;
+import frc.team1891.common.LazyDashboard;
 import frc.team1891.common.drivetrains.DrivetrainConfig;
 import frc.team1891.common.drivetrains.SwerveDrivetrain;
-import frc.team1891.common.drivetrains.swervemodules.BSF_FalconSteerController;
 import frc.team1891.common.drivetrains.swervemodules.DriveController;
 import frc.team1891.common.drivetrains.swervemodules.FalconDriveController;
-import frc.team1891.common.drivetrains.swervemodules.SteerController;
 import frc.team1891.common.drivetrains.swervemodules.SwerveModule;
 import frc.team1891.common.hardware.SimNavX;
 
@@ -120,25 +121,29 @@ public class Drivetrain extends SwerveDrivetrain {
   private static final DriveController frontLeftDriveController = new FalconDriveController(frontLeftDriveMotor, _config);
   private static final WPI_TalonFX frontLeftSteerMotor = new WPI_TalonFX(FrontLeft.STEER_CHANNEL);
   private static final WPI_CANCoder frontLeftEncoder = new WPI_CANCoder(FrontLeft.CANCODER_CHANNEL);
-  private static final SteerController frontLeftSteerController = new BSF_FalconSteerController(frontLeftSteerMotor, frontLeftEncoder, FrontLeft.ENCODER_OFFSET_RADIANS);
+  // private static final FalconSteerControllerModified frontLeftSteerController = new FalconSteerControllerModified(frontLeftSteerMotor, frontLeftEncoder, FrontLeft.ENCODER_OFFSET_DEGREES);
+  private static final BoringFalconSteerController frontLeftSteerController = new BoringFalconSteerController(frontLeftSteerMotor, frontLeftEncoder, steerP, steerI, steerD);
   private static final SwerveModule frontLeft = new SwerveModule(frontLeftDriveController, frontLeftSteerController);
   private static final WPI_TalonFX frontRightDriveMotor = new WPI_TalonFX(FrontRight.DRIVE_CHANNEL);
   private static final DriveController frontRightDriveController = new FalconDriveController(frontRightDriveMotor, _config);
   private static final WPI_TalonFX frontRightSteerMotor = new WPI_TalonFX(FrontRight.STEER_CHANNEL);
   private static final WPI_CANCoder frontRightEncoder = new WPI_CANCoder(FrontRight.CANCODER_CHANNEL);
-  private static final SteerController frontRightSteerController = new BSF_FalconSteerController(frontRightSteerMotor, frontRightEncoder, FrontRight.ENCODER_OFFSET_RADIANS);
+  // private static final FalconSteerControllerModified frontRightSteerController = new FalconSteerControllerModified(frontRightSteerMotor, frontRightEncoder, FrontRight.ENCODER_OFFSET_DEGREES);
+  private static final BoringFalconSteerController frontRightSteerController = new BoringFalconSteerController(frontRightSteerMotor, frontRightEncoder, steerP, steerI, steerD);
   private static final SwerveModule frontRight = new SwerveModule(frontRightDriveController, frontRightSteerController);
   private static final WPI_TalonFX backLeftDriveMotor = new WPI_TalonFX(BackLeft.DRIVE_CHANNEL);
   private static final DriveController backLeftDriveController = new FalconDriveController(backLeftDriveMotor, _config);
   private static final WPI_TalonFX backLeftSteerMotor = new WPI_TalonFX(BackLeft.STEER_CHANNEL);
   private static final WPI_CANCoder backLeftEncoder = new WPI_CANCoder(BackLeft.CANCODER_CHANNEL);
-  private static final SteerController backLeftSteerController = new BSF_FalconSteerController(backLeftSteerMotor, backLeftEncoder, BackLeft.ENCODER_OFFSET_RADIANS);
+  // private static final FalconSteerControllerModified backLeftSteerController = new FalconSteerControllerModified(backLeftSteerMotor, backLeftEncoder, BackLeft.ENCODER_OFFSET_DEGREES);
+  private static final BoringFalconSteerController backLeftSteerController = new BoringFalconSteerController(backLeftSteerMotor, backLeftEncoder, steerP, steerI, steerD);
   private static final SwerveModule backLeft = new SwerveModule(backLeftDriveController, backLeftSteerController);
   private static final WPI_TalonFX backRightDriveMotor = new WPI_TalonFX(BackRight.DRIVE_CHANNEL);
   private static final DriveController backRightDriveController = new FalconDriveController(backRightDriveMotor, _config);
   private static final WPI_TalonFX backRightSteerMotor = new WPI_TalonFX(BackRight.STEER_CHANNEL);
   private static final WPI_CANCoder backRightEncoder = new WPI_CANCoder(BackRight.CANCODER_CHANNEL);
-  private static final SteerController backRightSteerController = new BSF_FalconSteerController(backRightSteerMotor, backRightEncoder, BackRight.ENCODER_OFFSET_RADIANS);
+  // private static final FalconSteerControllerModified backRightSteerController = new FalconSteerControllerModified(backRightSteerMotor, backRightEncoder, BackRight.ENCODER_OFFSET_DEGREES);
+  private static final BoringFalconSteerController backRightSteerController = new BoringFalconSteerController(backRightSteerMotor, backRightEncoder, steerP, steerI, steerD);
   private static final SwerveModule backRight = new SwerveModule(backRightDriveController, backRightSteerController);
 
   private Drivetrain() {
@@ -161,24 +166,27 @@ public class Drivetrain extends SwerveDrivetrain {
     configDriveMotor(backLeftDriveMotor);
     configDriveMotor(backRightDriveMotor);
 
-    configCANCoder(frontLeftEncoder);
-    configCANCoder(frontRightEncoder);
-    configCANCoder(backLeftEncoder);
-    configCANCoder(backRightEncoder);
+    configCANCoder(frontLeftEncoder, FrontLeft.ENCODER_OFFSET_DEGREES);
+    configCANCoder(frontRightEncoder, FrontRight.ENCODER_OFFSET_DEGREES);
+    configCANCoder(backLeftEncoder, BackLeft.ENCODER_OFFSET_DEGREES);
+    configCANCoder(backRightEncoder, BackRight.ENCODER_OFFSET_DEGREES);
+
+    configSteerMotor(frontLeftSteerMotor);
+    configSteerMotor(frontRightSteerMotor);
+    configSteerMotor(backLeftSteerMotor);
+    configSteerMotor(backRightSteerMotor);
 
     // TODO: There may be some issues because this isn't reset before poseEstimator is initialized (@BullBotsLib).
+    gyro.calibrate();
     gyro.reset();
 
     photonVision = PhotonVisionWrapper.getInstance();
 
-    // Add some SmartDashboard settings
-    SmartDashboard.putBoolean("showPhotonEstimate", true);
-
-    // if (Robot.isSimulation()) {
-    //   LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
-    //   LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
-    //   LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
-    // }
+    if (Robot.isSimulation()) {
+      LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
+    }
     
     
     configureSmartDashboard();
@@ -202,14 +210,45 @@ public class Drivetrain extends SwerveDrivetrain {
     motor.configClosedloopRamp(.4*CHASSIS_MAX_VELOCITY/CHASSIS_MAX_ACCELERATION);
   }
 
-  private static void configCANCoder(WPI_CANCoder encoder) {
+  private static void configCANCoder(WPI_CANCoder encoder, double offset) {
+    // encoder.configFactoryDefault();
+    // encoder.configSensorDirection(true);
+
     encoder.configFactoryDefault();
+    encoder.configMagnetOffset(offset);
+  }
+
+  private static void configSteerMotor(WPI_TalonFX motor) {
+    motor.configFactoryDefault();
+    motor.setNeutralMode(NeutralMode.Brake);
+    
+    motor.setInverted(true);
+  }
+
+  // Since we seem to have issues when calibrating the encoders on robot startup, I'm adding this method so we can recalibrate them every time the robot enables
+  public void calibrateEncoders() {
+    // frontLeftSteerController.calibrateEncoders();
+    // frontRightSteerController.calibrateEncoders();
+    // backLeftSteerController.calibrateEncoders();
+    // backRightSteerController.calibrateEncoders();
+    
+  }
+
+  public void setNeutralMode(NeutralMode mode) {
+    frontLeftDriveMotor.setNeutralMode(mode);
+    frontRightDriveMotor.setNeutralMode(mode);
+    backLeftDriveMotor.setNeutralMode(mode);
+    backRightDriveMotor.setNeutralMode(mode);
+    frontLeftSteerMotor.setNeutralMode(mode);
+    frontRightSteerMotor.setNeutralMode(mode);
+    backLeftSteerMotor.setNeutralMode(mode);
+    backRightSteerMotor.setNeutralMode(mode);
   }
 
   @Override
   public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed *= config.chassisMaxVelocityMetersPerSecond();
-    ySpeed *= config.chassisMaxVelocityMetersPerSecond();
+    xSpeed *= RobotContainer.getTeleopTranslationalVelocity();
+    ySpeed *= RobotContainer.getTeleopTranslationalVelocity();
     rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
 
     fromChassisSpeeds(
@@ -236,6 +275,10 @@ public class Drivetrain extends SwerveDrivetrain {
     // Certain axes of the gyro are inverted compared to the conventional Rotation3d.
     // Rotation3d assumes counterclockwise about each axis is positive.
     return new Rotation3d(Units.degreesToRadians(-_gyro.getRoll()), Units.degreesToRadians(_gyro.getPitch()), Units.degreesToRadians(-_gyro.getYaw()));
+  }
+
+  public boolean isGyroConnected() {
+    return _gyro.isConnected();
   }
 
   @Override
@@ -293,5 +336,18 @@ public class Drivetrain extends SwerveDrivetrain {
     );
 
     poseEstimator.resetPosition(_gyro.getRotation2d(), getSwerveModulePositions(), newPose);
+  }
+
+  @Override
+  protected void configureSmartDashboard() {
+    super.configureSmartDashboard();
+    LazyDashboard.addBoolean("isGyroConnected", 100, this::isGyroConnected);
+    
+    SmartDashboard.putBoolean("showPhotonEstimate", true);
+
+    LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
+    LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
+    LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
+    LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
   }
 }

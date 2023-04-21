@@ -56,8 +56,14 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
 
     double twist = angleController.calculate(currentAngle.getRadians(), targetAngle.getRadians());
     twist /= DrivetrainConstants.CHASSIS_MAX_ANGULAR_VELOCITY;
+    
+    double f = -forward.getAsDouble();
+    double s = -strafe.getAsDouble();
+    if (Math.abs(f) < .01 && Math.abs(s) < .01) {
+      twist *= 0;
+    }
 
-    drivetrain.holonomicDrive(-forward.getAsDouble(), -strafe.getAsDouble(), twist, true);
+    drivetrain.holonomicDrive(f, s, twist, true);
 
     previousTarget = targetAngle;
   }
@@ -71,6 +77,6 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return !drivetrain.isGyroConnected();
   }
 }

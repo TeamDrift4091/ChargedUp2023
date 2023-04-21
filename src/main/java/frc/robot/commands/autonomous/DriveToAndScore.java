@@ -6,6 +6,7 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
+import frc.robot.commands.claw.Shoot;
 import frc.robot.commands.drivetrain.DriveToPose;
 import frc.robot.subsystems.*;
 
@@ -13,7 +14,7 @@ import frc.robot.subsystems.*;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveToAndScore extends SequentialCommandGroup {
-  public DriveToAndScore(Drivetrain drivetrain, ScoringLevel scoringLevel) {
+  public DriveToAndScore(Drivetrain drivetrain, Claw claw, ClawJoint clawJoint, ScoringLevel scoringLevel) {
     // If the target is to score low, we can align to any node, otherwise we need to go specifically to a cube node.
     if (scoringLevel == ScoringLevel.HYBRID) {
       addCommands(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestNodeAlignment()));
@@ -21,6 +22,6 @@ public class DriveToAndScore extends SequentialCommandGroup {
       addCommands(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestCubeNodeAlignment()));
     }
 
-    // addCommands(new Shoot(scoringLevel));
+    addCommands(new Shoot(claw, scoringLevel));
   }
 }

@@ -8,10 +8,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
+import frc.robot.commands.claw.Shoot;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
 
@@ -37,30 +39,42 @@ public class AutonomousCommandManager {
         HolonomicTrajectoryCommandGenerator.setTranslationalPID(DrivetrainConstants.translationalP, DrivetrainConstants.translationalI, DrivetrainConstants.translationalD);
 
         // Default do nothing to avoid issues
-        commandChooser.setDefaultOption("Default - Do Nothing", new InstantCommand());
+        commandChooser.setDefaultOption("Default - Do Nothing", null);
 
-        // Drive forward for 3 seconds at roughly .5 m/s
-        commandChooser.addOption("Drive Forward (~1.5 meters)",
-            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
+        commandChooser.addOption("Shoot High and Taxi - NO BUMP", 
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), ScoringLevel.HIGH).withTimeout(.4),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6) 
+            )
         );
 
-        commandChooser.addOption("Backup then Forward",
-            new SequentialCommandGroup(
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.5, 0, 0)), Drivetrain.getInstance()).withTimeout(6)
-        ));
+        commandChooser.addOption("Shoot High and Taxi - WITH BUMP", 
+        new SequentialCommandGroup(
+            new Shoot(Claw.getInstance(), ScoringLevel.HIGH).withTimeout(.4),
+            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.75, 0, 0)), Drivetrain.getInstance()).withTimeout(6) 
+        )
+    );
 
-        // Drive backward for 3 seconds at roughly .5 m/s
-        commandChooser.addOption("Drive Backward (~1.5 meters)",
-            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
+        commandChooser.addOption("Shoot High and Charge", 
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), ScoringLevel.HIGH).withTimeout(.4),
+                ChargeStation.autoChargeStation(Drivetrain.getInstance())
+            )
         );
 
-        // commandChooser.setDefaultOption("Auto Charge", new AutoChargeStation(Drivetrain.getInstance()));
-        commandChooser.addOption("Charge Station",
+        commandChooser.addOption("Shoot High, Taxi, and Charge", 
             new SequentialCommandGroup(
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(-.5, 0, 0)), Drivetrain.getInstance()).withTimeout(.5),
-                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.6, 0, 0)), Drivetrain.getInstance()).withTimeout(3)
-        ));
+                new Shoot(Claw.getInstance(), ScoringLevel.HIGH).withTimeout(.4),
+                ChargeStation.autoChargeStationWithTaxi(Drivetrain.getInstance())
+            )
+        );
+
+        commandChooser.addOption("Shoot Mid, Taxi, and Charge", 
+        new SequentialCommandGroup(
+            new Shoot(Claw.getInstance(), ScoringLevel.MID).withTimeout(.4),
+            ChargeStation.autoChargeStationWithTaxi(Drivetrain.getInstance())
+        )
+    );
 
         SmartDashboard.putData("Autonomous Chooser", commandChooser);
     }
