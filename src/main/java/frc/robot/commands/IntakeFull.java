@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.claw.Intake;
 import frc.robot.commands.clawjoint.ClawToAngle;
 import frc.robot.subsystems.Claw;
@@ -14,7 +16,10 @@ public class IntakeFull extends ParallelRaceGroup {
   public IntakeFull(Claw claw, ClawJoint clawJoint) {
     addCommands(
       new ClawToAngle(clawJoint, 0),
-      new Intake(claw)
+      new SequentialCommandGroup(
+        new WaitCommand(.5),
+        new Intake(claw)
+      )
     );
   }
 }

@@ -7,6 +7,7 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drivetrain.BalanceOnChargingStationLinear;
 import frc.robot.commands.drivetrain.FaceModules;
 import frc.robot.subsystems.Drivetrain;
@@ -63,7 +64,7 @@ public class ChargeStation {
         // Drive forward until the gyro angle is steep enough
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(.35, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 35% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {
@@ -78,7 +79,7 @@ public class ChargeStation {
         // Drive forward until the gyro angle is steep enough facing downwards
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(.35, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 35% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {
@@ -93,7 +94,7 @@ public class ChargeStation {
         // Drive forward until the gyro angle is level
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(.35, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 35% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {
@@ -104,6 +105,8 @@ public class ChargeStation {
               return Math.abs(drivetrain.getGyroMeasurement().getY() - BalanceOnChargingStationLinear.pitchOffset) < BalanceOnChargingStationLinear.balanceTolerance; // is pitch steeper than .35 rad
           }
         },
+
+        new WaitCommand(.5),
 
         // Drive backward until the gyro angle is steep enough facing downwards
         new RunCommand(() -> {

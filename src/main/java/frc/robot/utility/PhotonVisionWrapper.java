@@ -12,6 +12,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -45,6 +46,7 @@ public class PhotonVisionWrapper {
             return index;
         }
     }
+    private Pipeline currentPipeline;
 
     private static PhotonVisionWrapper instance = null;
     public static PhotonVisionWrapper getInstance() {
@@ -83,7 +85,22 @@ public class PhotonVisionWrapper {
         photonCamera = new PhotonCamera(VisionConstants.CAMERA_NAME);
         photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, VisionConstants.CAMERA_TO_ROBOT);
 
-        setPipeline(Pipeline.APRILTAG);
+        setPipeline(Pipeline.CUBE);
+    }
+
+    public Optional<PhotonTrackedTarget> getCubeLocation() {
+        if (currentPipeline == Pipeline.CUBE) {
+            PhotonTrackedTarget bestTarget = photonCamera.getLatestResult().getBestTarget();
+            if (bestTarget == null) {
+                return Optional.empty();
+            }
+            return Optional.of(bestTarget);
+        }
+        return Optional.empty();
+    }
+
+    public boolean seesCube() {
+        return currentPipeline == Pipeline.CUBE && getCubeLocation().isPresent();
     }
     
     /**
@@ -92,11 +109,15 @@ public class PhotonVisionWrapper {
      * @return the new estimated pose using vision.
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        if (enabled) {
+        if (enabled && currentPipeline == Pipeline.APRILTAG) {
             photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
             return photonPoseEstimator.update();    
         }
         return Optional.empty();
+    }
+
+    public Pipeline getPipeline() {
+        return currentPipeline;
     }
 
     /**
@@ -104,6 +125,7 @@ public class PhotonVisionWrapper {
      * @param pipeline the pipeline for the photonvision processing to use
      */
     public void setPipeline(Pipeline pipeline) {
+        currentPipeline = pipeline;
         photonCamera.setPipelineIndex(pipeline.getIndex());
     }
 }

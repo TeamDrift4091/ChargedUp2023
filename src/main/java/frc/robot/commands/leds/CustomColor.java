@@ -7,31 +7,32 @@ package frc.robot.commands.leds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LEDMode;
-import frc.robot.utility.PhotonVisionWrapper;
 
-public class LEDLimelightFault extends CommandBase {
+public class CustomColor extends CommandBase {
   private final LEDs leds;
-  public LEDLimelightFault(LEDs leds) {
+  private final int r, g, b;
+  public CustomColor(LEDs leds, int r, int g, int b) {
     addRequirements(leds);
     this.leds = leds;
+    this.r = r;
+    this.g = g;
+    this.b = b;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     leds.start();
+    leds.setCustomConsumer((ledString) -> {
+      ledString.allOneColor(r, g, b);
+      ledString.updateLEDs();
+      leds.setCustomConsumer(null);
+    });
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (PhotonVisionWrapper.getInstance().photonCamera.isConnected()) {
-      // leds.setMode(LEDMode.AUTONOMOUS);
-      leds.getDefaultCommand().execute();
-    } else {
-      leds.setMode(LEDMode.FAULT);
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

@@ -23,8 +23,8 @@ public class Constants {
         public static final double WHEEL_BASE_WIDTH_METERS = WHEEL_BASE_LENGTH_METERS; // It's a square
 
         public static final double rotationalP = 4;
-        public static final double rotationalI = 0.6;
-        public static final double rotationalD = 0.5;
+        public static final double rotationalI = 0.7;
+        public static final double rotationalD = 0.6;
 
         public static final double rotationalPForHolonomic = 4.5;
         public static final double rotationalIForHolonomic = 0;
@@ -79,7 +79,7 @@ public class Constants {
     public static class VisionConstants {
         public static final String CAMERA_NAME = "Limelight";
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
-            new Translation3d(-0.1524, 0.3556, 0), // in meters
+            new Translation3d(-0.1778, 0.3302, 0), // in meters
             new Rotation3d(0, 0, Math.PI)
         );
     }

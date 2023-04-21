@@ -30,9 +30,11 @@ public class LEDs extends SubsystemBase {
     AUTONOMOUS,
     TELEOP,
     FAULT,
-    PLAID;
+    PLAID,
+    CUBE_TARGET,
+    CUBE_HOLD;
   }
-  private LEDMode currentMode = null; // Set to OFf on init
+  private LEDMode currentMode = null; // Set to OFF on init
 
   private final LEDString leds;
 
@@ -79,8 +81,7 @@ public class LEDs extends SubsystemBase {
           break;
         case DISABLED:
           ledConsumer.set(
-            (leds) -> leds.flash(2, 
-              () -> setAll(leds, 0, 50, 0)));
+            (leds) -> setOnce(() -> setAll(leds, 0, 50, 0)));
           break;
         case AUTONOMOUS:
           ledConsumer.set((leds) -> rainbow(leds));
@@ -94,7 +95,7 @@ public class LEDs extends SubsystemBase {
           }
           break;
         case FAULT:
-          ledConsumer.set((leds) -> leds.alternate(.5, 
+          ledConsumer.set((leds) -> leds.alternate(.25, 
             () -> setAll(leds, 255, 0, 0), 
             () -> setAll(leds, 100, 0, 0)
           ));
@@ -104,6 +105,15 @@ public class LEDs extends SubsystemBase {
           ledConsumer.set((leds) -> leds.alternate(.5, 
             () -> twoColor(leds, 2, 10, 5, 20, 10, 70, 15),
             () -> twoColor(leds, 2, 10, 70, 15, 10, 5, 20)));
+          break;
+        case CUBE_TARGET:
+          ledConsumer.set((leds) -> fastRainbow(leds));
+          break;
+        case CUBE_HOLD:
+          ledConsumer.set((leds) -> {
+            setOnce(() -> setAll(leds, 40, 20, 80));
+          });
+          break;
       }
     }
   }
@@ -127,7 +137,7 @@ public class LEDs extends SubsystemBase {
   private int i = 0;
   private boolean isIncreasing = true;
   private void disconnected(LEDString leds) {
-    if (i + 4 >= LENGTH) {
+    if (i + 4 > LENGTH) {
       isIncreasing = false;
     }
     if (i == 0) {
@@ -143,6 +153,11 @@ public class LEDs extends SubsystemBase {
 
   private void rainbow(LEDString leds) {
     leds.rainbow();
+    leds.updateLEDs();
+  }
+
+  private void fastRainbow(LEDString leds) {
+    leds.fastRainbow();
     leds.updateLEDs();
   }
 

@@ -9,6 +9,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawJointConstants;
 import frc.team1891.common.LazyDashboard;
@@ -35,6 +36,8 @@ public class ClawJoint extends SubsystemBase {
     motor.restoreFactoryDefaults();
     motor.setInverted(true);
     motor.setIdleMode(WPI_CANSparkMax.IdleMode.kBrake);
+
+    motor.setSmartCurrentLimit(30, 30);
 
     encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     encoder.setInverted(true);
@@ -83,6 +86,7 @@ public class ClawJoint extends SubsystemBase {
    * @param rotations target angle
    */
   public void setAngle(double rotations, boolean isDown) {
+    SmartDashboard.putNumber("ClawJoint/targetAngle", rotations);
     int pidSlot = isDown ? 1 : 0;
     // // TODO: Make sure the target angle is attainable before trying to move.
     // if ((ClawJointConstants.MIN_ANGLE - 1) <= rotations && rotations <= ClawJointConstants.MAX_ANGLE) {

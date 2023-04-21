@@ -182,11 +182,11 @@ public class Drivetrain extends SwerveDrivetrain {
 
     photonVision = PhotonVisionWrapper.getInstance();
 
-    // if (Robot.isSimulation()) {
-    //   LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
-    //   LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
-    //   LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
-    // }
+    if (Robot.isSimulation()) {
+      LazyDashboard.addNumber("Drivetrain/xSpeed (Meters per Second)", 10, () -> simSpeeds.vxMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/ySpeed (Meters per Second)", 10, () -> simSpeeds.vyMetersPerSecond);
+      LazyDashboard.addNumber("Drivetrain/omegaSpeed (Radians per Second)", 10, () -> simSpeeds.omegaRadiansPerSecond);
+    }
     
     
     configureSmartDashboard();
@@ -231,6 +231,7 @@ public class Drivetrain extends SwerveDrivetrain {
     // frontRightSteerController.calibrateEncoders();
     // backLeftSteerController.calibrateEncoders();
     // backRightSteerController.calibrateEncoders();
+    
   }
 
   public void setNeutralMode(NeutralMode mode) {
@@ -249,8 +250,6 @@ public class Drivetrain extends SwerveDrivetrain {
     xSpeed *= RobotContainer.getTeleopTranslationalVelocity();
     ySpeed *= RobotContainer.getTeleopTranslationalVelocity();
     rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
-
-    System.out.println(xSpeed);
 
     fromChassisSpeeds(
       fieldRelative?

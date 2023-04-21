@@ -20,7 +20,8 @@ public class ClawToAngle extends CommandBase {
 
   @Override
   public void execute() {
-    clawJoint.setAngle(MathUtil.clamp(SmartDashboard.getNumber("ClawJoint/targetAngle", targetAngleRotations), ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE), true);
+    // clawJoint.setAngle(MathUtil.clamp(SmartDashboard.getNumber("ClawJoint/targetAngle", targetAngleRotations), ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE), true);
+    clawJoint.setAngle(MathUtil.clamp(targetAngleRotations, ClawJointConstants.MIN_ANGLE, ClawJointConstants.MAX_ANGLE), true);
   }
 
   public static ClawToAngle intake(ClawJoint clawJoint) {
