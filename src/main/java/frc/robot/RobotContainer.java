@@ -22,9 +22,7 @@ import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.commands.claw.*;
 import frc.robot.commands.clawjoint.*;
 import frc.robot.commands.drivetrain.*;
-import frc.robot.commands.leds.CustomColor;
-import frc.robot.commands.leds.LEDDefaultCommand;
-import frc.robot.commands.leds.LEDLimelightFault;
+import frc.robot.commands.leds.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LEDs.LEDMode;
 import frc.robot.utility.MirrorPoses;
@@ -90,7 +88,7 @@ public class RobotContainer {
   private final Trigger driveToCube = new JoystickButton(ps4Controller, PS4Controller.Button.kR2.value);
   // private final Trigger alignToCubeNode = new JoystickButton(ps4Controller, PS4Controller.Button.kL2.value);
 
-  private final Trigger toggleIntakeDeployment = new JoystickButton(ps4Controller, PS4Controller.Button.kL1.value);
+  private final Trigger deployIntake = new JoystickButton(ps4Controller, PS4Controller.Button.kL1.value);
 
   private final Trigger chargeStationBalance = new JoystickButton(ps4Controller, PS4Controller.Button.kL3.value);
 
@@ -210,7 +208,7 @@ public class RobotContainer {
 
     runIntake.whileTrue(new Intake(claw));
   
-    toggleIntakeDeployment.whileTrue(ClawToAngle.intake(clawJoint));
+    deployIntake.whileTrue(ClawToAngle.intake(clawJoint));
 
     chargeStationBalance.whileTrue(new BalanceOnChargingStationLinear(drivetrain));
 

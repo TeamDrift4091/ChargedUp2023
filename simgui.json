@@ -219,6 +219,9 @@
         "orbiting controller": {
           "open": true
         }
+      },
+      "photonvision": {
+        "open": true
       }
     }
   },

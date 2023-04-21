@@ -29,10 +29,15 @@ public class BalanceOnChargingStationLinear extends CommandBase {
     LazyDashboard.addNumber("BalanceOnChargingStation/currentAngle", () -> drivetrain.getGyroMeasurement().getY() - pitchOffset);
   }
 
+  private int signOfInitialAngle = 0;
+  private boolean hasChangedSign = false;
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     balanceCount = 0;
+    signOfInitialAngle = (int) Math.signum(drivetrain.getGyroMeasurement().getY() - pitchOffset);
+    hasChangedSign = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,9 +48,12 @@ public class BalanceOnChargingStationLinear extends CommandBase {
     double pitch = gyroMeasurement.getY() - pitchOffset; // Rotation around the y axis
 
     if (Math.abs(pitch) > balanceTolerance) {
+      if (Math.signum(pitch) != signOfInitialAngle && signOfInitialAngle != 0) {
+        hasChangedSign = true;
+      }
       drivetrain.fromChassisSpeeds(
         new ChassisSpeeds(
-          pitch * SmartDashboard.getNumber("BalanceOnChargingStation/kP", 0),
+          pitch * SmartDashboard.getNumber("BalanceOnChargingStation/kP", 0) * (hasChangedSign ? .8 : 1),
           0,
           0
         )

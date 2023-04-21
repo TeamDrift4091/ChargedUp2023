@@ -341,13 +341,13 @@ public class Drivetrain extends SwerveDrivetrain {
   @Override
   protected void configureSmartDashboard() {
     super.configureSmartDashboard();
-    LazyDashboard.addBoolean("isGyroConnected", 100, this::isGyroConnected);
+    LazyDashboard.addBoolean("Drivetrain/isGyroConnected", 100, this::isGyroConnected);
     
-    SmartDashboard.putBoolean("showPhotonEstimate", true);
+    SmartDashboard.putBoolean("Drivetrain/showPhotonEstimate", true);
 
-    LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
   }
 }
