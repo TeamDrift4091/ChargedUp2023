@@ -29,8 +29,8 @@ public class LEDs extends SubsystemBase {
     DISABLED,
     AUTONOMOUS,
     TELEOP,
+    TELEOP_SPECIAL,
     FAULT,
-    PLAID,
     CUBE_TARGET,
     CUBE_HOLD;
   }
@@ -94,17 +94,23 @@ public class LEDs extends SubsystemBase {
             ledConsumer.set((leds) -> setOnce(() -> twoColor(leds, 2, 200, 0, 0, 150, 150, 150)));
           }
           break;
+        case TELEOP_SPECIAL:
+          // Show alliance color
+          if (Robot.isBlueAlliance()) {
+            ledConsumer.set((leds) -> leds.alternate(.5, 
+              () -> twoColor(leds, 4, 0, 0, 200, 150, 150, 150),
+              () -> twoColor(leds, 4, 150, 150, 150, 0, 0, 200)));
+          } else {
+            ledConsumer.set((leds) -> leds.alternate(.5, 
+              () -> twoColor(leds, 4, 200, 0, 0, 150, 150, 150),  
+              () -> twoColor(leds, 4, 150, 150, 150, 200, 0, 0)));
+          }
+          break;
         case FAULT:
-          ledConsumer.set((leds) -> leds.alternate(.25, 
+          ledConsumer.set((leds) -> leds.alternate(.25,
             () -> setAll(leds, 255, 0, 0), 
             () -> setAll(leds, 100, 0, 0)
           ));
-          break;
-        case PLAID:
-          // Joker
-          ledConsumer.set((leds) -> leds.alternate(.5, 
-            () -> twoColor(leds, 2, 10, 5, 20, 10, 70, 15),
-            () -> twoColor(leds, 2, 10, 70, 15, 10, 5, 20)));
           break;
         case CUBE_TARGET:
           ledConsumer.set((leds) -> fastRainbow(leds));

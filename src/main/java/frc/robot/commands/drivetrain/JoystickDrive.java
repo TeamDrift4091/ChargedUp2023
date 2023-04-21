@@ -7,6 +7,7 @@ package frc.robot.commands.drivetrain;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.leds.LEDDefaultCommand;
 import frc.robot.subsystems.Drivetrain;
 
 public class JoystickDrive extends CommandBase {
@@ -29,7 +30,9 @@ public class JoystickDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    LEDDefaultCommand.isDrivingWithAbsoluteAngle = false;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

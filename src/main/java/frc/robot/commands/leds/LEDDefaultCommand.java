@@ -6,7 +6,6 @@ package frc.robot.commands.leds;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LEDs;
@@ -20,6 +19,9 @@ public class LEDDefaultCommand extends CommandBase {
     this.leds = leds;
   }
 
+  public static boolean isDrivingWithAbsoluteAngle = false;
+  public static boolean clawHasEStopped = false;
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -31,7 +33,7 @@ public class LEDDefaultCommand extends CommandBase {
   public void execute() {
     if (!DriverStation.isDSAttached()) {
       leds.setMode(LEDMode.DISCONNECTED);
-    } else if (!Drivetrain.getInstance().isGyroConnected()) {
+    } else if (!Drivetrain.getInstance().isGyroConnected() || clawHasEStopped) {
       leds.setMode(LEDMode.FAULT);
     } else if (DriverStation.isDisabled()) {
       if (AutonomousCommandManager.getSelected() == null) {
@@ -45,10 +47,11 @@ public class LEDDefaultCommand extends CommandBase {
       // if (Claw.getInstance().hasGamePiece()) {
       //   leds.setMode(LEDMode.CUBE_HOLD);
       // } else
-      if (PhotonVisionWrapper.getInstance().seesCube()) {
-        leds.setMode(LEDMode.CUBE_TARGET);
-      } else if (RobotContainer.getTeleopTranslationalVelocity() == RobotContainer.plaidSpeed) {
-        leds.setMode(LEDMode.PLAID);
+      // if (PhotonVisionWrapper.getInstance().seesCube()) {
+      //   leds.setMode(LEDMode.CUBE_TARGET);
+      // } else 
+      if (isDrivingWithAbsoluteAngle) {
+        leds.setMode(LEDMode.TELEOP_SPECIAL);
       } else {
         leds.setMode(LEDMode.TELEOP);
       }

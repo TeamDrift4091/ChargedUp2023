@@ -37,7 +37,7 @@ public class ClawJoint extends SubsystemBase {
     motor.setInverted(true);
     motor.setIdleMode(WPI_CANSparkMax.IdleMode.kBrake);
 
-    motor.setSmartCurrentLimit(30, 30);
+    motor.setSmartCurrentLimit(35, 35);
 
     encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     encoder.setInverted(true);
@@ -53,16 +53,16 @@ public class ClawJoint extends SubsystemBase {
     // Going UP
     pidController.setP(2.7, 0);
     pidController.setI(0, 0);
-    pidController.setD(0.75, 0);
+    pidController.setD(1.2, 0);
     pidController.setFF(0, 0);
-    pidController.setOutputRange(-.25, .6, 0);
+    pidController.setOutputRange(-.3, .6, 0);
 
     // Going DOWN
-    pidController.setP(1.3, 1);
+    pidController.setP(1.5, 1);
     pidController.setI(0, 1);
     pidController.setD(1.6, 1);
     pidController.setFF(0, 1);
-    pidController.setOutputRange(-.25, .6, 1);
+    pidController.setOutputRange(-.3, .6, 1);
 
     // TODO: Need to figure out units
     // pidController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
@@ -100,6 +100,10 @@ public class ClawJoint extends SubsystemBase {
    */
   public double getAngleRotations() {
     return encoder.getPosition();
+  }
+
+  public void stop() {
+    motor.stopMotor();
   }
 
   @Override
