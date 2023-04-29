@@ -13,7 +13,10 @@ import frc.robot.Robot;
 import static frc.robot.Constants.FIELD_LENGTH;
 
 /**
- * Any poses or rotations given to the robot as target positions to drive to should be run through one of these methods first
+ * This year the field isn't rotationally symetrical, so we had to reflect robot poses when on red alliance since our odometry 
+ * is relative to the april tag origin, on the side of the blue alliance driver stations.
+ * 
+ * Any poses or rotations given to the robot as target positions to drive to should be run through one of these methods first.
  * 
  * Set poses and rotations assuming the robot is on the blue alliance.
  * 

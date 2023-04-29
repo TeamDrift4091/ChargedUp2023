@@ -22,9 +22,10 @@ import frc.team1891.common.trajectory.HolonomicTrajectoryCommandGenerator;
  * 
  * Many of our autonomous commands will be built by chaining other commands together in sequence and parallel.
  * 
- * All our commands will be posted at options on {@link SmartDashboard} using a {@link SendableChooser}.
+ * All our commands will be posted as options on {@link SmartDashboard} using a {@link SendableChooser}.
  */
 public class AutonomousCommandManager {
+    // This is private because we don't need to create any objects of this class; everything is static
     private AutonomousCommandManager() {}
 
     // This object appears on SmartDashboard, allowing us to select which autonomous routine we want, while the robot is on.
@@ -49,11 +50,11 @@ public class AutonomousCommandManager {
         );
 
         commandChooser.addOption("Shoot High and Taxi - WITH BUMP", 
-        new SequentialCommandGroup(
-            new Shoot(Claw.getInstance(), ScoringLevel.HIGH).withTimeout(.4),
-            new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.75, 0, 0)), Drivetrain.getInstance()).withTimeout(6) 
-        )
-    );
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), ScoringLevel.HIGH).withTimeout(.4),
+                new RunCommand(() -> Drivetrain.getInstance().fromChassisSpeeds(new ChassisSpeeds(.75, 0, 0)), Drivetrain.getInstance()).withTimeout(6) 
+            )
+        );
 
         commandChooser.addOption("Shoot High and Charge", 
             new SequentialCommandGroup(
@@ -70,11 +71,11 @@ public class AutonomousCommandManager {
         );
 
         commandChooser.addOption("Shoot Mid, Taxi, and Charge", 
-        new SequentialCommandGroup(
-            new Shoot(Claw.getInstance(), ScoringLevel.MID).withTimeout(.4),
-            ChargeStation.autoChargeStationWithTaxi(Drivetrain.getInstance())
-        )
-    );
+            new SequentialCommandGroup(
+                new Shoot(Claw.getInstance(), ScoringLevel.MID).withTimeout(.4),
+                ChargeStation.autoChargeStationWithTaxi(Drivetrain.getInstance())
+            )
+        );
 
         SmartDashboard.putData("Autonomous Chooser", commandChooser);
     }

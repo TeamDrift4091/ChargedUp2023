@@ -9,6 +9,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
+/**
+ * Extremely simple command that rotates all the modules to face the given direction.
+ * We used this in autonomous to make sure the modules faced the right direction before driving.
+ */
 public class FaceModules extends CommandBase {
   private final Drivetrain drivetrain;
   private final Rotation2d moduleRotation;

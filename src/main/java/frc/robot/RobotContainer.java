@@ -39,26 +39,6 @@ public class RobotContainer {
   private final Claw claw = Claw.getInstance();
   private final LEDs leds = LEDs.getInstance();
 
-  // public static final double normalSpeed = 2.75;
-  // public static final double plaidSpeed = 3.1;
-  // private static double currentMaxVelocity = normalSpeed;
-
-  // Controllers; xbox
-  //private final XboxController xboxController = new XboxController(0) {
-   // public double getRawAxis(int axis) {
-     // return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
-   // };
- // };
- 
-  // Triggers and button bindings: xbpx
- // private final Trigger resetOdometry = new JoystickButton(xboxController, XboxController.Button.kStart.value);
-
-  //private final Trigger shootSimple = new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value);
-
-  //private final Trigger scoreLow = new JoystickButton(xboxController, XboxController.Button.kA.value);
-  //private final Trigger scoreMid = new JoystickButton(xboxController, XboxController.Button.kB.value);
-  //private final Trigger scoreHigh = new JoystickButton(xboxController, XboxController.Button.kY.value);
-
   // controllers: PS4
   private final PS4Controller ps4Controller = new PS4Controller(0) {
     public double getRawAxis(int axis) {
@@ -123,20 +103,6 @@ public class RobotContainer {
   private void configureBindings() {
     // DEFAULT COMMANDS
     leds.setDefaultCommand(new LEDDefaultCommand(leds));
-    // Whenever not told to do something else, the drivetrian will run JoystickDrive.
-   // drivetrain.setDefaultCommand(
-     // new JoystickDrive(
-      //  drivetrain,
-      //  () -> xboxController.getLeftY(),
-      //  () -> xboxController.getLeftX(),
-       // () -> xboxController.getRightX()
-     // )
-    //);
-    
-    //ps4
-
-      // DEFAULT COMMANDS
-      // Whenever not told to do something else, the drivetrian will run JoystickDrive.
 
     drivetrain.setDefaultCommand(
       new JoystickDrive(
@@ -145,9 +111,10 @@ public class RobotContainer {
         () -> ps4Controller.getLeftX(),
         () -> ps4Controller.getRightX()
       )
-      // new RunCommand(() -> {
-      //   drivetrain.fromChassisSpeeds(new ChassisSpeeds(ps4Controller.getLeftX(), 0, 0));
-      // }, drivetrain)
+    );
+
+    clawJoint.setDefaultCommand(
+      new HomeClawPosition(clawJoint)
     );
 
     alignForward.onTrue(new AbsoluteAngleJoystickDrive(drivetrain, 
@@ -169,10 +136,6 @@ public class RobotContainer {
       )
     );
 
-    clawJoint.setDefaultCommand(
-      new HomeClawPosition(clawJoint)
-    );
-
     resetOdometry.onTrue(new InstantCommand(() -> {
       System.out.println("reset gyro.");
       drivetrain.resetGyro();
@@ -180,9 +143,6 @@ public class RobotContainer {
 
     resetGyroPitch.onTrue(new InstantCommand(() -> BalanceOnChargingStationLinear.calibrateOffset()));
 
-    // scoreLow.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HYBRID));
-    // scoreMid.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.MID));
-    // scoreHigh.whileTrue(new DriveToAndScore(drivetrain, claw, clawJoint, ScoringLevel.HIGH));
     scoreLow.onTrue(new ParallelRaceGroup(
       new Shoot(claw, ScoringLevel.HYBRID).withTimeout(.4),
       new CustomColor(leds, 0, 50, 0)));
@@ -195,11 +155,6 @@ public class RobotContainer {
     kobeShot.onTrue(new ParallelRaceGroup(
       new Shoot(claw, .75).withTimeout(.5),
       new CustomColor(leds, 150, 75, 0)));
-
-    // alignToCubeNode.whileTrue(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestCubeNodeAlignment()));
-    // alignToNode.whileTrue(new DriveToPose(drivetrain, () -> ScoringLocationManager.getNearestNodeAlignment()));
-    // alignToCubeNode.whileTrue(new LEDLimelightFault(leds));
-    // alignToNode.whileTrue(new LEDLimelightFault(leds));
 
     driveToCube.whileTrue(new ParallelRaceGroup(
       new DriveToAndIntakeCube(drivetrain, claw, clawJoint),
@@ -239,6 +194,7 @@ public class RobotContainer {
     });
 
     // Interrupt claw's default command - for emergencies so we can try to avoid frying the motor
+    // This command has a special interrupt behavior, meaning you can't start the claw joint motor again no matter what you press.
     stopClawJoint.onTrue(new RunCommand(() -> {
       clawJoint.stop();
       clawJoint.setIdleMode(IdleMode.kCoast);

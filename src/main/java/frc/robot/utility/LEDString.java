@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.team1891.common.LazyDashboard;
 
+// Helper class used by the LEDs subsystem
 public class LEDString {
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
@@ -20,6 +21,8 @@ public class LEDString {
         leds.setLength(buffer.getLength());
         this.length = length;
 
+
+        // Dunno if this math is right :D
         LazyDashboard.addNumber("Estimated LED power draw", () -> {
             double totalPower = 0;
             for (int i = 0; i < length; i++) {
@@ -28,7 +31,7 @@ public class LEDString {
                 totalPower += sum / 3.;
             }
             
-            totalPower *= .06; // 60mA per led
+            totalPower *= .06; // 60mA per led at max brightness
             return totalPower;
         });
     }
@@ -137,6 +140,7 @@ public class LEDString {
         rainbowFirstPixelHue %= 180;
     }
 
+    // alternates between whatever pattern it's given and turning the leds off
     public void flash(double intervalSeconds, Runnable runnable) {
         alternate(intervalSeconds, runnable, () -> {
             off();
@@ -144,6 +148,7 @@ public class LEDString {
         });
     }
     
+    // alternates between two patterns with the given time interval.
     public void alternate(double intervalSeconds, Runnable a, Runnable b) {
         long currentTime = System.currentTimeMillis();
         if ((currentTime % (int) (intervalSeconds * 2000)) < (int) (intervalSeconds * 1000)) {

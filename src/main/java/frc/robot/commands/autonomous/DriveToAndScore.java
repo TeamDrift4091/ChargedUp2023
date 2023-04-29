@@ -10,9 +10,7 @@ import frc.robot.commands.claw.Shoot;
 import frc.robot.commands.drivetrain.DriveToPose;
 import frc.robot.subsystems.*;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+// Creates a command that drives to the target location using pose estimation, and then shoots at the target level.
 public class DriveToAndScore extends SequentialCommandGroup {
   public DriveToAndScore(Drivetrain drivetrain, Claw claw, ClawJoint clawJoint, ScoringLevel scoringLevel) {
     // If the target is to score low, we can align to any node, otherwise we need to go specifically to a cube node.

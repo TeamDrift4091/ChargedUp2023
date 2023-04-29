@@ -9,6 +9,9 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LEDMode;
 import frc.robot.utility.PhotonVisionWrapper;
 
+// Simple command that interruptes the LEDDefaultCommand and checks if the limelight is connected.
+// If it is, then it calls the execute of LEDDefaultCommand as normal.
+// It will show the FAULT LEDMode if the limelight is disconnected
 public class LEDLimelightFault extends CommandBase {
   private final LEDs leds;
   public LEDLimelightFault(LEDs leds) {

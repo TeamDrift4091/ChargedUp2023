@@ -48,7 +48,7 @@ public class ChargeStation {
     return command;
   }
 
-    /** Creates a new AutoChargeStation. */
+    // Creates a command that drives over the charge station, using the gyro, then drives back up and balances.
     public static SequentialCommandGroup autoChargeStationWithTaxi(Drivetrain drivetrain) {
       SequentialCommandGroup command = new SequentialCommandGroup();
       command.addCommands(
@@ -64,7 +64,7 @@ public class ChargeStation {
         // Drive forward until the gyro angle is steep enough
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 40% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {
@@ -79,7 +79,7 @@ public class ChargeStation {
         // Drive forward until the gyro angle is steep enough facing downwards
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 40% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {
@@ -87,14 +87,14 @@ public class ChargeStation {
           }
           @Override
           public boolean isFinished() {
-              return (drivetrain.getGyroMeasurement().getY() - BalanceOnChargingStationLinear.pitchOffset) < -BalanceOnChargingStationLinear.balanceTolerance; // is pitch steeper than .35 rad
+              return (drivetrain.getGyroMeasurement().getY() - BalanceOnChargingStationLinear.pitchOffset) < -BalanceOnChargingStationLinear.balanceTolerance;
           }
         },
 
         // Drive forward until the gyro angle is level
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(.4, 0, 0, false); // drive forward at 40% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {
@@ -102,7 +102,7 @@ public class ChargeStation {
           }
           @Override
           public boolean isFinished() {
-              return Math.abs(drivetrain.getGyroMeasurement().getY() - BalanceOnChargingStationLinear.pitchOffset) < BalanceOnChargingStationLinear.balanceTolerance; // is pitch steeper than .35 rad
+              return Math.abs(drivetrain.getGyroMeasurement().getY() - BalanceOnChargingStationLinear.pitchOffset) < BalanceOnChargingStationLinear.balanceTolerance;
           }
         },
 
@@ -111,7 +111,7 @@ public class ChargeStation {
         // Drive backward until the gyro angle is steep enough facing downwards
         new RunCommand(() -> {
           // drivetrain.fromChassisSpeeds(new ChassisSpeeds(1, 0, 0)); // drive forward at 1 m/s
-          drivetrain.holonomicDrive(-.35, 0, 0, false); // drive forward at 35% speed
+          drivetrain.holonomicDrive(-.35, 0, 0, false); // drive backward at 35% speed
         }, drivetrain) {
           @Override
           public void end(boolean interrupted) {

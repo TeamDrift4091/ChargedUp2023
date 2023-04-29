@@ -12,6 +12,8 @@ import frc.robot.subsystems.Drivetrain;
 
 import static frc.robot.utility.MirrorPoses.mirror;
 
+// Helper methods that return a target Pose2d to align to a hybrid or cube node.
+// Also contains an enum holding the shooting motor speeds for each scoring level.
 public class ScoringLocationManager {
     private ScoringLocationManager() {}
 

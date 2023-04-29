@@ -10,7 +10,6 @@ import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LEDMode;
-import frc.robot.utility.PhotonVisionWrapper;
 
 public class LEDDefaultCommand extends CommandBase {
   private final LEDs leds;
@@ -43,13 +42,6 @@ public class LEDDefaultCommand extends CommandBase {
     } else if (DriverStation.isAutonomousEnabled()) {
       leds.setMode(LEDMode.AUTONOMOUS);
     } else if (DriverStation.isTeleopEnabled()) {
-      // IF HAS CUBE
-      // if (Claw.getInstance().hasGamePiece()) {
-      //   leds.setMode(LEDMode.CUBE_HOLD);
-      // } else
-      // if (PhotonVisionWrapper.getInstance().seesCube()) {
-      //   leds.setMode(LEDMode.CUBE_TARGET);
-      // } else 
       if (isDrivingWithAbsoluteAngle) {
         leds.setMode(LEDMode.TELEOP_SPECIAL);
       } else {

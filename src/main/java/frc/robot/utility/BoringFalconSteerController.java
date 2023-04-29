@@ -16,6 +16,8 @@ import edu.wpi.first.math.util.Units;
 import frc.team1891.common.drivetrains.swervemodules.SteerController;
 
 /** Boring because it uses external PID. */
+// This class was created because the FalconSteerController provided by BullBotsLib didn't work for us, since the 
+// method setSelectedSensorPosition() didn't seem to be working for us.
 public class BoringFalconSteerController implements SteerController {
     private final WPI_TalonFX steerMotor;
     private final CANCoder encoder;

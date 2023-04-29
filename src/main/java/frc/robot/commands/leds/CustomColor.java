@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LEDMode;
 
+// Basic command that interrupts the LEDDefaultCommand and sets all LEDs to a given color
 public class CustomColor extends CommandBase {
   private final LEDs leds;
   private final int r, g, b;
