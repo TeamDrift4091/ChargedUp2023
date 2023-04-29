@@ -139,8 +139,12 @@
         }
       },
       "/SmartDashboard/Robot (Field2d)": {
+        "bottom": 544,
         "height": 8.013679504394531,
-        "image": "C:\\Users\\Pablo Herrera\\Documents\\GitHub\\ChargedUp2023\\2023-field.png",
+        "image": "C:\\Users\\Steph\\OnceDriven\\Programming\\FRC\\TeamDRIFT\\ChargedUp2023\\2023-field.png",
+        "left": 46,
+        "right": 1088,
+        "top": 36,
         "width": 16.541748046875,
         "window": {
           "visible": true
@@ -157,7 +161,7 @@
     "Plot <0>": {
       "plots": [
         {
-          "height": 2,
+          "height": 160,
           "series": [
             {
               "color": [
@@ -185,7 +189,7 @@
               "autoFit": true
             }
           ],
-          "height": 2,
+          "height": 160,
           "series": [
             {
               "color": [
@@ -217,7 +221,7 @@
           ]
         },
         {
-          "height": 2,
+          "height": 160,
           "series": [
             {
               "color": [
@@ -248,12 +252,15 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <1>": {
       "plots": [
         {
-          "height": 0,
+          "height": 644,
           "series": [
             {
               "color": [
@@ -272,6 +279,45 @@
                 1.0
               ],
               "id": "NT:/SmartDashboard/BalanceOnChargingStation/currentAngle"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <2>": {
+      "plots": [
+        {
+          "height": 580,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/ClawJoint/angleRadians"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/ClawJoint/targetAngle"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/voltage"
             }
           ]
         }

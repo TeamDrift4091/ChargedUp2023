@@ -24,7 +24,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.utility.BoringFalconSteerController;
 import frc.robot.utility.PhotonVisionWrapper;
 import frc.team1891.common.LazyDashboard;
@@ -247,8 +246,8 @@ public class Drivetrain extends SwerveDrivetrain {
 
   @Override
   public void holonomicDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed *= RobotContainer.getTeleopTranslationalVelocity();
-    ySpeed *= RobotContainer.getTeleopTranslationalVelocity();
+    xSpeed *= config.chassisMaxVelocityMetersPerSecond();
+    ySpeed *= config.chassisMaxVelocityMetersPerSecond();
     rot *= config.chassisMaxAngularVelocityRadiansPerSecond();
 
     fromChassisSpeeds(
@@ -341,13 +340,13 @@ public class Drivetrain extends SwerveDrivetrain {
   @Override
   protected void configureSmartDashboard() {
     super.configureSmartDashboard();
-    LazyDashboard.addBoolean("isGyroConnected", 100, this::isGyroConnected);
+    LazyDashboard.addBoolean("Drivetrain/isGyroConnected", 100, this::isGyroConnected);
     
-    SmartDashboard.putBoolean("showPhotonEstimate", true);
+    SmartDashboard.putBoolean("Drivetrain/showPhotonEstimate", true);
 
-    LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
-    LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Front Left CANCoder", 2, () -> frontLeftEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Front Right CANCoder", 2, () -> frontRightEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Back Left CANCoder", 2, () -> backLeftEncoder.getAbsolutePosition() % 360.);
+    // LazyDashboard.addNumber("Back Right CANCoder", 2, () -> backRightEncoder.getAbsolutePosition() % 360.);
   }
 }

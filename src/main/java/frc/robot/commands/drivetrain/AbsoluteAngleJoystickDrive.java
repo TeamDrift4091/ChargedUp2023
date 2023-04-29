@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.leds.LEDDefaultCommand;
 import frc.robot.subsystems.Drivetrain;
 
 public class AbsoluteAngleJoystickDrive extends CommandBase {
@@ -44,6 +45,7 @@ public class AbsoluteAngleJoystickDrive extends CommandBase {
   @Override
   public void initialize() {
     angleController.reset(drivetrain.getPose2d().getRotation().getRadians());
+    LEDDefaultCommand.isDrivingWithAbsoluteAngle = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
