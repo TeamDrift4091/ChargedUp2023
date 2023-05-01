@@ -52,10 +52,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {
-    Drivetrain.getInstance().calibrateEncoders();
-    // m_robotContainer.clawDown = false;
-  }
+  public void disabledExit() {}
 
   @Override
   public void autonomousInit() {
