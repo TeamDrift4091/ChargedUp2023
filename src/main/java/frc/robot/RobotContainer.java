@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DriveToAndIntakeCube;
 import frc.robot.commands.autonomous.AutonomousCommandManager;
 import frc.robot.commands.autonomous.ScoringLocationManager.ScoringLevel;
 import frc.robot.commands.claw.*;
@@ -39,8 +37,13 @@ public class RobotContainer {
   private final Claw claw = Claw.getInstance();
   private final LEDs leds = LEDs.getInstance();
 
-  // controllers: PS4
-  private final PS4Controller ps4Controller = new PS4Controller(0) {
+  // private final PS4Controller ps4Controller = new PS4Controller(0) {
+  //   public double getRawAxis(int axis) {
+  //     return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
+  //   };
+  // };
+
+  private final XboxController firstController = new XboxController(0) {
     public double getRawAxis(int axis) {
       return MathUtil.applyDeadband(super.getRawAxis(axis), .1); // Apply a deadband to all axis to eliminate noise when it should read 0.
     };
@@ -52,31 +55,31 @@ public class RobotContainer {
     };
   };
   
-  private final Trigger cancelAlignment = new AxisTrigger(ps4Controller, PS4Controller.Axis.kRightX.value, .05).or(
+  private final Trigger cancelAlignment = new AxisTrigger(firstController, XboxController.Axis.kRightX.value, .05).or(
     () -> secondController.getPOV() == 270 || secondController.getPOV() == 90
   );
-  private final Trigger leftXTrigger = new AxisTrigger(ps4Controller, PS4Controller.Axis.kLeftX.value, .05);
-  private final Trigger leftYTrigger = new AxisTrigger(ps4Controller, PS4Controller.Axis.kLeftY.value, .05);
-  private final Trigger alignForward = new POVTrigger(ps4Controller, POV.NORTH).or(new POVTrigger(secondController, POV.NORTH)).and(cancelAlignment.negate());
-  private final Trigger alignReverse = new POVTrigger(ps4Controller, POV.SOUTH).or(new POVTrigger(secondController, POV.SOUTH)).and(cancelAlignment.negate());
+  private final Trigger leftXTrigger = new AxisTrigger(firstController, XboxController.Axis.kLeftX.value, .05);
+  private final Trigger leftYTrigger = new AxisTrigger(firstController, XboxController.Axis.kLeftY.value, .05);
+  private final Trigger alignForward = new POVTrigger(firstController, POV.NORTH).or(new POVTrigger(secondController, POV.NORTH)).and(cancelAlignment.negate());
+  private final Trigger alignReverse = new POVTrigger(firstController, POV.SOUTH).or(new POVTrigger(secondController, POV.SOUTH)).and(cancelAlignment.negate());
   
    //Triggers and button bindings; PS4
-  private final Trigger resetOdometry = new JoystickButton(ps4Controller, PS4Controller.Button.kOptions.value);
+  private final Trigger resetOdometry = new JoystickButton(firstController, XboxController.Button.kStart.value);
 
-  private final Trigger scoreLow = new JoystickButton(ps4Controller, PS4Controller.Button.kCross.value);
-  private final Trigger scoreMid = new JoystickButton(ps4Controller, PS4Controller.Button.kCircle.value);
-  private final Trigger scoreHigh = new JoystickButton(ps4Controller, PS4Controller.Button.kTriangle.value);
-  private final Trigger kobeShot = new JoystickButton(ps4Controller, PS4Controller.Button.kSquare.value);
-  private final Trigger runIntake = new JoystickButton(ps4Controller, PS4Controller.Button.kR1.value);
+  private final Trigger scoreLow = new JoystickButton(firstController, XboxController.Button.kA.value);
+  private final Trigger scoreMid = new JoystickButton(firstController, XboxController.Button.kB.value);
+  private final Trigger scoreHigh = new JoystickButton(firstController, XboxController.Button.kY.value);
+  private final Trigger kobeShot = new JoystickButton(firstController, XboxController.Button.kX.value);
+  private final Trigger runIntake = new JoystickButton(firstController, XboxController.Button.kRightBumper.value);
 
-  private final Trigger driveToCube = new JoystickButton(ps4Controller, PS4Controller.Button.kR2.value);
+  // private final Trigger driveToCube = new JoystickButton(ps4Controller, PS4Controller.Button.kR2.value);
   // private final Trigger alignToCubeNode = new JoystickButton(ps4Controller, PS4Controller.Button.kL2.value);
 
-  private final Trigger deployIntake = new JoystickButton(ps4Controller, PS4Controller.Button.kL1.value);
+  private final Trigger deployIntake = new JoystickButton(firstController, XboxController.Button.kLeftBumper.value);
 
-  private final Trigger chargeStationBalance = new JoystickButton(ps4Controller, PS4Controller.Button.kL3.value);
+  private final Trigger chargeStationBalance = new JoystickButton(firstController, XboxController.Button.kLeftStick.value);
 
-  private final Trigger resetGyroPitch = new JoystickButton(ps4Controller, PS4Controller.Button.kR3.value);
+  private final Trigger resetGyroPitch = new JoystickButton(firstController, XboxController.Button.kRightStick.value);
 
   private final Trigger ledRainbow = new JoystickButton(secondController, XboxController.Button.kLeftBumper.value);
 
@@ -107,9 +110,9 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
       new JoystickDrive(
         drivetrain,
-        () -> ps4Controller.getLeftY(),
-        () -> ps4Controller.getLeftX(),
-        () -> ps4Controller.getRightX()
+        () -> firstController.getLeftY(),
+        () -> firstController.getLeftX(),
+        () -> firstController.getRightX()
       )
     );
 
@@ -118,21 +121,21 @@ public class RobotContainer {
     );
 
     alignForward.onTrue(new AbsoluteAngleJoystickDrive(drivetrain, 
-      () -> ps4Controller.getLeftY(), 
-      () -> ps4Controller.getLeftX(), 
+      () -> firstController.getLeftY(), 
+      () -> firstController.getLeftX(), 
       () -> MirrorPoses.getForwardForAlliance()));
 
     alignReverse.onTrue(new AbsoluteAngleJoystickDrive(drivetrain, 
-      () -> ps4Controller.getLeftY(), 
-      () -> ps4Controller.getLeftX(), 
+      () -> firstController.getLeftY(), 
+      () -> firstController.getLeftX(), 
       () -> MirrorPoses.getForwardForAlliance().rotateBy(Rotation2d.fromDegrees(180))));
 
     cancelAlignment.whileTrue(
       new JoystickDrive(
         drivetrain,
-        () -> ps4Controller.getLeftY(),
-        () -> ps4Controller.getLeftX(),
-        () -> ps4Controller.getRightX()
+        () -> firstController.getLeftY(),
+        () -> firstController.getLeftX(),
+        () -> firstController.getRightX()
       )
     );
 
@@ -156,10 +159,10 @@ public class RobotContainer {
       new Shoot(claw, .75).withTimeout(.5),
       new CustomColor(leds, 150, 75, 0)));
 
-    driveToCube.whileTrue(new ParallelRaceGroup(
-      new DriveToAndIntakeCube(drivetrain, claw, clawJoint),
-      new LEDLimelightFault(leds)
-    ));
+    // driveToCube.whileTrue(new ParallelRaceGroup(
+    //   new DriveToAndIntakeCube(drivetrain, claw, clawJoint),
+    //   new LEDLimelightFault(leds)
+    // ));
 
     runIntake.whileTrue(new Intake(claw));
   
