@@ -4,17 +4,26 @@
 
 package frc.robot.utility;
 
+import java.util.function.Consumer;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.team1891.common.LazyDashboard;
 
-// Helper class used by the LEDs subsystem
+/**
+ * A wrapper class to handle control over a simple LED strip.
+ */
 public class LEDString {
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
     private final int length;
     
+    /**
+     * Creates a new LEDString with control over an LED strip plugged into the given port.
+     * @param port target PWM port
+     * @param length number of LEDs
+     */
     public LEDString(int port, int length) {
         leds = new AddressableLED(port);
         buffer = new AddressableLEDBuffer(length);
@@ -36,42 +45,99 @@ public class LEDString {
         });
     }
 
-
+    /**
+     * Starts updating the leds
+     */
     public void start() {
         leds.start();
     }
 
+    /**
+     * Stops the leds from updating
+     */
     public void stop() {
         leds.stop();
     }
 
-    public void updateLEDs() {
+    /**
+     * Sends the data currently on the buffer to the led strip.
+     */
+    public void update() {
         leds.setData(buffer);
     }
 
-    public void individualPixel(int index, int hue) {
-        individualPixel(index, hue, false);
+    /**
+     * Sets the hue (HSV) of the pixel at the given index using a default saturation and value.
+     * @param index the target pixel
+     * @param hue
+     */
+    public void setHue(int index, int hue) {
+        setHue(index, hue, false);
+    }
+
+    /**
+     * Sets the hue (HSV) of the pixel at the given index using a default saturation and value.
+     * @param index the target pixel
+     * @param hue
+     * @param clearOthers turn off the other pixels
+     */
+    public void setHue(int index, int hue, boolean clearOthers) {
+        setHSV(index, hue, 255, 128, clearOthers);
+    }
+
+    /**
+     * Sets the HSV of the pixel at the given index.
+     * @param index the target pixel
+     * @param hue
+     * @param sat
+     * @param val
+     */
+    public void setHSV(int index, int hue, int sat, int val) {
+        setHSV(index, hue, sat, val, false);
     }
     
-    public void individualPixel(int index, int hue, boolean clearOthers) {
+    /**
+     * Sets the HSV of the pixel at the given index.
+     * @param index the target pixel
+     * @param hue
+     * @param sat
+     * @param val
+     * @param clearOthers turn off the other pixels
+     */
+    public void setHSV(int index, int hue, int sat, int val, boolean clearOthers) {
         if (clearOthers) {
             for (int i = 0; i < length; i++) {
                 if (i == index) {
-                    buffer.setHSV(i, hue, 255, 128);
+                    buffer.setHSV(i, hue, sat, val);
                 } else {
                     buffer.setRGB(i, 0, 0, 0);
                 }
             }    
         } else {
-            buffer.setHSV(index, hue, 255, 128);
+            buffer.setHSV(index, hue, sat, val);
         }
     }
 
-    public void individualPixel(int index, int r, int g, int b) {
-        individualPixel(index, r, g, b, false);
+    /**
+     * Sets the RGB of the pixel at the given index.
+     * @param index the target pixel
+     * @param r
+     * @param g
+     * @param b
+     */
+    public void setRGB(int index, int r, int g, int b) {
+        setRGB(index, r, g, b, false);
     }
     
-    public void individualPixel(int index, int r, int g, int b, boolean clearOthers) {
+    /**
+     * Sets the RGB of the pixel at the given index.
+     * @param index the target pixel
+     * @param r
+     * @param g
+     * @param b
+     * @param clearOthers turn off the other pixels
+     */
+    public void setRGB(int index, int r, int g, int b, boolean clearOthers) {
         if (clearOthers) {
             for (int i = 0; i < length; i++) {
                 if (i == index) {
@@ -85,15 +151,35 @@ public class LEDString {
         }
     }
 
-    public void allOneColor(int hue) {
+    /**
+     * Sets the hue (HSV) of all the pixels using a default saturation and value.
+     * @param hue
+     */
+    public void setAllHue(int hue) {
+        setAllHSV(hue, 255, 128);
+    }
+
+    /**
+     * Sets the HSV of all the pixels.
+     * @param hue
+     * @param sat
+     * @param val
+     */
+    public void setAllHSV(int hue, int sat, int val) {
         // For every pixel
         for (var i = 0; i < buffer.getLength(); i++) {
             // Set the value
-            buffer.setHSV(i, hue, 255, 128);
+            buffer.setHSV(i, hue, sat, val);
         }
     }
 
-    public void allOneColor(int r, int g, int b) {
+    /**
+     * Sets the RGB of all the pixels.
+     * @param r
+     * @param g
+     * @param b
+     */
+    public void setAllRGB(int r, int g, int b) {
         // For every pixel
         for (var i = 0; i < buffer.getLength(); i++) {
             // Set the value
@@ -101,6 +187,9 @@ public class LEDString {
         }
     }
 
+    /**
+     * Turns all pixels off.
+     */
     public void off() {
         // For every pixel
         for (var i = 0; i < buffer.getLength(); ++i) {
@@ -109,52 +198,161 @@ public class LEDString {
         }
     }
 
-    private int rainbowFirstPixelHue = 0;
-    public void rainbow() {
-        // For every pixel
-        for (var i = 0; i < buffer.getLength(); i++) {
-          // Calculate the hue - hue is easier for rainbows because the color
-          // shape is a circle so only one value needs to precess
-          final var hue = (rainbowFirstPixelHue + (i * 180 / buffer.getLength())) % 180;
-          // Set the value
-          buffer.setHSV(i, hue, 255, 128);
+    /**
+     * An interface for creating custom patterns for controlling LED strips more easily.
+     */
+    public static interface LEDPattern {
+        /**
+         * Set the buffer of the LEDString with a pattern.
+         * @param leds
+         */
+        void draw(LEDString leds);
+
+        /**
+         * Sets the buffer of the LEDString with a pattern, and updates it to the physical LED strip.
+         * @param leds
+         */
+        public default void run(LEDString leds) {
+            draw(leds);
+            leds.update();
         }
-        // Increase by to make the rainbow "move"
-        rainbowFirstPixelHue ++;
-        // Check bounds
-        rainbowFirstPixelHue %= 180;
+
+        /**
+         * Creates a basic {@link LEDPattern} that sets all the pixels in the LED strip to a given RGB color.
+         * @param r
+         * @param g
+         * @param b
+         * @return the created {@link LEDPattern}
+         */
+        public static LEDPattern setRGB(int r, int g, int b) {
+            return new LEDPattern() {
+                @Override
+                public void draw(LEDString leds) {
+                    leds.setAllRGB(r, g, b);
+                }
+            };
+        }
+
+        /**
+         * Creates a basic {@link LEDPattern} that sets all the pixels in the LED strip to a given hue (HSV with default saturation and value).
+         * @param hue
+         * @return the created {@link LEDPattern}.
+         */
+        public static LEDPattern setHue(int hue) {
+            return new LEDPattern() {
+                @Override
+                public void draw(LEDString leds) {
+                    leds.setAllHue(hue);
+                }
+            };
+        }
+
+        /**
+         * Creates a basic {@link LEDPattern} that sets all the pixels in the LED strip to a given HSV color.
+         * @param hue
+         * @param sat
+         * @param val
+         * @return the created {@link LEDPattern}.
+         */
+        public static LEDPattern setHue(int hue, int sat, int val) {
+            return new LEDPattern() {
+                @Override
+                public void draw(LEDString leds) {
+                    leds.setAllHSV(hue, sat, val);
+                }
+            };
+        }
+
+        /**
+         * Creates a basic {@link LEDPattern} from a consumer.
+         * 
+         * Consumers can be written like this: (myLEDString) -> {myLEDString.off();}
+         * @param consumer
+         * @return the created {@link LEDPattern}.
+         */
+        public static LEDPattern fromConsumer(Consumer<LEDString> consumer) {
+            return new LEDPattern() {
+                @Override
+                public void draw(LEDString leds) {
+                    consumer.accept(leds);
+                }
+            };
+        }
     }
 
-    public void fastRainbow() {
-        // For every pixel
-        for (var i = 0; i < buffer.getLength(); i++) {
-          // Calculate the hue - hue is easier for rainbows because the color
-          // shape is a circle so only one value needs to precess
-          final var hue = (rainbowFirstPixelHue + (2 * i * 180 / buffer.getLength())) % 180;
-          // Set the value
-          buffer.setHSV(i, hue, 255, 128);
+    /**
+     * An {@link LEDPattern} that alternates between two other {@link LEDPattern}.
+     */
+    public static class AlternatingPattern implements LEDPattern {
+        private final double timeInterval;
+        private final LEDPattern pattern1, pattern2;
+        /**
+         * Creates a new {@link LEDPattern} that alternates between two other {@link LEDPattern}.
+         * @param timeInterval the time interval bewtween switching patterns
+         * @param pattern1
+         * @param pattern2
+         */
+        public AlternatingPattern(double timeInterval, LEDPattern pattern1, LEDPattern pattern2) {
+            this.timeInterval = timeInterval;
+            this.pattern1 = pattern1;
+            this.pattern2 = pattern2;
         }
-        // Increase by to make the rainbow "move"
-        rainbowFirstPixelHue += 3;
-        // Check bounds
-        rainbowFirstPixelHue %= 180;
+        
+        /**
+         * Creates a new {@link LEDPattern} that flashes the given pattern on and off.
+         * @param timeInterval the time interval bewtween on and off
+         * @param pattern
+         */
+        public AlternatingPattern(double timeInterval, LEDPattern pattern) {
+            this.timeInterval = timeInterval;
+            this.pattern1 = pattern;
+            this.pattern2 = LEDPatterns.OFF;
+        }
+
+        @Override
+        public void draw(LEDString leds) {
+            long currentTime = System.currentTimeMillis();
+            if ((currentTime % (int) (timeInterval * 2000)) < (int) (timeInterval * 1000)) {
+                pattern1.draw(leds);
+            } else {
+                pattern2.draw(leds);
+            }
+        }
     }
 
-    // alternates between whatever pattern it's given and turning the leds off
-    public void flash(double intervalSeconds, Runnable runnable) {
-        alternate(intervalSeconds, runnable, () -> {
-            off();
-            updateLEDs();
-        });
-    }
+    public static class LEDPatterns {
+        /** Does nothing. */
+        public static final LEDPattern NONE = new LEDPattern() {
+            public void draw(LEDString leds) {};
+        };
+        /** Turns the LEDs off */
+        public static final LEDPattern OFF = new LEDPattern() {
+            public void draw(LEDString leds) {
+                leds.off();
+            };
+        };
+        /** Animates a simple rainbow moving along the LED strip. */
+        public static final LEDPattern RAINBOW = new LEDPattern() {
+            private int firstHue = 0;        
+            public void draw(LEDString leds) {
+                
+                for (var i = 0; i < leds.length; i++) {
+                    // Calculate the hue - hue is easier for rainbows because the color
+                    // shape is a circle so only one value needs to precess
+                    final var hue = (firstHue + (i * 180 / leds.length)) % 180;
+                    // Set the value
+                    leds.setHue(i, hue);
+                }
+                // Increase by to make the rainbow "move"
+                firstHue ++;
+                // Check bounds
+                firstHue %= 180;
+            }
+        };
     
-    // alternates between two patterns with the given time interval.
-    public void alternate(double intervalSeconds, Runnable a, Runnable b) {
-        long currentTime = System.currentTimeMillis();
-        if ((currentTime % (int) (intervalSeconds * 2000)) < (int) (intervalSeconds * 1000)) {
-            a.run();
-        } else {
-            b.run();
-        }
+        /** Flashes between red and bright red. */
+        public static final LEDPattern ERROR = new AlternatingPattern(.25, LEDPattern.setRGB(200, 0, 0), LEDPattern.setRGB(150, 0, 0));
+        /** Flashes yellow. */
+        public static final LEDPattern WARNING = new AlternatingPattern(.25, LEDPattern.setRGB(160, 160, 50));
     }
 }

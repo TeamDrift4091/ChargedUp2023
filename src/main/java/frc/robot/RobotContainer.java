@@ -28,6 +28,7 @@ import frc.robot.commands.leds.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LEDs.LEDMode;
 import frc.robot.utility.MirrorPoses;
+import frc.robot.utility.LEDString.LEDPatterns;
 import frc.team1891.common.control.AxisTrigger; 
 import frc.team1891.common.control.POVTrigger;
 import frc.team1891.common.control.POVTrigger.POV;
@@ -169,7 +170,7 @@ public class RobotContainer {
 
     ledRainbow.onTrue(new InstantCommand(() -> {
       leds.start();
-      leds.setMode(LEDMode.CUBE_TARGET);
+      leds.setCustomPattern(LEDPatterns.RAINBOW);
     }, leds) {
       public void end(boolean interrupted) {
         leds.setMode(LEDMode.OFF);
@@ -205,10 +206,6 @@ public class RobotContainer {
       };
     });
   }
- 
-  // public static double getTeleopTranslationalVelocity() {
-  //   return currentMaxVelocity;
-  // }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
   public Command getAutonomousCommand() {
