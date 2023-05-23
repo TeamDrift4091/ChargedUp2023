@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +27,7 @@ import frc.robot.commands.leds.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LEDs.LEDMode;
 import frc.robot.utility.MirrorPoses;
+import frc.robot.utility.LEDString.LEDPatterns;
 import frc.team1891.common.control.AxisTrigger; 
 import frc.team1891.common.control.POVTrigger;
 import frc.team1891.common.control.POVTrigger.POV;
@@ -93,6 +95,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Connects the buttons and triggers to commands
     configureBindings();
+
+    if (Robot.isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
     Thread loadAutoThread = new Thread(() -> {
@@ -172,7 +178,7 @@ public class RobotContainer {
 
     ledRainbow.onTrue(new InstantCommand(() -> {
       leds.start();
-      leds.setMode(LEDMode.CUBE_TARGET);
+      leds.setCustomPattern(LEDPatterns.RAINBOW);
     }, leds) {
       public void end(boolean interrupted) {
         leds.setMode(LEDMode.OFF);
@@ -208,10 +214,6 @@ public class RobotContainer {
       };
     });
   }
- 
-  // public static double getTeleopTranslationalVelocity() {
-  //   return currentMaxVelocity;
-  // }
 
   // This method runs at the beginning of the match to determine what command runs in autonomous.
   public Command getAutonomousCommand() {
