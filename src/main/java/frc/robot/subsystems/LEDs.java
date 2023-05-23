@@ -89,7 +89,8 @@ public class LEDs extends SubsystemBase {
           ledPattern.set(LEDPatterns.OFF);
           break;
         case DISCONNECTED:
-          ledPattern.set(LEDs.DISCONNECTED);
+          // ledPattern.set(LEDs.DISCONNECTED);
+          ledPattern.set(LOADING);
           break;
         case DISABLED:
           ledPattern.set(new NonLoopingPattern(LEDPattern.setRGB(0, 50, 0)));
@@ -127,20 +128,10 @@ public class LEDs extends SubsystemBase {
           ledPattern.set(LEDPatterns.RAINBOW);
           break;
         case CUBE_HOLD:
-          ledPattern.set((leds) -> {setOnce(leds, LEDPattern.setRGB(40, 20, 80));});
+          ledPattern.set(new NonLoopingPattern(LEDPattern.fromConsumer((leds) -> LEDPattern.setRGB(40, 20, 80))));
           break;
       }
     }
-  }
-
-  private void setAll(LEDString leds, int r, int g, int b) {
-    leds.setAllRGB(r, g, b);
-    leds.update();
-  }
-
-  private void setOnce(LEDString leds, LEDPattern pattern) {
-    pattern.run(leds);
-    ledPattern.set(null);
   }
 
   private void off(LEDString leds) {
@@ -148,25 +139,6 @@ public class LEDs extends SubsystemBase {
     leds.update();
     ledPattern.set(null);
   }
-
-  public static final LEDPattern DISCONNECTED = new LEDPattern() {
-    private int i = 0;
-    private boolean isIncreasing = true;
-    public void draw(LEDString leds) {
-      if (i + 4 > LENGTH) {
-        isIncreasing = false;
-      }
-      if (i == 0) {
-        isIncreasing = true;
-      }
-      i += isIncreasing ? 1 : -1;
-      leds.setRGB((i) % LENGTH, 150, 150, 150, true);
-      leds.setRGB((i + 1) % LENGTH, 150, 150, 150);
-      leds.setRGB((i + 2) % LENGTH, 150, 150, 150);
-      leds.setRGB((i + 3) % LENGTH, 150, 150, 150);
-      leds.update();
-    }
-  };
 
   private void twoColor(LEDString leds, int spacing, int r1, int g1, int b1, int r2, int g2, int b2) {
     for (int i = 0; i < LENGTH; i++) {
@@ -198,4 +170,79 @@ public class LEDs extends SubsystemBase {
       pattern.draw(leds);
     }
   }
+
+  // loading animation used at comp
+  public static final LEDPattern DISCONNECTED = new LEDPattern() {
+    private int i = 0;
+    private boolean isIncreasing = true;
+    public void draw(LEDString leds) {
+      if (i + 4 > LENGTH) {
+        isIncreasing = false;
+      }
+      if (i == 0) {
+        isIncreasing = true;
+      }
+      i += isIncreasing ? 1 : -1;
+      leds.setRGB((i) % LENGTH, 150, 150, 150, true);
+      leds.setRGB((i + 1) % LENGTH, 150, 150, 150);
+      leds.setRGB((i + 2) % LENGTH, 150, 150, 150);
+      leds.setRGB((i + 3) % LENGTH, 150, 150, 150);
+      leds.update();
+    }
+  };
+
+  public static final LEDPattern LOADING = new LEDPattern() {
+    private int targetIndex = 0;
+    private int currentIndex = 0;
+    private boolean increasing = true;
+
+    private int length = 1;
+
+    private boolean inverted = false;
+    @Override
+    public void draw(LEDString leds) {        
+      if (currentIndex == targetIndex) {
+        if (increasing) {
+          targetIndex = (int) (Math.random() * (currentIndex - length));
+          currentIndex = currentIndex - length;
+        } else {
+          targetIndex = (int) ((currentIndex + length) + Math.random() * (leds.length - (currentIndex +  length)));
+          currentIndex = currentIndex + length;
+        }
+        increasing = !increasing;
+        length++;
+
+      }
+      currentIndex += Math.signum(targetIndex - currentIndex);
+
+      if (inverted) {
+        leds.setAllRGB(20, 150, 0);
+        leds.setRGB(targetIndex, 0, 0, 0, false);
+        for (int i = 0; i < length; i++) {
+          if (increasing && currentIndex - i > -1) {
+            leds.setRGB(currentIndex - i, 100, 100, 100, false); 
+          } else if (currentIndex + i < leds.length) {
+            leds.setRGB(currentIndex + i, 100, 100, 100, false); 
+          }
+        }
+      } else {
+        leds.setAllRGB(100, 100, 100);
+        leds.setRGB(targetIndex, 0, 0, 0, false);
+        for (int i = 0; i < length; i++) {
+          if (increasing && currentIndex - i > -1) {
+            leds.setRGB(currentIndex - i, 20, 150, 0, false); 
+          } else if (currentIndex + i < leds.length) {
+            leds.setRGB(currentIndex + i, 20, 150, 0, false); 
+          }
+        }
+      }
+      if (length == leds.length) {
+        inverted = !inverted;
+        length = 1;
+        increasing = true;
+        currentIndex = 0;
+        targetIndex = 0;
+      }
+    }
+  };
 }

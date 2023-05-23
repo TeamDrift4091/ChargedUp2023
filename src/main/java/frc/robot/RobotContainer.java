@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -91,6 +92,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Connects the buttons and triggers to commands
     configureBindings();
+
+    if (Robot.isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
     // Loads the autonomous chooser with all of the available autonomous routines.
     // I'm doing this on a seperate thread because loading trajectories can take a lot of time.
     Thread loadAutoThread = new Thread(() -> {

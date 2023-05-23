@@ -4,12 +4,12 @@
 
 package frc.robot.utility;
 
-import java.util.function.Consumer;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.team1891.common.LazyDashboard;
+
+import java.util.function.Consumer;
 
 /**
  * A wrapper class to handle control over a simple LED strip.
@@ -17,8 +17,8 @@ import frc.team1891.common.LazyDashboard;
 public class LEDString {
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
-    private final int length;
-    
+    public final int length;
+
     /**
      * Creates a new LEDString with control over an LED strip plugged into the given port.
      * @param port target PWM port
@@ -35,11 +35,11 @@ public class LEDString {
         LazyDashboard.addNumber("Estimated LED power draw", () -> {
             double totalPower = 0;
             for (int i = 0; i < length; i++) {
-                Color color = buffer.getLED(i); 
+                Color color = buffer.getLED(i);
                 double sum = color.red + color.green + color.blue;
                 totalPower += sum / 3.;
             }
-            
+
             totalPower *= .06; // 60mA per led at max brightness
             return totalPower;
         });
@@ -69,7 +69,7 @@ public class LEDString {
     /**
      * Sets the hue (HSV) of the pixel at the given index using a default saturation and value.
      * @param index the target pixel
-     * @param hue
+     * @param hue hue
      */
     public void setHue(int index, int hue) {
         setHue(index, hue, false);
@@ -78,7 +78,7 @@ public class LEDString {
     /**
      * Sets the hue (HSV) of the pixel at the given index using a default saturation and value.
      * @param index the target pixel
-     * @param hue
+     * @param hue hue
      * @param clearOthers turn off the other pixels
      */
     public void setHue(int index, int hue, boolean clearOthers) {
@@ -88,20 +88,20 @@ public class LEDString {
     /**
      * Sets the HSV of the pixel at the given index.
      * @param index the target pixel
-     * @param hue
-     * @param sat
-     * @param val
+     * @param hue hue
+     * @param sat saturation
+     * @param val value
      */
     public void setHSV(int index, int hue, int sat, int val) {
         setHSV(index, hue, sat, val, false);
     }
-    
+
     /**
      * Sets the HSV of the pixel at the given index.
      * @param index the target pixel
-     * @param hue
-     * @param sat
-     * @param val
+     * @param hue hue
+     * @param sat saturation
+     * @param val value
      * @param clearOthers turn off the other pixels
      */
     public void setHSV(int index, int hue, int sat, int val, boolean clearOthers) {
@@ -112,7 +112,7 @@ public class LEDString {
                 } else {
                     buffer.setRGB(i, 0, 0, 0);
                 }
-            }    
+            }
         } else {
             buffer.setHSV(index, hue, sat, val);
         }
@@ -121,20 +121,20 @@ public class LEDString {
     /**
      * Sets the RGB of the pixel at the given index.
      * @param index the target pixel
-     * @param r
-     * @param g
-     * @param b
+     * @param r red
+     * @param g green
+     * @param b blue
      */
     public void setRGB(int index, int r, int g, int b) {
         setRGB(index, r, g, b, false);
     }
-    
+
     /**
      * Sets the RGB of the pixel at the given index.
      * @param index the target pixel
-     * @param r
-     * @param g
-     * @param b
+     * @param r red
+     * @param g green
+     * @param b blue
      * @param clearOthers turn off the other pixels
      */
     public void setRGB(int index, int r, int g, int b, boolean clearOthers) {
@@ -145,7 +145,7 @@ public class LEDString {
                 } else {
                     buffer.setRGB(i, 0, 0, 0);
                 }
-            }    
+            }
         } else {
             buffer.setRGB(index, r, g, b);
         }
@@ -153,7 +153,7 @@ public class LEDString {
 
     /**
      * Sets the hue (HSV) of all the pixels using a default saturation and value.
-     * @param hue
+     * @param hue hue
      */
     public void setAllHue(int hue) {
         setAllHSV(hue, 255, 128);
@@ -161,9 +161,9 @@ public class LEDString {
 
     /**
      * Sets the HSV of all the pixels.
-     * @param hue
-     * @param sat
-     * @param val
+     * @param hue hue
+     * @param sat saturation
+     * @param val value
      */
     public void setAllHSV(int hue, int sat, int val) {
         // For every pixel
@@ -175,9 +175,9 @@ public class LEDString {
 
     /**
      * Sets the RGB of all the pixels.
-     * @param r
-     * @param g
-     * @param b
+     * @param r red
+     * @param g green
+     * @param b blue
      */
     public void setAllRGB(int r, int g, int b) {
         // For every pixel
@@ -201,82 +201,62 @@ public class LEDString {
     /**
      * An interface for creating custom patterns for controlling LED strips more easily.
      */
-    public static interface LEDPattern {
+    public interface LEDPattern {
         /**
          * Set the buffer of the LEDString with a pattern.
-         * @param leds
+         * @param leds target {@link LEDString}
          */
         void draw(LEDString leds);
 
         /**
          * Sets the buffer of the LEDString with a pattern, and updates it to the physical LED strip.
-         * @param leds
+         * @param leds target {@link LEDString}
          */
-        public default void run(LEDString leds) {
+        default void run(LEDString leds) {
             draw(leds);
             leds.update();
         }
 
         /**
          * Creates a basic {@link LEDPattern} that sets all the pixels in the LED strip to a given RGB color.
-         * @param r
-         * @param g
-         * @param b
+         * @param r red
+         * @param g green
+         * @param b blue
          * @return the created {@link LEDPattern}
          */
-        public static LEDPattern setRGB(int r, int g, int b) {
-            return new LEDPattern() {
-                @Override
-                public void draw(LEDString leds) {
-                    leds.setAllRGB(r, g, b);
-                }
-            };
+        static LEDPattern setRGB(int r, int g, int b) {
+            return leds -> leds.setAllRGB(r, g, b);
         }
 
         /**
          * Creates a basic {@link LEDPattern} that sets all the pixels in the LED strip to a given hue (HSV with default saturation and value).
-         * @param hue
+         * @param hue hue
          * @return the created {@link LEDPattern}.
          */
-        public static LEDPattern setHue(int hue) {
-            return new LEDPattern() {
-                @Override
-                public void draw(LEDString leds) {
-                    leds.setAllHue(hue);
-                }
-            };
+        static LEDPattern setHue(int hue) {
+            return leds -> leds.setAllHue(hue);
         }
 
         /**
          * Creates a basic {@link LEDPattern} that sets all the pixels in the LED strip to a given HSV color.
-         * @param hue
-         * @param sat
-         * @param val
+         * @param hue hue
+         * @param sat saturation
+         * @param val value
          * @return the created {@link LEDPattern}.
          */
-        public static LEDPattern setHue(int hue, int sat, int val) {
-            return new LEDPattern() {
-                @Override
-                public void draw(LEDString leds) {
-                    leds.setAllHSV(hue, sat, val);
-                }
-            };
+        static LEDPattern setHue(int hue, int sat, int val) {
+            return leds -> leds.setAllHSV(hue, sat, val);
         }
 
         /**
          * Creates a basic {@link LEDPattern} from a consumer.
-         * 
+         *
          * Consumers can be written like this: (myLEDString) -> {myLEDString.off();}
-         * @param consumer
+         * @param consumer consumer
          * @return the created {@link LEDPattern}.
          */
-        public static LEDPattern fromConsumer(Consumer<LEDString> consumer) {
-            return new LEDPattern() {
-                @Override
-                public void draw(LEDString leds) {
-                    consumer.accept(leds);
-                }
-            };
+        static LEDPattern fromConsumer(Consumer<LEDString> consumer) {
+            return consumer::accept;
         }
     }
 
@@ -288,20 +268,20 @@ public class LEDString {
         private final LEDPattern pattern1, pattern2;
         /**
          * Creates a new {@link LEDPattern} that alternates between two other {@link LEDPattern}.
-         * @param timeInterval the time interval bewtween switching patterns
-         * @param pattern1
-         * @param pattern2
+         * @param timeInterval the time interval between switching patterns
+         * @param pattern1 first pattern
+         * @param pattern2 second pattern
          */
         public AlternatingPattern(double timeInterval, LEDPattern pattern1, LEDPattern pattern2) {
             this.timeInterval = timeInterval;
             this.pattern1 = pattern1;
             this.pattern2 = pattern2;
         }
-        
+
         /**
          * Creates a new {@link LEDPattern} that flashes the given pattern on and off.
-         * @param timeInterval the time interval bewtween on and off
-         * @param pattern
+         * @param timeInterval the time interval between on and off
+         * @param pattern pattern
          */
         public AlternatingPattern(double timeInterval, LEDPattern pattern) {
             this.timeInterval = timeInterval;
@@ -322,20 +302,14 @@ public class LEDString {
 
     public static class LEDPatterns {
         /** Does nothing. */
-        public static final LEDPattern NONE = new LEDPattern() {
-            public void draw(LEDString leds) {};
-        };
+        public static final LEDPattern NONE = leds -> {};
         /** Turns the LEDs off */
-        public static final LEDPattern OFF = new LEDPattern() {
-            public void draw(LEDString leds) {
-                leds.off();
-            };
-        };
+        public static final LEDPattern OFF = LEDString::off;
         /** Animates a simple rainbow moving along the LED strip. */
         public static final LEDPattern RAINBOW = new LEDPattern() {
-            private int firstHue = 0;        
+            private int firstHue = 0;
             public void draw(LEDString leds) {
-                
+
                 for (var i = 0; i < leds.length; i++) {
                     // Calculate the hue - hue is easier for rainbows because the color
                     // shape is a circle so only one value needs to precess
@@ -349,7 +323,7 @@ public class LEDString {
                 firstHue %= 180;
             }
         };
-    
+
         /** Flashes between red and bright red. */
         public static final LEDPattern ERROR = new AlternatingPattern(.25, LEDPattern.setRGB(200, 0, 0), LEDPattern.setRGB(150, 0, 0));
         /** Flashes yellow. */
